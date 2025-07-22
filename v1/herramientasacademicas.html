@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Herramientas</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        header {
+            background-color: #333;
+            color: white;
+            width: 100%;
+            text-align: center;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 50px;
+            padding: 20px;
+        }
+        
+        .tool-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 30px;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 15px;
+            object-fit: contain;
+        }
+        
+        .tool-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        #clock-card {
+            position: relative;
+        }
+        
+        #digital-clock {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            color: #333;
+        }
+        
+        footer {
+            margin-top: auto;
+            width: 100%;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Herramientas</h1>
+    </header>
+    
+    <div class="container">
+        <div class="tool-card">
+            <img src="https://cdn.worldvectorlogo.com/logos/notion-2.svg" alt="Notion Logo" class="logo">
+            <div class="tool-name">Notion</div>
+        </div>
+        
+        <div class="tool-card">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1200px-Google_2015_logo.svg.png" alt="Google Logo" class="logo">
+            <div class="tool-name">Google</div>
+        </div>
+        
+        <div class="tool-card" id="clock-card">
+            <svg class="logo" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="white" stroke="#333" stroke-width="2" />
+                <circle cx="50" cy="50" r="3" fill="#333" />
+                <!-- Hour hand -->
+                <line id="hour-hand" x1="50" y1="50" x2="50" y2="25" stroke="#333" stroke-width="4" stroke-linecap="round" />
+                <!-- Minute hand -->
+                <line id="minute-hand" x1="50" y1="50" x2="50" y2="15" stroke="#333" stroke-width="2" stroke-linecap="round" />
+                <!-- Second hand -->
+                <line id="second-hand" x1="50" y1="50" x2="50" y2="10" stroke="red" stroke-width="1" stroke-linecap="round" />
+                
+                <!-- Hour marks -->
+                <line x1="50" y1="10" x2="50" y2="15" stroke="#333" stroke-width="2" />
+                <line x1="90" y1="50" x2="85" y2="50" stroke="#333" stroke-width="2" />
+                <line x1="50" y1="90" x2="50" y2="85" stroke="#333" stroke-width="2" />
+                <line x1="10" y1="50" x2="15" y2="50" stroke="#333" stroke-width="2" />
+                
+                <line x1="75" y1="25" x2="72" y2="28" stroke="#333" stroke-width="2" />
+                <line x1="75" y1="75" x2="72" y2="72" stroke="#333" stroke-width="2" />
+                <line x1="25" y1="75" x2="28" y2="72" stroke="#333" stroke-width="2" />
+                <line x1="25" y1="25" x2="28" y2="28" stroke="#333" stroke-width="2" />
+            </svg>
+            <div class="tool-name">Reloj</div>
+            <div id="digital-clock"></div>
+        </div>
+    </div>
+    
+    <footer>
+        &copy; 2025 Herramientas Útiles
+    </footer>
+    
+    <script>
+        // Update clock hands and digital time
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours() % 12;
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            
+            // Calculate rotation angles
+            const secondAngle = (seconds / 60) * 360;
+            const minuteAngle = ((minutes + seconds / 60) / 60) * 360;
+            const hourAngle = ((hours + minutes / 60) / 12) * 360;
+            
+            // Update hand positions
+            const secondHand = document.getElementById('second-hand');
+            const minuteHand = document.getElementById('minute-hand');
+            const hourHand = document.getElementById('hour-hand');
+            
+            secondHand.setAttribute('transform', `rotate(${secondAngle}, 50, 50)`);
+            minuteHand.setAttribute('transform', `rotate(${minuteAngle}, 50, 50)`);
+            hourHand.setAttribute('transform', `rotate(${hourAngle}, 50, 50)`);
+            
+            // Update digital clock
+            const digitalClock = document.getElementById('digital-clock');
+            const hours24 = now.getHours();
+            const formattedTime = `${hours24.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            digitalClock.textContent = formattedTime;
+        }
+        
+        // Update clock immediately and then every second
+        updateClock();
+        setInterval(updateClock, 1000);
+        
+        // Add click functionality
+        document.querySelectorAll('.tool-card').forEach(card => {
+            card.addEventListener('click', function() {
+               const toolName = this.querySelector('.tool-name').textContent;
+                
+                switch(toolName) {
+                    case 'Notion':
+                        window.open('https://www.notion.so', '_blank');
+                        break;
+                    case 'Google':
+                        window.open('https://www.google.com', '_blank');
+                        break;
+                    case 'Reloj':
+                        alert('La hora actual es: ' + new Date().toLocaleTimeString());
+                        break;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

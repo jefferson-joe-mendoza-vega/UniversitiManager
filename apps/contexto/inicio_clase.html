@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de Clase</title>
+    <!-- Bootstrap CSS para estilos rápidos y responsivos -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- D3.js CDN -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Estilos personalizados -->
+    <style>
+        /* Centrar el contenido vertical y horizontalmente */
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+            background-color: #f0f4f8;
+        }
+
+        /* Estilo para el título */
+        .content h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        /* Estilo para el párrafo */
+        .content p {
+            color: #34495e;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        /* Estilo para el botón */
+        .btn-custom {
+            background-color: #27ae60; /* Color verde para indicar el inicio de clase */
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            text-decoration: none; /* Remover el subrayado en enlaces */
+        }
+
+        .btn-custom:hover {
+            background-color: #1e8449; /* Color más oscuro al pasar el cursor */
+            text-decoration: none;
+            color: #fff;
+        }
+
+        /* Estilo para el contenedor del diagrama */
+        #diagram {
+            width: 100%;
+            max-width: 800px;
+            height: 200px; /* Ajustada la altura para dos nodos */
+            margin-top: 50px;
+        }
+
+        /* Estilos para los nodos del diagrama */
+        .node {
+            cursor: pointer;
+        }
+
+        /* Estilo para el texto dentro de los nodos */
+        .node-text {
+            fill: #ffffff;
+            font-size: 1rem;
+            text-anchor: middle;
+            dominant-baseline: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <!-- Título de la sección -->
+        <h2>🚀 Inicio de Clase</h2>
+        
+        <!-- Descripción de la actividad -->
+        <p>
+            ¡Bienvenido al inicio de tu clase! Este es el momento para prepararte, revisar los objetivos del día y asegurarte de que tienes todo lo necesario para comenzar.
+        </p>
+        
+        <!-- Botón que redirige al enlace especificado en una nueva pestaña -->
+        <a class="btn-custom" href="https://ejemplo.com/inicio_clase_recursos" target="_blank" rel="noopener noreferrer">
+            Acceder a Recursos Iniciales
+        </a>
+
+        <!-- Contenedor para el diagrama de flujo -->
+        <svg id="diagram"></svg>
+    </div>
+
+    <!-- Script para crear el diagrama de flujo con D3.js -->
+    <script>
+        // Configuración del SVG
+        const svg = d3.select("#diagram")
+                      .attr("width", "100%")
+                      .attr("height", 200);
+
+        const width = parseInt(svg.style("width"));
+        const height = parseInt(svg.style("height"));
+
+        // Datos de los nodos con etiquetas
+        const nodes = [
+            { id: "cuaderno dividido", x: width / 2, y: 50 },
+            { id: "anotar todo lo posible + fotos", x: width / 2, y: 150 }
+        ];
+
+        // Datos de las conexiones (links)
+        const links = [
+            { source: nodes[0].id, target: nodes[1].id }
+        ];
+
+        // Crear grupos para enlaces y nodos
+        const linkGroup = svg.append("g")
+                             .attr("class", "links");
+
+        const nodeGroup = svg.append("g")
+                             .attr("class", "nodes");
+
+        // Definir la flecha para las conexiones
+        svg.append("defs").append("marker")
+            .attr("id", "arrow")
+            .attr("viewBox", "0 0 10 10")
+            .attr("refX", 5)
+            .attr("refY", 5)
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto-start-reverse")
+            .append("path")
+            .attr("d", "M 0 0 L 10 5 L 0 10 Z")
+            .attr("fill", "#2c3e50");
+
+        // Dibujar las líneas de conexión
+        linkGroup.selectAll("line")
+                 .data(links)
+                 .enter()
+                 .append("line")
+                 .attr("x1", d => getNodeById(d.source).x)
+                 .attr("y1", d => getNodeById(d.source).y + 20)
+                 .attr("x2", d => getNodeById(d.target).x)
+                 .attr("y2", d => getNodeById(d.target).y - 20)
+                 .attr("stroke", "#2c3e50")
+                 .attr("stroke-width", 2)
+                 .attr("marker-end", "url(#arrow)");
+
+        // Dibujar los rectángulos (nodos)
+        nodeGroup.selectAll("rect")
+                 .data(nodes)
+                 .enter()
+                 .append("rect")
+                 .attr("x", d => d.x - 100) // Ajusta la posición X para centrar el rectángulo
+                 .attr("y", d => d.y - 20)
+                 .attr("width", 200)
+                 .attr("height", 40)
+                 .attr("rx", 10) // Bordes redondeados
+                 .attr("ry", 10)
+                 .attr("fill", "#27ae60")
+                 .attr("stroke", "#1e8449")
+                 .attr("stroke-width", 2);
+
+        // Añadir el texto a los nodos
+        nodeGroup.selectAll("text")
+                 .data(nodes)
+                 .enter()
+                 .append("text")
+                 .attr("x", d => d.x)
+                 .attr("y", d => d.y)
+                 .attr("class", "node-text")
+                 .text(d => d.id);
+
+        // Función para obtener un nodo por su ID
+        function getNodeById(id) {
+            return nodes.find(node => node.id === id);
+        }
+
+        // Responsividad: actualizar el diagrama al cambiar el tamaño de la ventana
+        window.addEventListener("resize", () => {
+            const newWidth = parseInt(svg.style("width"));
+            // Actualizar posiciones X si la pantalla cambia de tamaño
+            nodes.forEach(node => node.x = newWidth / 2);
+
+            // Redibujar las líneas
+            linkGroup.selectAll("line")
+                     .attr("x1", d => getNodeById(d.source).x)
+                     .attr("y1", d => getNodeById(d.source).y + 20)
+                     .attr("x2", d => getNodeById(d.target).x)
+                     .attr("y2", d => getNodeById(d.target).y - 20);
+
+            // Redibujar los rectángulos
+            nodeGroup.selectAll("rect")
+                     .attr("x", d => d.x - 100);
+
+            // Redibujar el texto
+            nodeGroup.selectAll("text")
+                     .attr("x", d => d.x)
+                     .attr("y", d => d.y);
+        });
+    </script>
+
+    <!-- Bootstrap JS (opcional, para componentes interactivos) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+</body>
+</html>

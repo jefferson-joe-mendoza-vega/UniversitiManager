@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Nutricional para Estudiantes de Informática</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --accent: #f39c12;
+            --dark: #34495e;
+            --light: #ecf0f1;
+            --danger: #e74c3c;
+            --text: #2c3e50;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, #3498db, #2ecc71);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            color: var(--text);
+            background-color: var(--light);
+            line-height: 1.6;
+            padding-top: 60px; /* For fixed navbar */
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        
+        header {
+            background: var(--gradient);
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            position: relative;
+            margin-bottom: 2rem;
+            border-radius: 0 0 20px 20px;
+            box-shadow: var(--shadow);
+        }
+        
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        h2 {
+            margin: 2rem 0 1rem;
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
+        }
+        
+        h3 {
+            color: var(--secondary);
+            margin: 1.5rem 0 0.5rem;
+        }
+        
+        p, li {
+            margin-bottom: 1rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .navbar {
+            background-color: white;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 2rem;
+        }
+        
+        .logo {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 8px;
+            font-size: 1.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin: 0 15px;
+        }
+        
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .burger {
+            display: none;
+            cursor: pointer;
+        }
+        
+        .burger div {
+            width: 25px;
+            height: 3px;
+            background-color: var(--dark);
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-gap: 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: background 0.3s, transform 0.3s;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary);
+        }
+        
+        .btn-secondary:hover {
+            background: #27ae60;
+        }
+        
+        .btn-accent {
+            background: var(--accent);
+        }
+        
+        .btn-accent:hover {
+            background: #d35400;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            box-shadow: var(--shadow);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        tr:hover {
+            background-color: #e9e9e9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            border-radius: 10px;
+            transition: width 0.5s;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            line-height: 20px;
+            font-size: 0.8rem;
+        }
+        
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            text-align: center;
+        }
+        
+        .tab-container {
+            margin: 2rem 0;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            overflow-x: auto;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        .tab-button {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            opacity: 0.7;
+            transition: opacity 0.3s, border-bottom 0.3s;
+        }
+        
+        .tab-button.active {
+            opacity: 1;
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background: white;
+            border-radius: 0 0 10px 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .chart-container {
+            position: relative;
+            margin: 20px auto;
+            height: 300px;
+            width: 300px;
+        }
+        
+        .meal-plan {
+            margin: 2rem 0;
+        }
+        
+        .day-selector {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .day-button {
+            padding: 10px 15px;
+            border: none;
+            background: #f1f1f1;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .day-button.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .meal-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 1rem;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            grid-gap: 15px;
+            align-items: center;
+        }
+        
+        .meal-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--light);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: var(--primary);
+        }
+        
+        .meal-details h4 {
+            margin: 0 0 5px 0;
+            color: var(--dark);
+        }
+        
+        .meal-details p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        .accordion {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        
+        .accordion-header {
+            padding: 15px;
+            background: #f9f9f9;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+        }
+        
+        .accordion-header:hover {
+            background: #f1f1f1;
+        }
+        
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .accordion-content {
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .accordion-active .accordion-body {
+            max-height: 500px;
+        }
+        
+        .tool-box {
+            background: var(--dark);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+        
+        .tool-box h3 {
+            color: white;
+            margin-top: 0;
+        }
+        
+        .water-tracker {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+        
+        .water-glass {
+            width: 30px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .water-glass.filled {
+            background: var(--primary);
+        }
+        
+        .resource-list {
+            list-style: none;
+        }
+        
+        .resource-list li {
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        
+        .resource-list li:hover {
+            transform: translateX(5px);
+        }
+        
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            text-decoration: none;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            box-shadow: var(--shadow);
+        }
+        
+        .to-top.visible {
+            opacity: 1;
+            cursor: pointer;
+        }
+        
+        .to-top:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* Pseudo-element icons */
+        .icon-container {
+            display: inline-flex;
+            width: 50px;
+            height: 50px;
+            justify-content: center;
+            align-items: center;
+            background: rgba(46, 204, 113, 0.1);
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .feature-card {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card .content {
+            flex: 1;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .badge-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .badge-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .badge-accent {
+            background: var(--accent);
+            color: white;
+        }
+        
+        /* Responsive styles */
+        @media screen and (max-width: 768px) {
+            .burger {
+                display: block;
+            }
+            
+            .nav-links {
+                position: absolute;
+                right: 0px;
+                height: calc(100vh - 60px);
+                top: 60px;
+                background-color: white;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 50%;
+                transform: translateX(100%);
+                transition: transform 0.5s ease-in;
+                box-shadow: var(--shadow);
+            }
+            
+            .nav-links li {
+                opacity: 0;
+                margin: 1.5rem 0;
+            }
+            
+            .nav-active {
+                transform: translateX(0%);
+            }
+            
+            @keyframes navLinkFade {
+                from {
+                    opacity: 0;
+                    transform: translateX(50px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .meal-card {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .meal-icon {
+                margin: 0 auto;
+            }
+            
+            .tab-buttons {
+                flex-wrap: wrap;
+            }
+            
+            .tab-button {
+                flex: 1 0 33.333%;
+                text-align: center;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-brain"></i>
+            <span>NutriTech</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#introduccion">Introducción</a></li>
+            <li><a href="#objetivos">Objetivos</a></li>
+            <li><a href="#macronutrientes">Nutrientes</a></li>
+            <li><a href="#plan">Plan Diario</a></li>
+            <li><a href="#consejos">Consejos</a></li>
+            <li><a href="#herramientas">Herramientas</a></li>
+        </ul>
+        <div class="burger">
+            <div class="line1"></div>
+            <div class="line2"></div>
+            <div class="line3"></div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <h1>Guía Nutricional para Estudiantes de Informática</h1>
+            <p>Optimiza tu rendimiento académico y bienestar con una nutrición adaptada a tus necesidades</p>
+            <button class="btn" id="start-btn">Comenzar <i class="fas fa-arrow-down"></i></button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Introducción -->
+        <section id="introduccion">
+            <h2>1. Introducción</h2>
+            <div class="card">
+                <div class="card-body">
+                    <p>Esta guía está diseñada específicamente para estudiantes de ingeniería informática y sistemas que:</p>
+                    <div class="grid">
+                        <div class="feature-card">
+                            <div class="icon-container">
+                                <i class="fas fa-user" style="color: var(--primary);"></i>
+                            </div>
+                            <div class="content">
+                                <strong>Edad:</strong> 20-30 años
+                            </div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="icon-container">
+                                <i class="fas fa-dumbbell" style="color: var(--primary);"></i>
+                            </div>
+                            <div class="content">
+                                <strong>Actividad:</strong> Física ligera a moderada
+                            </div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="icon-container">
+                                <i class="fas fa-brain" style="color: var(--primary);"></i>
+                            </div>
+                            <div class="content">
+                                <strong>Demanda cognitiva:</strong> Alta
+                            </div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="icon-container">
+                                <i class="fas fa-laptop-code" style="color: var(--primary);"></i>
+                            </div>
+                            <div class="content">
+                                <strong>Actividad:</strong> Muchas horas frente a pantallas
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Objetivos -->
+        <section id="objetivos">
+            <h2>2. Objetivos Nutricionales</h2>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-lightbulb"></i> Función Cognitiva
+                    </div>
+                    <div class="card-body">
+                        <p>Optimizar la concentración, memoria y capacidad de aprendizaje para maximizar el rendimiento académico.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-battery-full"></i> Energía Constante
+                    </div>
+                    <div class="card-body">
+                        <p>Mantener niveles de energía estables durante largas sesiones de estudio y programación.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-dumbbell"></i> Recuperación Física
+                    </div>
+                    <div class="card-body">
+                        <p>Apoyar la recuperación muscular después de la actividad física para mantener un cuerpo saludable.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-heartbeat"></i> Prevención
+                    </div>
+                    <div class="card-body">
+                        <p>Prevenir problemas de salud asociados con el estilo de vida sedentario como la obesidad y problemas cardiovasculares.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-seedling"></i> Hábitos de Vida
+                    </div>
+                    <div class="card-body">
+                        <p>Establecer patrones alimentarios saludables que se mantengan a largo plazo a lo largo de la carrera profesional.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Distribución de Macronutrientes -->
+        <section id="macronutrientes">
+            <h2>3. Distribución de Macronutrientes</h2>
+            
+            <div class="card">
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="macroChart"></canvas>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Macronutriente</th>
+                                <th>Porcentaje</th>
+                                <th>Función principal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Carbohidratos complejos</td>
+                                <td>45-55%</td>
+                                <td>Energía cerebral y muscular</td>
+                            </tr>
+                            <tr>
+                                <td>Proteínas</td>
+                                <td>20-25%</td>
+                                <td>Recuperación muscular y saciedad</td>
+                            </tr>
+                            <tr>
+                                <td>Grasas saludables</td>
+                                <td>20-30%</td>
+                                <td>Función cerebral y hormonal</td>
+                            </tr>
+                            <tr>
+                                <td>Fibra</td>
+                                <td>25-35g/día</td>
+                                <td>Salud digestiva y saciedad</td>
+                            </tr>
+                            <tr>
+                                <td>Agua</td>
+                                <td>2.5-3L/día</td>
+                                <td>Hidratación y función cognitiva</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3>Progreso de Hidratación Diaria</h3>
+                    <div class="progress-container">
+                        <div id="water-progress" class="progress-bar" style="width: 0%; background-color: var(--primary);">
+                            0/8 vasos
+                        </div>
+                    </div>
+                    <div class="water-tracker">
+                        <div class="water-glass" data-index="1"></div>
+                        <div class="water-glass" data-index="2"></div>
+                        <div class="water-glass" data-index="3"></div>
+                        <div class="water-glass" data-index="4"></div>
+                        <div class="water-glass" data-index="5"></div>
+                        <div class="water-glass" data-index="6"></div>
+                        <div class="water-glass" data-index="7"></div>
+                        <div class="water-glass" data-index="8"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Estructura Diaria Alimentaria -->
+        <section id="plan">
+            <h2>4. Estructura Diaria Alimentaria</h2>
+            
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button class="tab-button active" data-tab="tab1">Desayuno</button>
+                    <button class="tab-button" data-tab="tab2">Media Mañana</button>
+                    <button class="tab-button" data-tab="tab3">Almuerzo</button>
+                    <button class="tab-button" data-tab="tab4">Merienda</button>
+                    <button class="tab-button" data-tab="tab5">Cena</button>
+                </div>
+                
+                <div id="tab1" class="tab-content active">
+                    <h3>Desayuno (7:00-8:00 AM)</h3>
+                    <p><strong>Objetivo:</strong> Iniciar el día con energía sostenida y nutrientes para el cerebro</p>
+                    
+                    <h4>Componentes ideales:</h4>
+                    <ul>
+                        <li>Carbohidrato complejo</li>
+                        <li>Proteína de calidad</li>
+                        <li>Grasa saludable</li>
+                        <li>Fruta o verdura</li>
+                    </ul>
+                    
+                    <h4>Ejemplos:</h4>
+                    <div class="meal-card">
+                        <div class="meal-icon">
+                            <i class="fas fa-bread-slice"></i>
+                        </div>
+                        <div class="meal-details">
+                            <h4>Opción 1</h4>
+                            <p>Avena con leche/bebida vegetal + plátano + nueces + canela</p>
+                        </div>
+                    </div>
+                    <div class="meal-card">
+                        <div class="meal-icon">
+                            <i class="fas fa-egg"></i>
+                        </div>
+                        <div class="meal-details">
+                            <h4>Opción 2</h4>
+                            <p>Huevos revueltos con espinacas + tostada integral + aguacate</p>
+                        </div>
+                    </div>
+                    <div class="meal-card">
+                        <div class="meal-icon">
+                            <i class="fas fa-apple-alt"></i>
+                        </div>
+                        <div class="meal-details">
+                            <h4>Opción 3</h4>
+                            <p>Yogur griego con frutas + granola casera sin azúcar + semillas de chía</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="tab2" class="tab-content">
+                    <h3>Media Mañana (10:30-11:00 AM)</h3>
+                    <p><strong>Objetivo:</strong> Mantener energía durante estudio matutino</p>
+                    
+                    <h4>Opciones:</h4>
+                    <div class="meal-card">
+                        <div class="meal-icon">
+                            <i class="fas fa-apple-alt"></i>
+                        </div>
+                        <div class="meal-details">
+                            <h4>Opción 1</h4>
+                            <p>Fruta fresca + puñado de frutos secos (30g)</p>
+                        </div>
+                    </div>
+                    <div class="meal-card">
+                        <div class="meal-icon">
+                            <i class="fas fa-cheese"></i>
+                        </div>
+                        <div class="meal-details">
+                            <h4>Opción 2</h4>
+                            <p>Yogur natural sin azúcar + fruta</p>
+                        </div>
+                    </div>
+                    <div class="meal-card">
+                        <div class="meal-icon">
+                            <i class="fas fa-carrot"></i>
+                        </div>
+                        <div class="meal-details">
+                            <h4>Opción 3</h4>
+                            <p>Batones de vegetales con hummus</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="tab3" class="tab-content">
+                    <h3>Almuerzo (1:00-2:00 PM)</h3>
+                    <p><strong>Objetivo:</strong> Comida principal equilibrada</p>
+                    
+                    <h4>Composición del plato:</h4>
+                    <ul>
+                        <li>½ plato: Verduras variadas (ensalada o vegetales cocidos)</li>
+                        <li>¼ plato: Proteína magra</li>
+                        <li>¼ plato: Carbohidratos complejos</li>
+                        <li>1-2 cucharadas de grasa saludable (aceite oliva, aguacate)</li>
+                    </ul>
+                    
+                    <h4>Ejemplos:</h4>
+                    <div class="meal-card">
+                        <div class="meal-icon">
+                            <i class="fas fa-drumstick-bite"></i>
+                        </div>
+                        <div class="meal-details">
+                            <h4>Opción 1</h4>
+                            <p>Pechuga de pollo + arroz integral + vegetales salteados</p>
+                        </div>
+                    </div>
+                    <div class="meal-card">
+                        <div class="meal-icon">
+                            <i class="fas fa-fish"></i>
+                        </div>
+                        <div class="meal-details">
+                            <h4>Opción 2</h4>
+                            <p>Salmón al horno + patata asada + ensalada verde</p>
+                        </div>
+                    </div>
+                    <div class="meal-card">
+                        <div class="meal-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <div class="meal-details">
+                            <h4>Opción 3</h4>
+                            <p>Bowl de quinoa con garbanzos + verduras + aderezo de limón/aceite</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="tab4" class="tab-content">
+                    <h3>Merienda (4:00-5:00 PM)</h3>
+                    <p><strong>Objetivo:</strong> Energía pre-ejercicio o para estudio vespertino</p>
+                    
+                    <h4>Opciones:</h4>
+                    <div class="meal-card">
+                        <div class="meal-icon">
+                            <i class="fas fa-blender"></i>
+                        </div>
+                        <div class="meal-details">
+                            <h4>Opción 1</h4>
+                            <p>Batido: proteína en polvo + plátano + leche/bebida vegetal</p>
+                        </div>
+                    </div>
+                    <div class="meal-card">
+                        <div class="meal-icon">
+                            <i class="fas fa-bread-slice"></i>
+                        </div>
+                        <div class="meal-details">
+                            <h4>Opción 2</h4>
+                            <p>Tostada integral con mantequilla de maní o aguacate</p>
+                        </div>
+                    </div>
+                    <div class="meal-card">
+                        <div class="meal-icon">
+                            <i class="fas fa-cheese"></i>
+                        </div>
+                        <div class="meal-details">
+                            <h4>Opción 3</h4>
+                            <p>Yogur con frutas y nueces</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="tab5" class="tab-content">
+                    <h3>Cena (8:00-9:00 PM)</h3>
+                    <p><strong>Objetivo:</strong> Recuperación y preparación para el descanso</p>
+                    
+                    <p><strong>Composición:</strong> Similar al almuerzo pero en menor cantidad, especialmente carbohidratos</p>
+                    
+                    <h4>Ejemplos:</h4>
+                    <div class="meal-card">
+                        <div class="meal-icon">
+                            <i class="fas fa-egg"></i>
+                        </div>
+                        <div class="meal-details">
+                            <h4>Opción 1</h4>
+                            <p>Tortilla de claras con espinacas + ensalada</p>
+                        </div>
+                    </div>
+                    <div class="meal-card">
+                        <div class="meal-icon">
+                            <i class="fas fa-fish"></i>
+                        </div>
+                        <div class="meal-details">
+                            <h4>Opción 2</h4>
+                            <p>Pescado blanco + verduras al vapor + batata asada pequeña</p>
+                        </div>
+                    </div>
+                    <div class="meal-card">
+                        <div class="meal-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <div class="meal-details">
+                            <h4>Opción 3</h4>
+                            <p>Tofu salteado con verduras + quinoa (porción pequeña)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Alimentos Clave -->
+        <section id="alimentos">
+            <h2>5. Alimentos Clave por Categoría</h2>
+            
+            <div class="accordion">
+                <div class="accordion-header">
+                    <span><i class="fas fa-brain"></i> Superalimentos para el Cerebro</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="grid">
+                            <div class="meal-card">
+                                <div class="meal-icon">
+                                    <i class="fas fa-fish"></i>
+                                </div>
+                                <div class="meal-details">
+                                    <h4>Pescados grasos</h4>
+                                    <p>Salmón, sardinas, atún (omega-3)</p>
+                                </div>
+                            </div>
+                            <div class="meal-card">
+                                <div class="meal-icon">
+                                    <i class="fas fa-apple-alt"></i>
+                                </div>
+                                <div class="meal-details">
+                                    <h4>Frutos rojos</h4>
+                                    <p>Arándanos, fresas, moras (antioxidantes)</p>
+                                </div>
+                            </div>
+                            <div class="meal-card">
+                                <div class="meal-icon">
+                                    <i class="fas fa-seedling"></i>
+                                </div>
+                                <div class="meal-details">
+                                    <h4>Frutos secos</h4>
+                                    <p>Nueces, almendras (vitamina E y ácidos grasos)</p>
+                                </div>
+                            </div>
+                            <div class="meal-card">
+                                <div class="meal-icon">
+                                    <i class="fas fa-egg"></i>
+                                </div>
+                                <div class="meal-details">
+                                    <h4>Huevos</h4>
+                                    <p>Colina para memoria y neurotransmisores</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion">
+                <div class="accordion-header">
+                    <span><i class="fas fa-bolt"></i> Alimentos para Energía Sostenida</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="grid">
+                            <div class="meal-card">
+                                <div class="meal-icon">
+                                    <i class="fas fa-bread-slice"></i>
+                                </div>
+                                <div class="meal-details">
+                                    <h4>Avena y cereales integrales</h4>
+                                    <p>Liberación lenta de energía</p>
+                                </div>
+                            </div>
+                            <div class="meal-card">
+                                <div class="meal-icon">
+                                    <i class="fas fa-seedling"></i>
+                                </div>
+                                <div class="meal-details">
+                                    <h4>Legumbres</h4>
+                                    <p>Lentejas, garbanzos, frijoles</p>
+                                </div>
+                            </div>
+                            <div class="meal-card">
+                                <div class="meal-icon">
+                                    <i class="fas fa-carrot"></i>
+                                </div>
+                                <div class="meal-details">
+                                    <h4>Batata/camote</h4>
+                                    <p>Carbohidratos complejos + vitaminas</p>
+                                </div>
+                            </div>
+                            <div class="meal-card">
+                                <div class="meal-icon">
+                                    <i class="fas fa-apple-alt"></i>
+                                </div>
+                                <div class="meal-details">
+                                    <h4>Plátano</h4>
+                                    <p>Potasio y carbohidratos de fácil asimilación</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion">
+                <div class="accordion-header">
+                    <span><i class="fas fa-dumbbell"></i> Proteínas de Alta Calidad</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="grid">
+                            <div class="meal-card">
+                                <div class="meal-icon">
+                                    <i class="fas fa-drumstick-bite"></i>
+                                </div>
+                                <div class="meal-details">
+                                    <h4>Carnes magras</h4>
+                                    <p>Pollo, pavo</p>
+                                </div>
+                            </div>
+                            <div class="meal-card">
+                                <div class="meal-icon">
+                                    <i class="fas fa-fish"></i>
+                                </div>
+                                <div class="meal-details">
+                                    <h4>Pescados</h4>
+                                    <p>Atún, merluza, bacalao</p>
+                                </div>
+                            </div>
+                            <div class="meal-card">
+                                <div class="meal-icon">
+                                    <i class="fas fa-egg"></i>
+                                </div>
+                                <div class="meal-details">
+                                    <h4>Huevos</h4>
+                                    <p>Proteína completa de alta calidad</p>
+                                </div>
+                            </div>
+                            <div class="meal-card">
+                                <div class="meal-icon">
+                                    <i class="fas fa-cheese"></i>
+                                </div>
+                                <div class="meal-details">
+                                    <h4>Lácteos</h4>
+                                    <p>Yogur griego, queso fresco, leche</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Plan Semanal -->
+        <section id="plan-semanal">
+            <h2>6. Planificación Semanal</h2>
+            
+            <div class="card">
+                <div class="card-body">
+                    <div class="day-selector">
+                        <button class="day-button active" data-day="lunes">Lunes</button>
+                        <button class="day-button" data-day="martes">Martes</button>
+                        <button class="day-button" data-day="miercoles">Miércoles</button>
+                        <button class="day-button" data-day="jueves">Jueves</button>
+                        <button class="day-button" data-day="viernes">Viernes</button>
+                        <button class="day-button" data-day="finde">Fin de Semana</button>
+                    </div>
+                    
+                    <div id="lunes" class="day-plan active">
+                        <div class="meal-card">
+                            <div class="meal-icon">
+                                <i class="fas fa-coffee"></i>
+                            </div>
+                            <div class="meal-details">
+                                <h4>Desayuno</h4>
+                                <p>Bowl de avena con plátano, canela y nueces</p>
+                            </div>
+                        </div>
+                        <div class="meal-card">
+                            <div class="meal-icon">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <div class="meal-details">
+                                <h4>Almuerzo</h4>
+                                <p>Ensalada de quinoa con pollo y verduras</p>
+                            </div>
+                        </div>
+                        <div class="meal-card">
+                            <div class="meal-icon">
+                                <i class="fas fa-moon"></i>
+                            </div>
+                            <div class="meal-details">
+                                <h4>Cena</h4>
+                                <p>Tortilla de espinacas con pan integral</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="martes" class="day-plan">
+                        <div class="meal-card">
+                            <div class="meal-icon">
+                                <i class="fas fa-coffee"></i>
+                            </div>
+                            <div class="meal-details">
+                                <h4>Desayuno</h4>
+                                <p>Tostadas integrales con huevo y aguacate</p>
+                            </div>
+                        </div>
+                        <div class="meal-card">
+                            <div class="meal-icon">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <div class="meal-details">
+                                <h4>Almuerzo</h4>
+                                <p>Bowl de arroz integral con atún y verduras</p>
+                            </div>
+                        </div>
+                        <div class="meal-card">
+                            <div class="meal-icon">
+                                <i class="fas fa-moon"></i>
+                            </div>
+                            <div class="meal-details">
+                                <h4>Cena</h4>
+                                <p>Sopa de verduras con pollo desmenuzado</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="miercoles" class="day-plan">
+                        <div class="meal-card">
+                            <div class="meal-icon">
+                                <i class="fas fa-coffee"></i>
+                            </div>
+                            <div class="meal-details">
+                                <h4>Desayuno</h4>
+                                <p>Batido proteico (yogur, plátano, proteína en polvo)</p>
+                            </div>
+                        </div>
+                        <div class="meal-card">
+                            <div class="meal-icon">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <div class="meal-details">
+                                <h4>Almuerzo</h4>
+                                <p>Pasta integral con salsa de tomate natural y pollo</p>
+                            </div>
+                        </div>
+                        <div class="meal-card">
+                            <div class="meal-icon">
+                                <i class="fas fa-moon"></i>
+                            </div>
+                            <div class="meal-details">
+                                <h4>Cena</h4>
+                                <p>Pescado al horno con verduras asadas</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="jueves" class="day-plan">
+                        <div class="meal-card">
+                            <div class="meal-icon">
+                                <i class="fas fa-coffee"></i>
+                            </div>
+                            <div class="meal-details">
+                                <h4>Desayuno</h4>
+                                <p>Yogur griego con frutas y semillas</p>
+                            </div>
+                        </div>
+                        <div class="meal-card">
+                            <div class="meal-icon">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <div class="meal-details">
+                                <h4>Almuerzo</h4>
+                                <p>Ensalada de lentejas con vegetales y atún</p>
+                            </div>
+                        </div>
+                        <div class="meal-card">
+                            <div class="meal-icon">
+                                <i class="fas fa-moon"></i>
+                            </div>
+                            <div class="meal-details">
+                                <h4>Cena</h4>
+                                <p>Revuelto de tofu con verduras</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="viernes" class="day-plan">
+                        <div class="meal-card">
+                            <div class="meal-icon">
+                                <i class="fas fa-coffee"></i>
+                            </div>
+                            <div class="meal-details">
+                                <h4>Desayuno</h4>
+                                <p>Huevos revueltos con espinacas y tostada integral</p>
+                            </div>
+                        </div>
+                        <div class="meal-card">
+                            <div class="meal-icon">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <div class="meal-details">
+                                <h4>Almuerzo</h4>
+                                <p>Bowl de garbanzos con verduras y tahini</p>
+                            </div>
+                        </div>
+                        <div class="meal-card">
+                            <div class="meal-icon">
+                                <i class="fas fa-moon"></i>
+                            </div>
+                            <div class="meal-details">
+                                <h4>Cena</h4>
+                                <p>Pechuga de pollo a la plancha con ensalada mixta</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="finde" class="day-plan">
+                        <div class="meal-card">
+                            <div class="meal-icon">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <div class="meal-details">
+                                <h4>Fin de Semana</h4>
+                                <p>Más flexible pero manteniendo la estructura de macronutrientes</p>
+                                <p>Buen momento para preparación de comidas para la semana</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Consejos Prácticos -->
+        <section id="consejos">
+            <h2>7. Consejos Prácticos para Estudiantes</h2>
+            
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-clock"></i> Preparación y Organización
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>Batch cooking:</strong> Prepara bases de comida los domingos (arroz, quinoa, pollo, etc.)</li>
+                            <li><strong>Snacks inteligentes:</strong> Mantén opciones saludables en tu mochila/escritorio</li>
+                            <li><strong>Horarios regulares:</strong> Programa alarmas para comer si tiendes a olvidarlo</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-laptop-code"></i> Durante Sesiones de Estudio
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>Hidratación:</strong> Mantén una botella de agua visible en tu escritorio</li>
+                            <li><strong>Pausas activas:</strong> 5-10 minutos cada hora para moverte y estirar</li>
+                            <li><strong>Snacks estratégicos:</strong> Nueces, fruta fresca, yogur (evita azúcares procesados)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-brain"></i> Antes de Exámenes/Proyectos Intensivos
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>Aumenta omega-3 y antioxidantes</strong> (pescado graso, nueces, bayas)</li>
+                            <li><strong>Evita excesos de cafeína</strong> (máximo 2-3 tazas de café al día)</li>
+                            <li><strong>Prioriza el sueño:</strong> 7-8 horas mínimo para consolidar aprendizaje</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Suplementación -->
+        <section id="suplementacion">
+            <h2>8. Suplementación Recomendada</h2>
+            
+            <div class="card">
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Suplemento</th>
+                                <th>Beneficio</th>
+                                <th>Recomendación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Omega-3</td>
+                                <td>Función cerebral</td>
+                                <td>Si consumes poco pescado</td>
+                            </tr>
+                            <tr>
+                                <td>Vitamina D</td>
+                                <td>Inmunidad, estado de ánimo</td>
+                                <td>1000-2000 UI/día (especialmente en invierno)</td>
+                            </tr>
+                            <tr>
+                                <td>Magnesio</td>
+                                <td>Relajación muscular, estrés</td>
+                                <td>300-400mg/día</td>
+                            </tr>
+                            <tr>
+                                <td>Multivitamínico</td>
+                                <td>Cubrir posibles déficits</td>
+                                <td>En períodos de alta exigencia</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <p class="alert" style="background-color: #fff3cd; padding: 15px; border-radius: 5px; margin-top: 20px; border-left: 5px solid #ffc107;">
+                        <i class="fas fa-exclamation-triangle" style="color: #ffc107;"></i> <strong>Importante:</strong> Consulta siempre con un profesional de la salud antes de comenzar cualquier régimen de suplementación.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lista de Compras -->
+        <section id="lista-compras">
+            <h2>9. Lista de Compras Esencial</h2>
+            
+            <div class="card">
+                <div class="card-body">
+                    <div class="grid">
+                        <div>
+                            <h3><i class="fas fa-drumstick-bite"></i> Proteínas</h3>
+                            <ul>
+                                <li><span class="badge badge-primary">Proteína</span> Pollo/pavo (pechuga)</li>
+                                <li><span class="badge badge-primary">Proteína</span> Huevos</li>
+                                <li><span class="badge badge-primary">Proteína</span> Pescado (salmón, atún)</li>
+                                <li><span class="badge badge-primary">Proteína</span> Yogur griego natural</li>
+                                <li><span class="badge badge-primary">Proteína</span> Tofu/tempeh (opcional)</li>
+                                <li><span class="badge badge-primary">Proteína</span> Legumbres (lentejas, garbanzos)</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3><i class="fas fa-bread-slice"></i> Carbohidratos Complejos</h3>
+                            <ul>
+                                <li><span class="badge badge-accent">Carbo</span> Avena</li>
+                                <li><span class="badge badge-accent">Carbo</span> Pan integral (100% integral)</li>
+                                <li><span class="badge badge-accent">Carbo</span> Arroz integral/basmati</li>
+                                <li><span class="badge badge-accent">Carbo</span> Quinoa</li>
+                                <li><span class="badge badge-accent">Carbo</span> Patatas/batatas</li>
+                                <li><span class="badge badge-accent">Carbo</span> Pasta integral</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3><i class="fas fa-apple-alt"></i> Frutas</h3>
+                            <ul>
+                                <li>Plátanos</li>
+                                <li>Manzanas</li>
+                                <li>Frutos rojos (arándanos, fresas)</li>
+                                <li>Naranjas/mandarinas</li>
+                                <li>Kiwi</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3><i class="fas fa-carrot"></i> Verduras</h3>
+                            <ul>
+                                <li>Espinacas/kale</li>
+                                <li>Brócoli</li>
+                                <li>Tomates</li>
+                                <li>Pimientos</li>
+                                <li>Zanahorias</li>
+                                <li>Pepino</li>
+                                <li>Aguacate</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3><i class="fas fa-oil-can"></i> Grasas Saludables</h3>
+                            <ul>
+                                <li><span class="badge badge-secondary">Grasa</span> Aceite de oliva virgen extra</li>
+                                <li><span class="badge badge-secondary">Grasa</span> Nueces variadas</li>
+                                <li><span class="badge badge-secondary">Grasa</span> Semillas (chía, lino, calabaza)</li>
+                                <li><span class="badge badge-secondary">Grasa</span> Mantequilla de cacahuete/almendra natural</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3><i class="fas fa-mortar-pestle"></i> Otros</h3>
+                            <ul>
+                                <li>Especias (canela, cúrcuma, pimienta)</li>
+                                <li>Té verde</li>
+                                <li>Cacao puro en polvo</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-secondary" id="download-list">
+                        <i class="fas fa-download"></i> Descargar Lista de Compras
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Aplicación a Largo Plazo -->
+        <section id="aplicacion">
+            <h2>10. Aplicación a Largo Plazo</h2>
+            
+            <div class="card">
+                <div class="card-body">
+                    <p>Esta guía está diseñada para establecer hábitos durante la etapa universitaria que servirán como base para mantener la salud a lo largo de la carrera profesional en informática. Los patrones alimenticios creados ahora influirán significativamente en la salud física y mental en las próximas décadas.</p>
+                    
+                    <p><strong>Recuerda</strong>: Esta guía proporciona orientación general. Las necesidades nutricionales individuales pueden variar según metabolismo, nivel de actividad física y objetivos personales.</p>
+                    
+                    <div class="tool-box">
+                        <h3><i class="fas fa-tools"></i> Herramientas para el Éxito</h3>
+                        <div class="grid">
+                            <div>
+                                <h4><i class="fas fa-mobile-alt"></i> Apps Recomendadas</h4>
+                                <ul class="resource-list">
+                                    <li>MyFitnessPal - Seguimiento de nutrición</li>
+                                    <li>Plant Nanny - Recordatorios de hidratación</li>
+                                    <li>MealPrep Pro - Planificación semanal</li>
+                                    <li>Forest - Productividad y pausas</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4><i class="fas fa-book"></i> Recursos Adicionales</h4>
+                                <ul class="resource-list">
+                                    <li>Libro: "Nutrición para Dummies"</li>
+                                    <li>Podcast: "Nutrición con Ciencia"</li>
+                                    <li>Canal: "What I Eat in a Day - Developer Edition"</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Herramientas Interactivas -->
+        <section id="herramientas">
+            <h2>Herramientas Interactivas</h2>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-calculator"></i> Calculadora de Calorías
+                </div>
+                <div class="card-body">
+                    <form id="calorie-calculator">
+                        <div style="margin-bottom: 15px;">
+                            <label for="weight">Peso (kg):</label>
+                            <input type="number" id="weight" min="40" max="150" step="0.5" placeholder="Ej: 70" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;">
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label for="height">Altura (cm):</label>
+                            <input type="number" id="height" min="140" max="220" placeholder="Ej: 175" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;">
+                        </div>
+                        
+                     <div style="margin-bottom: 15px;">
+    <label for="age">Edad:</label>
+    <input type="number" id="age" min="18" max="35" placeholder="Ej: 22" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;">
+</div>
+
+<div style="margin-bottom: 15px;">
+    <label for="activity">Nivel de Actividad:</label>
+    <select id="activity" style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;">
+        <option value="1.2">Sedentario (poco o nada de ejercicio)</option>
+        <option value="1.375" selected>Ligero (1-3 días por semana)</option>
+        <option value="1.55">Moderado (3-5 días por semana)</option>
+        <option value="1.725">Intenso (6-7 días por semana)</option>
+        <option value="1.9">Atleta profesional</option>
+    </select>
+</div>
+
+<div style="margin-bottom: 15px;">
+    <label>Género:</label>
+    <div style="display: flex; gap: 15px; margin-top: 5px;">
+        <label style="display: flex; align-items: center;">
+            <input type="radio" name="gender" value="male" checked style="margin-right: 5px;"> Masculino
+        </label>
+        <label style="display: flex; align-items: center;">
+            <input type="radio" name="gender" value="female" style="margin-right: 5px;"> Femenino
+        </label>
+    </div>
+</div>
+
+<button type="submit" class="btn" style="width: 100%; margin-top: 10px;">
+    <i class="fas fa-calculator"></i> Calcular
+</button>
+</form>
+
+<div id="calorie-result" style="margin-top: 20px; display: none; background: #f9f9f9; padding: 15px; border-radius: 5px; text-align: center;">
+    <h3 style="margin-top: 0;">Tus resultados:</h3>
+    <div id="bmr-result" style="font-size: 1.1rem; margin: 10px 0;"></div>
+    <div id="calorie-maintenance" style="font-size: 1.1rem; margin: 10px 0;"></div>
+    <div id="macros" style="margin-top: 15px;">
+        <h4>Distribución de macronutrientes recomendada:</h4>
+        <div style="display: flex; justify-content: space-around; text-align: center; margin-top: 10px;">
+            <div>
+                <div style="font-weight: bold; color: var(--accent);">Carbohidratos</div>
+                <div id="carbs-result">0g</div>
+            </div>
+            <div>
+                <div style="font-weight: bold; color: var(--primary);">Proteínas</div>
+                <div id="protein-result">0g</div>
+            </div>
+            <div>
+                <div style="font-weight: bold; color: var(--secondary);">Grasas</div>
+                <div id="fat-result">0g</div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- Meal Prep Guide -->
+<div class="card" style="margin-top: 20px;">
+<div class="card-header">
+    <i class="fas fa-utensils"></i> Planificador de Preparación de Comidas
+</div>
+<div class="card-body">
+    <p>La preparación de comidas es una estrategia clave para los estudiantes ocupados. Dedica 2-3 horas cada fin de semana para preparar alimentos base que utilizarás durante la semana.</p>
+    
+    <h4 style="margin-top: 20px;">Lista de verificación de preparación:</h4>
+    <div style="margin: 15px 0;">
+        <label style="display: flex; align-items: center; margin-bottom: 10px;">
+            <input type="checkbox" id="check1" style="margin-right: 10px;"> 
+            <span>Preparar proteínas base (pollo/tofu horneado, huevos duros)</span>
+        </label>
+        <label style="display: flex; align-items: center; margin-bottom: 10px;">
+            <input type="checkbox" id="check2" style="margin-right: 10px;"> 
+            <span>Cocinar granos en lote (arroz integral, quinoa)</span>
+        </label>
+        <label style="display: flex; align-items: center; margin-bottom: 10px;">
+            <input type="checkbox" id="check3" style="margin-right: 10px;"> 
+            <span>Lavar y cortar vegetales para ensaladas y salteados</span>
+        </label>
+        <label style="display: flex; align-items: center; margin-bottom: 10px;">
+            <input type="checkbox" id="check4" style="margin-right: 10px;"> 
+            <span>Preparar snacks en porciones individuales</span>
+        </label>
+        <label style="display: flex; align-items: center; margin-bottom: 10px;">
+            <input type="checkbox" id="check5" style="margin-right: 10px;"> 
+            <span>Preparar aderezos caseros para la semana</span>
+        </label>
+    </div>
+</div>
+</div>
+
+<!-- Study Snacks -->
+<div class="card" style="margin-top: 20px;">
+<div class="card-header">
+    <i class="fas fa-cookie-bite"></i> Mejores Snacks para Programadores
+</div>
+<div class="card-body">
+    <p>Durante sesiones de programación intensas, es crucial mantener snacks saludables a mano para mantener la energía y concentración.</p>
+    
+    <div class="grid" style="margin-top: 15px;">
+        <div class="meal-card">
+            <div class="meal-icon">
+                <i class="fas fa-seedling"></i>
+            </div>
+            <div class="meal-details">
+                <h4>Mix de frutos secos</h4>
+                <p>Nueces, almendras y semillas para energía sostenida y concentración</p>
+            </div>
+        </div>
+        <div class="meal-card">
+            <div class="meal-icon">
+                <i class="fas fa-apple-alt"></i>
+            </div>
+            <div class="meal-details">
+                <h4>Fruta + proteína</h4>
+                <p>Manzana con mantequilla de almendra para equilibrar los niveles de azúcar</p>
+            </div>
+        </div>
+        <div class="meal-card">
+            <div class="meal-icon">
+                <i class="fas fa-cheese"></i>
+            </div>
+            <div class="meal-details">
+                <h4>Yogur griego</h4>
+                <p>Con bayas y un toque de miel para combatir antojos de dulce</p>
+            </div>
+        </div>
+        <div class="meal-card">
+            <div class="meal-icon">
+                <i class="fas fa-carrot"></i>
+            </div>
+            <div class="meal-details">
+                <h4>Vegetales + hummus</h4>
+                <p>Para masticar sin culpa durante largas sesiones de código</p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+</section>
+
+<!-- Back to top button -->
+<a href="#" class="to-top">
+<i class="fas fa-arrow-up"></i>
+</a>
+
+<!-- Footer -->
+<footer>
+<div class="container">
+    <div style="margin-bottom: 20px;">
+        <h3>Guía Nutricional para Estudiantes de Informática</h3>
+        <p>Optimiza tu rendimiento académico y bienestar con una nutrición adaptada a tus necesidades</p>
+    </div>
+    <p>© 2025 NutriTech - Todos los derechos reservados</p>
+    <p style="font-size: 0.8rem; margin-top: 10px;">Esta guía proporciona orientación general. Para un plan nutricional totalmente personalizado, consulta con un profesional de la nutrición.</p>
+</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Chart JS Initialization
+    document.addEventListener('DOMContentLoaded', function() {
+        // Macro Pie Chart
+        const ctx = document.getElementById('macroChart').getContext('2d');
+        const macroChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Carbohidratos', 'Proteínas', 'Grasas'],
+                datasets: [{
+                    data: [50, 25, 25],
+                    backgroundColor: [
+                        '#f39c12',
+                        '#3498db',
+                        '#2ecc71'
+                    ],
+                    borderColor: [
+                        '#fff',
+                        '#fff',
+                        '#fff'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.raw + '%';
+                            }
+                        }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+        
+        // Tab functionality
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+                
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                button.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Accordion functionality
+        const accordionHeaders = document.querySelectorAll('.accordion-header');
+        
+        accordionHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const accordion = header.parentElement;
+                accordion.classList.toggle('accordion-active');
+                
+                const icon = header.querySelector('i.fas');
+                if (accordion.classList.contains('accordion-active')) {
+                    icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                } else {
+                    icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                }
+            });
+        });
+        
+        // Day selector functionality
+        const dayButtons = document.querySelectorAll('.day-button');
+        const dayPlans = document.querySelectorAll('.day-plan');
+        
+        dayButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const dayId = button.getAttribute('data-day');
+                
+                dayButtons.forEach(btn => btn.classList.remove('active'));
+                dayPlans.forEach(plan => plan.classList.remove('active'));
+                
+                button.classList.add('active');
+                document.getElementById(dayId).classList.add('active');
+            });
+        });
+        
+        // Water tracking functionality
+        const waterGlasses = document.querySelectorAll('.water-glass');
+        const waterProgress = document.getElementById('water-progress');
+        let filledGlasses = 0;
+        
+        waterGlasses.forEach(glass => {
+            glass.addEventListener('click', () => {
+                const glassIndex = parseInt(glass.getAttribute('data-index'));
+                
+                if (glass.classList.contains('filled')) {
+                    // If clicking on a filled glass, unfill this and all after it
+                    for (let i = glassIndex; i <= waterGlasses.length; i++) {
+                        const currentGlass = document.querySelector(`.water-glass[data-index="${i}"]`);
+                        if (currentGlass) currentGlass.classList.remove('filled');
+                    }
+                    filledGlasses = glassIndex - 1;
+                } else {
+                    // Fill this glass and all before it
+                    for (let i = 1; i <= glassIndex; i++) {
+                        const currentGlass = document.querySelector(`.water-glass[data-index="${i}"]`);
+                        if (currentGlass) currentGlass.classList.add('filled');
+                    }
+                    filledGlasses = glassIndex;
+                }
+                
+                const percentage = (filledGlasses / 8) * 100;
+                waterProgress.style.width = `${percentage}%`;
+                waterProgress.textContent = `${filledGlasses}/8 vasos`;
+            });
+        });
+        
+        // Back to Top functionality
+        const toTopButton = document.querySelector('.to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                toTopButton.classList.add('visible');
+            } else {
+                toTopButton.classList.remove('visible');
+            }
+        });
+        
+        toTopButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Mobile nav functionality
+        const burger = document.querySelector('.burger');
+        const nav = document.querySelector('.nav-links');
+        const navLinks = document.querySelectorAll('.nav-links li');
+        
+        burger.addEventListener('click', () => {
+            // Toggle Nav
+            nav.classList.toggle('nav-active');
+            
+            // Animate Links
+            navLinks.forEach((link, index) => {
+                if (link.style.animation) {
+                    link.style.animation = '';
+                } else {
+                    link.style.animation = `navLinkFade 0.5s ease forwards ${index / 7 + 0.3}s`;
+                }
+            });
+            
+            // Burger Animation
+            burger.classList.toggle('toggle');
+        });
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                if (nav.classList.contains('nav-active')) {
+                    nav.classList.remove('nav-active');
+                }
+                
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 70,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Start button smooth scroll
+        document.getElementById('start-btn').addEventListener('click', () => {
+            window.scrollTo({
+                top: document.getElementById('introduccion').offsetTop - 70,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Calorie Calculator
+        document.getElementById('calorie-calculator').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const age = parseInt(document.getElementById('age').value);
+            const activity = parseFloat(document.getElementById('activity').value);
+            const gender = document.querySelector('input[name="gender"]:checked').value;
+            
+            // BMR calculation using Mifflin-St Jeor Equation
+            let bmr;
+            if (gender === 'male') {
+                bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+            } else {
+                bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+            }
+            
+            // Daily calorie needs
+            const dailyCalories = Math.round(bmr * activity);
+            
+            // Macros calculation (using the recommended splits from the guide)
+            const carbsPercentage = 0.5; // 50%
+            const proteinPercentage = 0.25; // 25%
+            const fatPercentage = 0.25; // 25%
+            
+            const carbsCalories = dailyCalories * carbsPercentage;
+            const proteinCalories = dailyCalories * proteinPercentage;
+            const fatCalories = dailyCalories * fatPercentage;
+            
+            const carbsGrams = Math.round(carbsCalories / 4); // 4 calories per gram
+            const proteinGrams = Math.round(proteinCalories / 4); // 4 calories per gram
+            const fatGrams = Math.round(fatCalories / 9); // 9 calories per gram
+            
+            // Display results
+            document.getElementById('bmr-result').textContent = `Metabolismo Basal (BMR): ${Math.round(bmr)} calorías/día`;
+            document.getElementById('calorie-maintenance').textContent = `Necesidad calórica diaria total: ${dailyCalories} calorías/día`;
+            document.getElementById('carbs-result').textContent = `${carbsGrams}g (${Math.round(carbsCalories)} cal)`;
+            document.getElementById('protein-result').textContent = `${proteinGrams}g (${Math.round(proteinCalories)} cal)`;
+            document.getElementById('fat-result').textContent = `${fatGrams}g (${Math.round(fatCalories)} cal)`;
+            
+            document.getElementById('calorie-result').style.display = 'block';
+        });
+        
+        // Download shopping list functionality
+        document.getElementById('download-list').addEventListener('click', function() {
+            alert('La lista de compras se descargará como un archivo PDF. Funcionalidad simulada para fines de demostración.');
+        });
+        
+        // Checkbox persistence using localStorage
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        
+        // Load saved states
+        checkboxes.forEach(checkbox => {
+            const isChecked = localStorage.getItem(checkbox.id) === 'true';
+            checkbox.checked = isChecked;
+        });
+        
+        // Save states on change
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                localStorage.setItem(checkbox.id, checkbox.checked);
+            });
+        });
+    });
+</script>
+</body>
+</html>

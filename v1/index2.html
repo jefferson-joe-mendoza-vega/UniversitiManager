@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Visor de Páginas Futurista</title>
+  <link rel="icon" href="https://i.ibb.co/kKZ4LHJ/image-removebg-preview-24.png" type="image/png">
+  
+  <!-- CSS Libraries -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      --header-gradient: linear-gradient(90deg, #141E30, #243B55);
+      --active-color: #00b894;
+      --text-color: #f4f7f6;
+      --section-bg: #212121;
+      --shadow-color: rgba(0, 0, 0, 0.3);
+      --transition-speed: 0.3s;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--primary-gradient);
+      color: var(--text-color);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: var(--header-gradient);
+      padding: 15px 0;
+      z-index: 1000;
+      box-shadow: 0 4px 8px var(--shadow-color);
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      padding: 0 15px;
+    }
+
+    .navbar a {
+      color: var(--text-color);
+      text-decoration: none;
+      padding: 10px 15px;
+      border-radius: 30px;
+      transition: background-color var(--transition-speed), 
+                  transform var(--transition-speed), 
+                  box-shadow var(--transition-speed);
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 48px;
+      height: 48px;
+    }
+
+    .navbar a.active, .navbar a:hover {
+      background-color: var(--active-color);
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px var(--shadow-color);
+    }
+
+    .citas-iframe {
+      border: none;
+      width: 80%;
+      height: 130px;
+      display: block;
+      margin: 90px auto 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px var(--shadow-color);
+    }
+
+    .container {
+      padding: 0 20px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: calc(100vh - 250px);
+    }
+
+    .section {
+      display: none;
+      padding: 10px;
+      border-radius: 15px;
+      box-shadow: 0 6px 12px var(--shadow-color);
+      background: var(--section-bg);
+      position: relative;
+      transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .section.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .section iframe {
+      width: 100%;
+      height: 150vh;
+      border: none;
+      border-radius: 10px;
+      background-color: #fff;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        gap: 10px;
+      }
+      
+      .navbar a {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+      }
+      
+      .citas-iframe {
+        width: 95%;
+        height: 120px;
+        margin-top: 80px;
+      }
+      
+      .section iframe {
+        height: 150vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar" aria-label="Navegación principal">
+      <a href="#" onclick="showSection('section1')" id="navSection1" aria-label="Tareas">✅</a>
+      <a href="#" onclick="showSection('section2')" id="navSection2" aria-label="herrmientas academicas">🛠️</a>
+      <a href="#" onclick="showSection('section3')" id="navSection3" aria-label="Administracion negocios">👨🏻‍💻💰</a>
+      
+      <a href="#" onclick="showSection('section4')" id="navSection4" aria-label="Pomodoro">⏱️</a>
+      <a href="#" onclick="showSection('section45')" id="navSection45" aria-label="Nutricion">🍎 </a>
+      <a href="#" onclick="showSection('section5')" id="navSection5" aria-label="Contexto">🧠</a>
+    </nav>
+  </header>
+
+  <iframe src="citas.html" class="citas-iframe" title="Citas"></iframe>
+
+  <div class="container">
+    <div id="section1" class="section">
+      <iframe src="tarealist.html" title="Lista de Tareas"></iframe>
+    </div>
+    <div id="section2" class="section">
+      <iframe src="https://jefferson-joe-mendoza-vega.github.io/panel-jj/" title="herrmientas academicas"></iframe>
+    </div>
+    <div id="section3" class="section">
+      <iframe src="https://jefferson-joe-mendoza-vega.github.io/panel-de-administracion---G/" title="Administracion negocios"></iframe>
+    </div>
+    
+    <div id="section4" class="section">
+      <iframe src="https://unasino.github.io/registroPomodoroDiario/" title="Registro Pomodoro"></iframe>
+    </div>
+    <div id="section45" class="section">
+      <iframe src="nutricion.html" title="Contexto"></iframe>
+    </div>
+    <div id="section5" class="section">
+      <iframe src="contexto.html" title="Contexto"></iframe>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+  
+  <script>
+    // Función para mostrar secciones
+    function showSection(sectionId) {
+      const sections = document.querySelectorAll('.section');
+      const navLinks = document.querySelectorAll('.navbar a');
+
+      sections.forEach(section => {
+        if (section.id === sectionId) {
+          section.classList.add('active');
+        } else {
+          section.classList.remove('active');
+        }
+      });
+
+      navLinks.forEach(link => {
+        if (link.id === 'nav' + sectionId.charAt(0).toUpperCase() + sectionId.slice(1)) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+    }
+
+    // Función para obtener la hora actual en Perú
+    function getPeruCurrentDateTime() {
+      return new Date().toLocaleString("en-US", { timeZone: "America/Lima" });
+    }
+
+    // Función simplificada para determinar qué sección mostrar según el día
+    function determineSectionByTime() {
+      const currentDateTime = new Date(getPeruCurrentDateTime());
+      const day = currentDateTime.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+
+      // Mostrar section5 por defecto en días de semana (lunes a viernes)
+      if (day >= 1 && day <= 5) {
+        return 'section5';
+      } 
+      // Mostrar section1 (Tareas) por defecto en fines de semana (sábado y domingo)
+      else {
+        return 'section1';
+      }
+    }
+
+    // Mostrar la sección correspondiente al cargar la página
+    document.addEventListener('DOMContentLoaded', () => {
+      const sectionId = determineSectionByTime();
+      showSection(sectionId);
+      
+      // Agregar clase activa al enlace correspondiente
+      const activeNavLink = document.getElementById('nav' + sectionId.charAt(0).toUpperCase() + sectionId.slice(1));
+      if (activeNavLink) {
+        activeNavLink.classList.add('active');
+      }
+    });
+  </script>
+</body>
+</html>

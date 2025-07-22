@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mendoza Vega Jefferson Información</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        /* Estilos personalizados para una temática oscura más atractiva */
+        body {
+            background-color: #1E1E2F; /* Azul oscuro para un fondo moderno y relajante */
+            color: #E0E0E0; /* Texto claro para buen contraste */
+            transition: background-color 0.3s, color 0.3s;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            max-width: 900px;
+        }
+        /* Estilos para la barra de navegación */
+        .navbar-dark {
+            background-color: #2A2A40; /* Gris azulado para la navbar */
+        }
+        .navbar-dark .navbar-brand, .navbar-dark .nav-link {
+            color: #FFFFFF; /* Texto blanco para los elementos de la navbar */
+        }
+        .navbar-dark .nav-link:hover {
+            color: #FFD700; /* Color dorado al pasar el cursor */
+        }
+        /* Estilos del acordeón */
+        .accordion-button {
+            background-color: #2A2A40; /* Gris azulado para los botones del acordeón */
+            color: #FFFFFF; /* Texto blanco para destacar sobre el fondo oscuro */
+            transition: background-color 0.3s, color 0.3s;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        .accordion-button:hover {
+            background-color: #3A3A5A; /* Color más claro al pasar el cursor */
+        }
+        .accordion-button:not(.collapsed) {
+            background-color: #4B4B6E; /* Color activo para distinguir la sección abierta */
+            color: #FFD700; /* Texto dorado para resaltar */
+        }
+        .main-accordion-button {
+            font-weight: bold;
+        }
+        .copy-container {
+            /* Posición relativa para alinear el ícono */
+            position: relative;
+            text-align: right; /* Alinea el ícono a la derecha */
+            margin-bottom: 10px; /* Espacio entre el ícono y el texto */
+        }
+        .copy-icon {
+            cursor: pointer;
+            color: #1E90FF; /* Azul brillante para el ícono de copiar */
+            transition: color 0.3s, transform 0.3s;
+            font-size: 1.5rem; /* Tamaño del ícono */
+        }
+        .copy-icon:hover {
+            color: #63B3ED; /* Azul más claro al pasar el cursor */
+        }
+        /* Estilos para la animación de cambio de ícono */
+        .copy-icon.copied {
+            color: #32CD32; /* Verde para indicar éxito */
+            transform: rotate(360deg);
+        }
+        /* Animaciones para el acordeón */
+        .accordion-collapse {
+            transition: height 0.35s ease;
+        }
+        /* Estilo para los párrafos dentro del acordeón */
+        .accordion-body p {
+            font-size: 1rem;
+            line-height: 1.6;
+            white-space: pre-line; /* Preserva los saltos de línea */
+            margin-top: 1.5rem; /* Espacio superior para el texto */
+        }
+        /* Estilos para listas dentro del acordeón */
+        .accordion-body ul {
+            list-style-type: disc; /* Tipo de lista con viñetas */
+            padding-left: 1.5rem; /* Sangría para la lista */
+        }
+        .accordion-body li {
+            margin-bottom: 0.5rem; /* Espacio entre ítems de la lista */
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de Navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Mendoza Vega Jefferson</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav ms-auto">
+                    <!-- Menú Desplegable -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Información
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item" href="https://mendoza-vega-informacion.web.app/informacion/2/">Información sobre el tema 2</a></li>
+                            <li><a class="dropdown-item" href="https://mendoza-vega-informacion.web.app/informacion/3/">Información sobre el tema 3</a></li>
+                            <li><a class="dropdown-item" href="https://mendoza-vega-informacion.web.app/informacion/4/">Información sobre el tema 4</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Fin de la Barra de Navegación -->
+
+    <div class="container py-5">
+        <div class="accordion" id="mainAccordion">
+            <!-- Sección 1 -->
+            <div class="accordion-item section">
+                <h2 class="accordion-header" id="heading1">
+                    <button class="accordion-button main-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#section1" aria-expanded="true" aria-controls="section1">
+                        APRENDER 
+                    </button>
+                </h2>
+                <div id="section1" class="accordion-collapse collapse show" aria-labelledby="heading1" data-bs-parent="#mainAccordion">
+                    <div class="accordion-body">
+                        <div class="accordion nested-accordion" id="accordionSection1">
+                            <!-- Desplegable 1.1 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading1-1">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1-1" aria-expanded="false" aria-controls="collapse1-1">
+                                        SIGNIFICADO DE PALABRAS
+                                    </button>
+                                </h2>
+                                <div id="collapse1-1" class="accordion-collapse collapse" aria-labelledby="heading1-1" data-bs-parent="#accordionSection1">
+                                    <div class="accordion-body">
+                                        <div class="copy-container">
+                                            <!-- Ícono de copiar arriba del texto -->
+                                            <i class="bi bi-clipboard copy-icon" title="Copiar texto" onclick="copyText(this)"></i>
+                                        </div>
+                                        <p>
+                                            :explícame su significado de manera didáctica y detallada.
+
+explicame como para un niño.                                                                                                                                                                                                                                                                                                   etimologicamente.
+de cuántas formas se puede interpretar la palabra.
+y sinónimos                                                                                                                                                                                                         explicame con  ejemplos  segun el concepto y en la vida cotidiana.
+y los posibles escenarios en los que se pueda aplicar.
+luego brindarme 3 oraciones usando la palabra.
+créame una evaluación con alternativas y respuesta
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Desplegable 1.2 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading1-2">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1-2" aria-expanded="false" aria-controls="collapse1-2">
+                                        Entender un concepto
+                                    </button>
+                                </h2>
+                                <div id="collapse1-2" class="accordion-collapse collapse" aria-labelledby="heading1-2" data-bs-parent="#accordionSection1">
+                                    <div class="accordion-body">
+                                        <div class="copy-container">
+                                            <!-- Ícono de copiar arriba del texto -->
+                                            <i class="bi bi-clipboard copy-icon" title="Copiar texto" onclick="copyText(this)"></i>
+                                        </div>
+                                        <p>
+                                            **Tu rol:** Actuarás como un tutor especializado en enseñar y ayudarme a comprender y dominar conceptos de manera clara, didáctica, y comprensiva. Tu objetivo es asegurar que aprenda de forma efectiva, retenga la información a largo plazo y sea capaz de aplicarla en diferentes contextos. Para lograr esto, debes seguir estas instrucciones y técnicas:
+
+### **1. Evaluación Inicial**
+
+- Comienza preguntándome cuánto sé sobre el concepto para adaptar la profundidad y complejidad de las explicaciones según mi nivel de conocimiento.
+- dar las fases o el proceso adaptado al tema que eligio el usuario, es deci rocmo un plan o un mapa algo asi, donde pueda identificar y ya saber que vera o aprnedera
+
+1.1 dar como un tipo de temario, donde donde se mostraraa los objetivos, o palabras claves o mas que aprendera al finall de todo ese proceso
+
+### **2. Estructura Jerárquica**
+
+- Desglosa el concepto en partes claras y organizadas. Comienza con una visión general y luego profundiza en detalles específicos. Utiliza mapas conceptuales o diagramas cuando sea necesario.
+
+### **3. Contextualización y Relación**
+
+- Relaciona el nuevo concepto con conocimientos previos que ya tenga. Coloca el concepto en un contexto relevante para mi vida universitaria o intereses personales.
+
+### **4. Programación Neurolingüística (PNL)**
+
+- **Lenguaje Positivo y de Empoderamiento:** Utiliza un lenguaje que refuerce mi autoestima y confianza en el aprendizaje. Ejemplo: "¡Estás haciendo un gran trabajo!" o "Vamos a dominar este concepto juntos."
+- **Anclaje Emocional:** Asocia el aprendizaje con emociones positivas, celebrando conmigo cada vez que domine un concepto. Ejemplo: "¡Fantástico! Piensa en lo bien que te sentirás aplicando esto en la vida real."
+- **Visualización Guiada:** Invítame a imaginar escenarios donde aplique el concepto que estoy aprendiendo. Ejemplo: "Imagina que estás explicando este concepto a un amigo en clase. ¿Cómo lo harías?"
+
+### **5. Asociación de Ideas y Visualización Guiada**
+
+- Usa analogías, metáforas y técnicas de visualización para asociar el nuevo concepto con algo familiar. Invítame a imaginar cómo lo aplicaría en situaciones reales.
+
+### **6. Uso de Historias y Ejemplos Concretos**
+
+- Explica el concepto utilizando narrativas y ejemplos concretos que ilustran cómo se aplica en la vida real o en situaciones prácticas.
+
+### **7. Flujo de Aprendizaje Optimizado (Ciclo de Aprendizaje de Kolb)**
+
+- **Experiencia Concreta:** Comienza con una actividad práctica o un ejemplo real.
+- **Observación Reflexiva:** Reflexiona sobre lo que se acaba de aprender.
+- **Conceptualización Abstracta:** Introduce la teoría y los conceptos abstractos relacionados.
+- **Experimentación Activa:** Ayúdame a aplicar el conocimiento en nuevos escenarios para consolidarlo.
+
+### **8. Sesgo de Confirmación y Reforzamiento Positivo**
+
+- Refuerza mis conocimientos previos y utiliza preguntas que validen lo que ya entiendo. Ofrece recompensas verbales o simbólicas cuando complete con éxito una tarea o comprensión.
+
+### **9. Preguntas y Autoevaluación**
+
+- Proporciona preguntas abiertas, quizzes y ejercicios prácticos para evaluar mi comprensión. Incluye quizzes con tres alternativas y da una explicación detallada de la respuesta correcta.
+
+### **10. Secuenciación Lógica**
+
+- Presenta la información en un orden cronológico o secuencial, comenzando por lo más simple y progresando hacia ideas más complejas. Asegúrate de que cada paso esté claro antes de avanzar.
+
+### **11. Práctica Activa y Aplicación Real**
+
+- Proporciona ejercicios prácticos, simulaciones o proyectos que me permitan aplicar lo aprendido en situaciones reales. Esto consolidará el conocimiento y fomentará la transferencia a nuevos contextos.
+
+### **12. Construcción de Conexiones Neuronales**
+
+- Utiliza técnicas como la repetición espaciada, la práctica activa y la visualización para fortalecer las conexiones neuronales y asegurar la retención a largo plazo.
+
+### **13. Emociones y Motivación (PNL)**
+
+- Emplea anclajes emocionales positivos y lenguaje hipnótico para mantenerme motivado y seguro en mi capacidad de aprender. Introduce el concepto de manera impactante o emotiva para captar mi atención y hacer que la información sea memorable.
+
+### **14. Técnicas Psicológicas Avanzadas**
+
+- **Gamificación:** Introduce elementos de juego como puntos, niveles, y recompensas por completar tareas o entender conceptos. Esto incrementará mi motivación y compromiso.
+- **Desafío Óptimo:** Presenta desafíos que estén ligeramente por encima de mi nivel actual, manteniéndome en la zona de desarrollo próximo (ZDP).
+- **Estrategias de Repetición Controlada:** Utiliza repetición espaciada con variación, presentando conceptos clave en diferentes contextos para fomentar la comprensión profunda.
+
+### **15. Retroalimentación y Reflexión**
+
+- Proporciona retroalimentación inmediata después de cada actividad de aprendizaje. Destaca lo que hice bien y sugiere áreas de mejora. Anímame a reflexionar sobre lo aprendido y cómo me siento al respecto.
+
+### **16. Ciclo de Mejora Continua**
+
+- Estructura el aprendizaje en ciclos iterativos, donde revisamos, reforzamos puntos débiles y aplicamos el conocimiento en nuevas situaciones. Fomenta la metacognición para que identifique qué estrategias de estudio funcionan mejor para mí.
+
+### **17. Gamificación**
+
+- Introduce elementos de juego, como puntos, niveles o insignias, para hacer el aprendizaje más motivador. Celebra mis logros y progreso con recompensas simbólicas.
+
+### **18. Personalización y Adaptación**
+
+- **Reconocimiento del Estilo de Aprendizaje:** Identifica si soy más visual, auditivo, kinestésico, o una combinación, y adapta la enseñanza en consecuencia.
+- **Seguimiento Progresivo:** Mantén un registro de mi progreso y ajusta el nivel de dificultad según sea necesario, proporcionando revisiones específicas cuando sea necesario.
+
+### **19. Técnicas de Enfoque y Mindfulness**
+
+- **Mindful Learning:** Antes de comenzar una nueva lección, guíame a través de un breve ejercicio de mindfulness para mejorar mi enfoque.
+- **Pomodoro Learning:** Sugiere trabajar en bloques de 25 minutos seguidos de un breve descanso para optimizar mi concentración y retención.
+
+### **20. Aprendizaje Multimodal**
+
+- **Integración Sensorial:** Utiliza diferentes modos de aprendizaje (visual, auditivo, kinestésico) para hacer el concepto más accesible.
+- **Interacción Dinámica:** Permite que elija cómo quiero aprender un concepto, ya sea a través de lecturas, ejercicios interactivos, videos, o debates guiados.
+
+### **21. Recapitulación y Meta-cognición**
+
+- Al final de cada sesión, recapitula lo aprendido y pregúntame cómo me siento con el concepto.
+- Fomenta la auto-reflexión, preguntándome cómo puedo aplicar el conocimiento y cuáles son mis áreas de duda.
+
+### **22. Transferencia y Generalización**
+
+- **Desafíos de Transferencia:** Una vez que domine un concepto, presenta nuevos contextos o problemas donde ese conocimiento pueda ser aplicado.
+- **Cross-disciplinary Connections:** Ayúdame a conectar el concepto aprendido con otras disciplinas. Ejemplo: "Este principio de economía tiene similitudes con un concepto en biología. ¿Puedes ver la conexión?"
+
+### **23. Tono**
+
+- Usa un lenguaje comprensivo, motivador y adecuado para un estudiante universitario de 19 años. Mantén un enfoque didáctico pero formal, asegurándote de que el aprendizaje sea interactivo, dinámico y divertido.
+
+### **Objetivo Final**
+
+- Asegúrate de que no solo comprenda el concepto, sino que también sea capaz de aplicarlo en diferentes contextos y situaciones, y que lo recuerde a largo plazo. Mi aprendizaje debe ser práctico, significativo y sostenible.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Desplegable 1.3 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading1-3">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1-3" aria-expanded="false" aria-controls="collapse1-3">
+                                        quiz 20 preguntas
+                                    </button>
+                                </h2>
+                                <div id="collapse1-3" class="accordion-collapse collapse" aria-labelledby="heading1-3" data-bs-parent="#accordionSection1">
+                                    <div class="accordion-body">
+                                        <div class="copy-container">
+                                            <!-- Ícono de copiar arriba del texto -->
+                                            <i class="bi bi-clipboard copy-icon" title="Copiar texto" onclick="copyText(this)"></i>
+                                        </div>
+                                        <p>
+                                            brindame un quis de 20 preguntas, donde cada pregunta indique la respuesta correcta y el por que, ademas que cumpla las siguientes caracteristicas:
+
+- la estructura debe ser la siguiente importante{debaajo de cada pregunta indicar primeramente la respuesta, luego las alternativas u otro, luego la explicacion d ela respuesta o algo asi)
+- las preguntas que me realizaras, denen ser preguntas frecuentes qque realizan otras universidades, instituciones y otros a nivel mundial, es decir lo que se repiten que coinciden, y admeaas algunas que son consideradas cruciales para un examen  e importantes
+- **Diversidad de Preguntas:** Incluye diferentes tipos de preguntas (verdadero/falso, opción múltiple, preguntas abiertas) para cubrir todos los aspectos del tema.
+- **Número de Opciones:** Para preguntas de opción múltiple, utiliza 3 alternativas para evitar la sobrecarga cognitiva.
+- cada pregunta denotara al final el por que o explicacion de la respuest(**Feedback:** Proporciona retroalimentación inmediata para cada pregunta, explicando por qué la respuesta es correcta o incorrecta **Explicaciones:** Incluye una breve explicación con la respuesta correcta para reforzar el aprendizaje.)
+- **Explicaciones Detalladas**: Incluye una breve explicación de por qué la respuesta es correcta o incorrecta.
+
+teniendo en cuenta todo ello que sera caractiristico de cada pregunto, tomaras como una estructura genereal para las preguntas esto:
+contextualizar→ pregunta → brindar la respuesta correcta → alternativas a la pregunta → explicacion del porque de la respuesta correcta.
+
+ademas las preguntas deben estar en orden secunecial , donde el conocimmiento del anterior ssirva como base para la siguiente pregunta, y asi porfavor
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección 2 -->
+            <div class="accordion-item section">
+                <h2 class="accordion-header" id="heading2">
+                    <button class="accordion-button collapsed main-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#section2" aria-expanded="false" aria-controls="section2">
+                        Sección 2
+                    </button>
+                </h2>
+                <div id="section2" class="accordion-collapse collapse" aria-labelledby="heading2" data-bs-parent="#mainAccordion">
+                    <div class="accordion-body">
+                        <div class="accordion nested-accordion" id="accordionSection2">
+                            <!-- Desplegable 2.1 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading2-1">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2-1" aria-expanded="false" aria-controls="collapse2-1">
+                                        Desplegable 2.1
+                                    </button>
+                                </h2>
+                                <div id="collapse2-1" class="accordion-collapse collapse" aria-labelledby="heading2-1" data-bs-parent="#accordionSection2">
+                                    <div class="accordion-body">
+                                        <div class="copy-container">
+                                            <!-- Ícono de copiar arriba del texto -->
+                                            <i class="bi bi-clipboard copy-icon" title="Copiar texto" onclick="copyText(this)"></i>
+                                        </div>
+                                        <p>
+Este es el contenido del primer desplegable de la sección 2.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Desplegable 2.2 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading2-2">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2-2" aria-expanded="false" aria-controls="collapse2-2">
+                                        Desplegable 2.2
+                                    </button>
+                                </h2>
+                                <div id="collapse2-2" class="accordion-collapse collapse" aria-labelledby="heading2-2" data-bs-parent="#accordionSection2">
+                                    <div class="accordion-body">
+                                        <div class="copy-container">
+                                            <!-- Ícono de copiar arriba del texto -->
+                                            <i class="bi bi-clipboard copy-icon" title="Copiar texto" onclick="copyText(this)"></i>
+                                        </div>
+                                        <p>
+Este es el contenido del segundo desplegable de la sección 2.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Desplegable 2.3 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading2-3">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2-3" aria-expanded="false" aria-controls="collapse2-3">
+                                        Desplegable 2.3
+                                    </button>
+                                </h2>
+                                <div id="collapse2-3" class="accordion-collapse collapse" aria-labelledby="heading2-3" data-bs-parent="#accordionSection2">
+                                    <div class="accordion-body">
+                                        <div class="copy-container">
+                                            <!-- Ícono de copiar arriba del texto -->
+                                            <i class="bi bi-clipboard copy-icon" title="Copiar texto" onclick="copyText(this)"></i>
+                                        </div>
+                                        <p>
+Este es el contenido del tercer desplegable de la sección 2.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección 3 -->
+            <div class="accordion-item section">
+                <h2 class="accordion-header" id="heading3">
+                    <button class="accordion-button collapsed main-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#section3" aria-expanded="false" aria-controls="section3">
+                        Sección 3
+                    </button>
+                </h2>
+                <div id="section3" class="accordion-collapse collapse" aria-labelledby="heading3" data-bs-parent="#mainAccordion">
+                    <div class="accordion-body">
+                        <div class="accordion nested-accordion" id="accordionSection3">
+                            <!-- Desplegable 3.1 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading3-1">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3-1" aria-expanded="false" aria-controls="collapse3-1">
+                                        Desplegable 3.1
+                                    </button>
+                                </h2>
+                                <div id="collapse3-1" class="accordion-collapse collapse" aria-labelledby="heading3-1" data-bs-parent="#accordionSection3">
+                                    <div class="accordion-body">
+                                        <div class="copy-container">
+                                            <!-- Ícono de copiar arriba del texto -->
+                                            <i class="bi bi-clipboard copy-icon" title="Copiar texto" onclick="copyText(this)"></i>
+                                        </div>
+                                        <p>
+Este es el contenido del primer desplegable de la sección 3.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Desplegable 3.2 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading3-2">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3-2" aria-expanded="false" aria-controls="collapse3-2">
+                                        Desplegable 3.2
+                                    </button>
+                                </h2>
+                                <div id="collapse3-2" class="accordion-collapse collapse" aria-labelledby="heading3-2" data-bs-parent="#accordionSection3">
+                                    <div class="accordion-body">
+                                        <div class="copy-container">
+                                            <!-- Ícono de copiar arriba del texto -->
+                                            <i class="bi bi-clipboard copy-icon" title="Copiar texto" onclick="copyText(this)"></i>
+                                        </div>
+                                        <p>
+Este es el contenido del segundo desplegable de la sección 3.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Desplegable 3.3 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading3-3">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3-3" aria-expanded="false" aria-controls="collapse3-3">
+                                        Desplegable 3.3
+                                    </button>
+                                </h2>
+                                <div id="collapse3-3" class="accordion-collapse collapse" aria-labelledby="heading3-3" data-bs-parent="#accordionSection3">
+                                    <div class="accordion-body">
+                                        <div class="copy-container">
+                                            <!-- Ícono de copiar arriba del texto -->
+                                            <i class="bi bi-clipboard copy-icon" title="Copiar texto" onclick="copyText(this)"></i>
+                                        </div>
+                                        <p>
+Este es el contenido del tercer desplegable de la sección 3.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            /**
+             * Función para copiar el texto del contenedor al portapapeles y cambiar el ícono temporalmente.
+             * @param {HTMLElement} icon - El ícono que fue clicado.
+             */
+            function copyText(icon) {
+                // Obtener el contenedor padre que contiene el párrafo
+                const container = icon.parentElement.nextElementSibling; // Obtener el siguiente elemento después del ícono
+                const text = container.innerText;
+    
+                // Usar API moderna de Clipboard para copiar el texto
+                navigator.clipboard.writeText(text).then(() => {
+                    // Cambiar el ícono a un checkmark
+                    icon.classList.remove('bi-clipboard');
+                    icon.classList.add('bi-check-lg', 'copied');
+    
+                    // Revertir el ícono después de 3 segundos
+                    setTimeout(() => {
+                        icon.classList.remove('bi-check-lg', 'copied');
+                        icon.classList.add('bi-clipboard');
+                    }, 3000);
+                }).catch(err => {
+                    console.error('Error al copiar el texto: ', err);
+                });
+            }
+    
+            // Función para abrir una sección específica basada en el hash de la URL
+            function openSectionFromHash() {
+                const hash = window.location.hash;
+                if (hash) {
+                    const targetElement = document.querySelector(hash);
+                    if (targetElement) {
+                        // Crear instancia de Bootstrap Collapse
+                        const collapse = new bootstrap.Collapse(targetElement, {
+                            toggle: true
+                        });
+    
+                        // Si el hash se refiere a una subsección, abrir también la sección principal
+                        if (hash.includes('-')) {
+                            const parentHash = hash.split('-')[0].replace('collapse', 'section');
+                            const parentElement = document.querySelector(`#${parentHash}`);
+                            if (parentElement) {
+                                new bootstrap.Collapse(parentElement, {
+                                    toggle: true
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+    
+            // Escuchar cambios en el hash de la URL
+            window.addEventListener('hashchange', openSectionFromHash);
+    
+            // Abrir la sección correcta al cargar la página
+            document.addEventListener('DOMContentLoaded', openSectionFromHash);
+    
+            // Actualizar el hash de la URL cuando se abre una sección
+            document.querySelectorAll('.accordion-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const target = this.getAttribute('data-bs-target');
+                    if (target.startsWith('#section') || target.startsWith('#collapse')) {
+                        window.location.hash = target.substring(1);
+                    }
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>

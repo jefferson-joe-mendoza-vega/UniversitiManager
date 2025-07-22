@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tareas</title>
+    <!-- Estilos CSS -->
+    <style>
+        /* Estilos generales con tema oscuro y colores más suaves */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a; /* Color de fondo más suave */
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            color: #f0f0f0; /* Color de texto más suave */
+            margin-top: 20px;
+            font-size: 2.5rem;
+            letter-spacing: 1px;
+        }
+
+        .task-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            background-color: #2a2a2a; /* Fondo de contenedor más claro */
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            position: relative; /* Para posicionar el spinner */
+        }
+
+        /* Barra de Búsqueda */
+        .search-bar {
+            width: 100%;
+            margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            background-color: #2a2a2a;
+            padding: 10px 0;
+            z-index: 100;
+            border-bottom: 1px solid #444444;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px 15px;
+            font-size: 1rem;
+            border: 1px solid #555555; /* Borde más suave */
+            border-radius: 5px;
+            background-color: #4a4a4a; /* Fondo de input más claro */
+            color: #ffffff;
+            transition: border 0.3s ease;
+        }
+
+        .search-bar input:focus {
+            border: 1px solid #80cbc4; /* Color de enfoque más suave */
+            outline: none;
+        }
+
+        /* Botón para abrir el modal */
+        .open-modal-btn {
+            display: block;
+            width: 220px;
+            margin: 20px auto;
+            padding: 12px;
+            background: linear-gradient(135deg, #7e57c2, #9575cd); /* Gradiente suave */
+            color: #ffffff; /* Texto blanco para mejor contraste */
+            text-align: center;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 30px; /* Bordes más redondeados */
+            cursor: pointer;
+            transition: background 0.5s ease, transform 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .open-modal-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translateY(-50%) scale(0);
+            transition: transform 0.5s ease;
+        }
+
+        .open-modal-btn:hover::after {
+            transform: translateY(-50%) scale(1);
+        }
+
+        .open-modal-btn:hover {
+            background: linear-gradient(135deg, #6a5dc2, #8468d1);
+            transform: translateY(-3px);
+        }
+
+        /* Estilos para el modal de agregar/editar tarea */
+        .modal, .detail-modal {
+            display: none; 
+            position: fixed; 
+            z-index: 150; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); 
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content, .detail-modal-content {
+            background-color: #333333; /* Fondo del modal más suave */
+            margin: 5% auto;
+            padding: 25px 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            color: #e0e0e0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-content input, .modal-content textarea {
+            padding: 12px;
+            margin-top: 8px;
+            font-size: 1rem;
+            border: 1px solid #555555; /* Borde más suave */
+            border-radius: 5px;
+            background-color: #4a4a4a; /* Fondo de input más claro */
+            color: #ffffff;
+            width: 100%;
+            box-sizing: border-box;
+            transition: border 0.3s ease;
+        }
+
+        .modal-content input:focus, .modal-content textarea:focus {
+            border: 1px solid #80cbc4; /* Color de enfoque más suave */
+            outline: none;
+        }
+
+        .modal-content button, .detail-modal-content button {
+            padding: 12px;
+            margin-top: 20px;
+            font-size: 1rem;
+            background: linear-gradient(135deg, #80cbc4, #4db6ac); /* Gradiente suave */
+            color: #000000;
+            border: none;
+            border-radius: 30px; /* Bordes más redondeados */
+            cursor: pointer;
+            transition: background 0.5s ease, transform 0.3s ease;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content button:hover, .detail-modal-content button:hover {
+            background: linear-gradient(135deg, #66aaa6, #26a69a);
+            transform: translateY(-3px);
+        }
+
+        /* Botón de cerrar modal */
+        .close-modal-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background-color: transparent;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #e0e0e0;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal-btn:hover {
+            color: #ffffff;
+        }
+
+        /* Estilos para la lista de tareas */
+        ul {
+            margin-top: 40px;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        li {
+            background-color: #2a2a2a; /* Fondo de tarea más claro */
+            padding: 20px 25px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        li:hover {
+            background-color: #383838;
+            transform: translateY(-2px);
+        }
+
+        .task-info {
+            flex-grow: 1;
+            margin-right: 20px;
+        }
+
+        .task-info strong {
+            font-size: 1.2rem;
+            display: block;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+
+        .task-info span {
+            font-size: 0.95rem;
+            color: #bdbdbd;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 10px;
+            margin-left: auto; /* Asegura que las acciones estén al lado derecho */
+        }
+
+        .task-actions button {
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            opacity: 0.9;
+        }
+
+        .task-actions button:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .edit-btn {
+            background-color: #80cbc4; /* Color menos intenso */
+            color: #000000;
+        }
+
+        .edit-btn:hover {
+            background-color: #66aaa6;
+            transform: translateY(-1px);
+        }
+
+        .delete-btn {
+            background-color: #e57373; /* Color menos intenso */
+            color: #000000;
+        }
+
+        .delete-btn:hover {
+            background-color: #ef5350;
+            transform: translateY(-1px);
+        }
+
+        /* Estilos para el modal de detalles */
+        .image-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .gallery-item {
+            flex: 1;
+            min-width: 200px;
+            max-width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.02);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            border-radius: 10px;
+        }
+
+        /* Estilos para tareas urgentes */
+        .urgent {
+            background-color: #ff8a80; /* Fondo rojo claro */
+            color: #ffffff;
+            animation: pulse 2s infinite;
+        }
+
+        .urgent .task-actions button {
+            color: #ffffff;
+        }
+
+        /* Estilos para tareas vencidas */
+        .expired {
+            background-color: #d32f2f; /* Fondo rojo intenso para mejor contraste */
+            color: #ffffff;
+            animation: fadeOutIn 1.5s infinite;
+        }
+
+        .expired .task-actions button {
+            color: #ffffff;
+        }
+
+        /* Ajuste de colores de texto en tareas urgentes y vencidas */
+        .urgent .task-info strong,
+        .urgent .task-info span,
+        .expired .task-info strong,
+        .expired .task-info span {
+            color: #ffffff; /* Texto blanco para mejor contraste */
+        }
+
+        /* Animación para tareas urgentes */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 10px #ff5252; }
+            50% { box-shadow: 0 0 20px #ff5252; }
+            100% { box-shadow: 0 0 10px #ff5252; }
+        }
+
+        /* Animación para tareas vencidas */
+        @keyframes fadeOutIn {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .task-container {
+                padding: 20px 15px;
+            }
+
+            .modal-content, .detail-modal-content {
+                padding: 20px 25px;
+            }
+
+            .task-info strong {
+                font-size: 1rem;
+            }
+
+            .task-info span {
+                font-size: 0.85rem;
+            }
+
+            .open-modal-btn {
+                width: 180px;
+                padding: 10px;
+                font-size: 1rem;
+            }
+
+            li {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .task-actions {
+                margin-top: 10px;
+            }
+
+            .search-bar {
+                padding: 8px 0;
+            }
+
+            .search-bar input {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+
+            .image-gallery {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .open-modal-btn {
+                width: 160px;
+                padding: 8px;
+                font-size: 0.95rem;
+            }
+
+            .task-info strong {
+                font-size: 1rem;
+            }
+
+            .task-info span {
+                font-size: 0.8rem;
+            }
+
+            .task-actions button {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+
+            .search-bar input {
+                font-size: 0.85rem;
+                padding: 6px 10px;
+            }
+        }
+
+        /* Mensajes de notificación */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #333333;
+            color: #ffffff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.3s ease;
+            z-index: 200;
+            font-size: 1rem;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification.success {
+            background-color: #4caf50;
+        }
+
+        .notification.error {
+            background-color: #f44336;
+        }
+
+        /* Estilos para múltiples imágenes */
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .image-preview-item {
+            position: relative;
+            width: calc(33.33% - 7px);
+            height: 120px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .image-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .remove-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 24px;
+            height: 24px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .remove-image:hover {
+            background-color: rgba(255, 0, 0, 0.7);
+        }
+
+        .add-more-images {
+            margin-top: 10px;
+            background-color: #4a4a4a;
+            color: white;
+            border: 1px dashed #80cbc4;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+            width: auto;
+        }
+
+        .add-more-images:hover {
+            background-color: #555555;
+        }
+
+        .images-counter {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #bdbdbd;
+        }
+
+        /* Estilos para listas en la descripción */
+        .description ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            padding-left: 0;
+        }
+
+        .description li {
+            margin-bottom: 5px;
+        }
+
+        /* Spinner de Carga */
+        .spinner-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            z-index: 200; /* Superior a otros elementos */
+            display: none; /* Oculto por defecto */
+        }
+
+        .spinner {
+            border: 8px solid #f3f3f3; /* Light grey */
+            border-top: 8px solid #4db6ac; /* Azul */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Deshabilitar el cursor durante la carga */
+        body.loading {
+            overflow: hidden;
+            cursor: wait;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="task-container">
+        <h1>Lista de Tareas</h1>
+
+        <!-- Barra de Búsqueda -->
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Buscar tareas...">
+        </div>
+
+        <!-- Botón para abrir el modal de agregar tarea -->
+        <button class="open-modal-btn" id="openModalBtn">Agregar Tarea</button>
+
+        <!-- Spinner de Carga -->
+        <div class="spinner-overlay" id="spinnerOverlay">
+            <div class="spinner"></div>
+        </div>
+
+        <!-- Modal para agregar/editar tarea -->
+        <div id="taskModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+            <div class="modal-content">
+                <button class="close-modal-btn" id="closeModalBtn" aria-label="Cerrar Modal">&times;</button>
+                <h2 id="modalTitle">Agregar Nueva Tarea</h2>
+                <form id="taskForm">
+                    <label for="taskName">Nombre de la tarea:</label>
+                    <input type="text" id="taskName" required>
+
+                    <label for="dueDate">Fecha de vencimiento:</label>
+                    <input type="date" id="dueDate" required>
+
+                    <label for="description">Descripción:</label>
+                    <textarea id="description" placeholder="Opcional"></textarea>
+
+                    <label>Imágenes de la tarea (máximo 3):</label>
+                    <input type="file" id="taskImage" accept="image/*" multiple style="display: none;">
+                    <button type="button" id="addImagesBtn" class="add-more-images">Seleccionar imágenes</button>
+                    <div class="images-counter" id="imagesCounter">0/3 imágenes seleccionadas</div>
+                    <div class="image-preview-container" id="imagePreviewContainer"></div>
+
+                    <button type="submit" id="submitBtn">Agregar Tarea</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal para mostrar detalles de la tarea -->
+        <div id="detailModal" class="detail-modal" role="dialog" aria-labelledby="detailTaskName" aria-modal="true">
+            <div class="detail-modal-content">
+                <button class="close-modal-btn" id="closeDetailModalBtn" aria-label="Cerrar Modal">&times;</button>
+                <h2 id="detailTaskName"></h2>
+                <p><strong>Fecha de vencimiento:</strong> <span id="detailDueDate"></span></p>
+                <div id="detailDescriptionContainer">
+                    <p><strong>Descripción:</strong></p>
+                    <div id="detailDescription" class="description"></div>
+                </div>
+                
+                <div id="detailImagesContainer" class="image-gallery"></div>
+                
+                <button id="closeDetailButton">Cerrar</button>
+            </div>
+        </div>
+
+        <ul id="tasksList"></ul>
+    </div>
+
+    <!-- Notificación -->
+    <div id="notification" class="notification" role="alert" aria-live="assertive"></div>
+
+    <!-- Importar Firebase como módulos -->
+    <script type="module">
+        // Importar funciones necesarias de Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDJphtweEVrvaVn4i-UwKuMHGCtX_LPl_g",
+            authDomain: "tareaspendientes-1cadf.firebaseapp.com",
+            projectId: "tareaspendientes-1cadf",
+            storageBucket: "tareaspendientes-1cadf.firebasestorage.app",
+            messagingSenderId: "580768863245",
+            appId: "1:580768863245:web:28aa8abdc6f4281c7a7144",
+            measurementId: "G-NH654YBBF5"
+        };
+
+        // Inicializa Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Obtener elementos del DOM
+        const taskForm = document.getElementById('taskForm');
+        const taskNameInput = document.getElementById('taskName');
+        const dueDateInput = document.getElementById('dueDate');
+        const descriptionInput = document.getElementById('description');
+        const taskImageInput = document.getElementById('taskImage');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+        const addImagesBtn = document.getElementById('addImagesBtn');
+        const imagesCounter = document.getElementById('imagesCounter');
+        const tasksList = document.getElementById('tasksList');
+        const openModalBtn = document.getElementById('openModalBtn');
+        const taskModal = document.getElementById('taskModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modalTitle = document.getElementById('modalTitle');
+        const submitBtn = document.getElementById('submitBtn');
+        const detailModal = document.getElementById('detailModal');
+        const closeDetailModalBtn = document.getElementById('closeDetailModalBtn');
+        const closeDetailButton = document.getElementById('closeDetailButton');
+        const detailTaskName = document.getElementById('detailTaskName');
+        const detailDueDate = document.getElementById('detailDueDate');
+        const detailDescription = document.getElementById('detailDescription');
+        const detailImagesContainer = document.getElementById('detailImagesContainer');
+        const detailDescriptionContainer = document.getElementById('detailDescriptionContainer');
+        const notification = document.getElementById('notification');
+        const spinnerOverlay = document.getElementById('spinnerOverlay');
+        const searchInput = document.getElementById('searchInput');
+
+        let editMode = false;
+        let currentEditTaskId = null;
+        let allTasks = []; // Almacena todas las tareas para el buscador
+        let selectedImages = []; // Arreglo para almacenar las imágenes seleccionadas
+
+        // API Key de ImgBB
+        const imgbbAPIKey = '6919281ff26b04eeaa4fc95ae5745889';
+
+        /**
+         * Obtiene la fecha actual en la zona horaria de Perú (UTC-5).
+         * @returns {Date} - Fecha actual en Perú sin tiempo.
+         */
+        function getCurrentPeruDate() {
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            // Perú está en UTC-5
+            const peruTime = new Date(utc - (5 * 60 * 60 * 1000));
+            return new Date(peruTime.getFullYear(), peruTime.getMonth(), peruTime.getDate());
+        }
+
+        /**
+         * Función para mostrar notificaciones
+         * @param {string} message - Mensaje de la notificación
+         * @param {string} type - Tipo de notificación ('success' o 'error')
+         */
+        function showNotification(message, type = 'success') {
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        /**
+         * Función para mostrar el spinner de carga
+         */
+        function showSpinner() {
+            spinnerOverlay.style.display = 'flex';
+            document.body.classList.add('loading');
+            // Deshabilitar botones y inputs
+            disableInteractions(true);
+        }
+
+        /**
+         * Función para ocultar el spinner de carga
+         */
+        function hideSpinner() {
+            spinnerOverlay.style.display = 'none';
+            document.body.classList.remove('loading');
+            // Habilitar botones y inputs
+            disableInteractions(false);
+        }
+
+        /**
+         * Función para deshabilitar interacciones durante la carga
+         * @param {boolean} disable - Estado para deshabilitar o habilitar
+         */
+        function disableInteractions(disable) {
+            const buttons = document.querySelectorAll('button');
+            const inputs = document.querySelectorAll('input, textarea');
+            buttons.forEach(btn => {
+                btn.disabled = disable;
+            });
+            inputs.forEach(input => {
+                input.disabled = disable;
+            });
+        }
+
+        /**
+         * Función para abrir el modal de agregar/editar tarea
+         * @param {boolean} isEdit - Indica si es modo edición
+         * @param {object} task - Datos de la tarea a editar
+         */
+        function openTaskModal(isEdit = false, task = {}) {
+            taskModal.style.display = 'block';
+            selectedImages = []; // Resetear el arreglo de imágenes
+            imagePreviewContainer.innerHTML = ''; // Limpiar el contenedor de vista previa
+            
+            if (isEdit) {
+                modalTitle.textContent = 'Editar Tarea';
+                submitBtn.textContent = 'Actualizar Tarea';
+                taskNameInput.value = task.nombre;
+                dueDateInput.value = task.fecha;
+                descriptionInput.value = task.descripcion || '';
+                
+                // Mostrar vista previa de las imágenes existentes
+                if (task.urlImagenes && task.urlImagenes.length > 0) {
+                    task.urlImagenes.forEach(url => {
+                        addImagePreview(url);
+                    });
+                    selectedImages = [...task.urlImagenes];
+                }
+                
+                taskImageInput.value = ''; // Resetear el input de archivo
+                editMode = true;
+                currentEditTaskId = task.id;
+            } else {
+                modalTitle.textContent = 'Agregar Nueva Tarea';
+                submitBtn.textContent = 'Agregar Tarea';
+                taskForm.reset();
+                editMode = false;
+                currentEditTaskId = null;
+            }
+            
+            updateImagesCounter();
+        }
+
+        /**
+         * Función para cerrar el modal de agregar/editar tarea
+         */
+        function closeTaskModal() {
+            taskModal.style.display = 'none';
+            taskForm.reset();
+            imagePreviewContainer.innerHTML = '';
+            selectedImages = [];
+            editMode = false;
+            currentEditTaskId = null;
+            updateImagesCounter();
+        }
+
+        /**
+         * Función para abrir el modal de detalles de la tarea
+         * @param {string} taskId - ID de la tarea
+         */
+        async function openDetailModal(taskId) {
+            showSpinner();
+            try {
+                const taskRef = doc(db, 'tareas', taskId);
+                const taskSnap = await getDoc(taskRef);
+                if (taskSnap.exists()) {
+                    const task = taskSnap.data();
+                    detailTaskName.textContent = task.nombre;
+                    detailDueDate.textContent = task.fecha;
+                    
+                    if (task.descripcion) {
+                        detailDescription.innerHTML = parseDescription(task.descripcion);
+                        detailDescriptionContainer.style.display = 'block';
+                    } else {
+                        detailDescriptionContainer.style.display = 'none';
+                    }
+
+                    // Mostrar las imágenes en la galería
+                    detailImagesContainer.innerHTML = '';
+                    if (task.urlImagenes && task.urlImagenes.length > 0) {
+                        task.urlImagenes.forEach(url => {
+                            const imgContainer = document.createElement('div');
+                            imgContainer.className = 'gallery-item';
+                            
+                            const img = document.createElement('img');
+                            img.src = url;
+                            img.alt = `Imagen de ${task.nombre}`;
+                            
+                            imgContainer.appendChild(img);
+                            detailImagesContainer.appendChild(imgContainer);
+                        });
+                        detailImagesContainer.style.display = 'flex';
+                    } else {
+                        detailImagesContainer.style.display = 'none';
+                    }
+
+                    detailModal.style.display = 'block';
+                } else {
+                    showNotification('La tarea no existe!', 'error');
+                }
+            } catch (error) {
+                console.error('Error al abrir detalles de la tarea:', error);
+                showNotification('Error al abrir detalles de la tarea.', 'error');
+            } finally {
+                hideSpinner();
+            }
+        }
+
+        /**
+         * Función para cerrar el modal de detalles
+         */
+        function closeDetailModalFunc() {
+            detailModal.style.display = 'none';
+        }
+
+        /**
+         * Función para calcular los días restantes
+         * @param {string} dueDate - Fecha de vencimiento en formato 'YYYY-MM-DD'
+         * @returns {number} - Días restantes
+         */
+        function getDaysLeft(dueDate) {
+            const currentPeruDate = getCurrentPeruDate();
+            const [year, month, day] = dueDate.split('-').map(Number);
+            const due = new Date(year, month -1, day);
+            // Calcular diferencia en milisegundos
+            const timeDiff = due - currentPeruDate;
+            const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            return daysDiff;
+        }
+
+        /**
+         * Función para obtener el mensaje de días restantes
+         * @param {number} daysLeft - Días restantes
+         * @returns {string} - Mensaje correspondiente
+         */
+        function getDueMessage(daysLeft) {
+            if (daysLeft === 1) {
+                return 'Vence mañana';
+            } else if (daysLeft > 1 && daysLeft <= 5) {
+                return `Vence en ${daysLeft} días`;
+            } else if (daysLeft <= 0) {
+                return 'Ya venció';
+            } else {
+                return `Vence en más de 5 días`;
+            }
+        }
+
+        /**
+         * Función para parsear la descripción y convertir guiones/puntos en listas
+         * @param {string} text - Texto de la descripción
+         * @returns {string} - HTML formateado
+         */
+        function parseDescription(text) {
+            // Reemplazar líneas que comienzan con '-' o '.' seguidas de espacio por <li>
+            const lines = text.split('\n');
+            let html = '';
+            let inList = false;
+            let listType = '';
+
+            lines.forEach(line => {
+                if (/^-\s+/.test(line)) {
+                    if (!inList) {
+                        inList = true;
+                        listType = 'ul';
+                        html += '<ul>';
+                    }
+                    const item = line.replace(/^-+\s+/, '');
+                    html += `<li>${item}</li>`;
+                } else if (/^\.\s+/.test(line)) {
+                    if (!inList) {
+                        inList = true;
+                        listType = 'ol';
+                        html += '<ol>';
+                    }
+                    const item = line.replace(/^\.\s+/, '');
+                    html += `<li>${item}</li>`;
+                } else {
+                    if (inList) {
+                        if (listType === 'ul') {
+                            html += '</ul>';
+                        } else {
+                            html += '</ol>';
+                        }
+                        inList = false;
+                        listType = '';
+                    }
+                    if (line.trim() !== '') {
+                        html += `<p>${line}</p>`;
+                    }
+                }
+            });
+
+            if (inList) {
+                if (listType === 'ul') {
+                    html += '</ul>';
+                } else {
+                    html += '</ol>';
+                }
+            }
+
+            return html;
+        }
+
+        /**
+         * Actualiza el contador de imágenes seleccionadas
+         */
+        function updateImagesCounter() {
+            imagesCounter.textContent = `${selectedImages.length}/3 imágenes seleccionadas`;
+            
+            // Habilitar o deshabilitar el botón para agregar más imágenes
+            if (selectedImages.length >= 3) {
+                addImagesBtn.disabled = true;
+                addImagesBtn.style.opacity = '0.5';
+            } else {
+                addImagesBtn.disabled = false;
+                addImagesBtn.style.opacity = '1';
+            }
+        }
+
+        /**
+         * Agrega una vista previa de imagen
+         * @param {string} src - URL de la imagen o blob URL
+         * @param {File} file - Archivo de imagen (opcional)
+         */
+        function addImagePreview(src, file = null) {
+            if (selectedImages.length >= 3) {
+                showNotification('Solo puedes seleccionar hasta 3 imágenes', 'error');
+                return;
+            }
+            
+            const previewItem = document.createElement('div');
+            previewItem.className = 'image-preview-item';
+            
+            const img = document.createElement('img');
+            img.src = src;
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-image';
+            removeBtn.innerHTML = '×';
+            removeBtn.addEventListener('click', () => {
+                // Si es una URL que ya existe
+                if (!file) {
+                    const index = selectedImages.indexOf(src);
+                    if (index !== -1) {
+                        selectedImages.splice(index, 1);
+                    }
+                } else {
+                    // Si es un nuevo archivo
+                    const index = selectedImages.findIndex(item => 
+                        item instanceof File && item.name === file.name
+                    );
+                    if (index !== -1) {
+                        selectedImages.splice(index, 1);
+                    }
+                }
+                previewItem.remove();
+                updateImagesCounter();
+            });
+            
+            previewItem.appendChild(img);
+            previewItem.appendChild(removeBtn);
+            imagePreviewContainer.appendChild(previewItem);
+            
+            // Agregar a la lista de imágenes seleccionadas
+            if (file) {
+                // Si es un nuevo archivo
+                selectedImages.push(file);
+            } else if (!selectedImages.includes(src)) {
+                // Si es una URL existente que no está en el array
+                selectedImages.push(src);
+            }
+            
+            updateImagesCounter();
+        }
+
+        /**
+         * Activar botón para seleccionar imágenes
+         */
+        addImagesBtn.addEventListener('click', () => {
+            taskImageInput.click();
+        });
+
+        /**
+         * Mostrar vista previa de las imágenes seleccionadas
+         */
+        taskImageInput.addEventListener('change', () => {
+            const files = taskImageInput.files;
+            if (files.length > 0) {
+                // Verificar si el número de archivos seleccionados + los ya existentes excede el límite
+                if (files.length + selectedImages.length > 3) {
+                    showNotification(`Puedes seleccionar máximo 3 imágenes. Ya tienes ${selectedImages.length}.`, 'error');
+                    return;
+                }
+                
+                // Para cada archivo seleccionado
+                Array.from(files).forEach(file => {
+                    if (selectedImages.length < 3) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            addImagePreview(e.target.result, file);
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        });
+
+        /**
+         * Abrir el modal de agregar tarea
+         */
+        openModalBtn.addEventListener('click', () => {
+            openTaskModal();
+        });
+
+        /**
+         * Cerrar el modal de agregar/editar tarea
+         */
+        closeModalBtn.addEventListener('click', () => {
+            closeTaskModal();
+        });
+
+        /**
+         * Cerrar el modal de detalles
+         */
+        closeDetailModalBtn.addEventListener('click', () => {
+            closeDetailModalFunc();
+        });
+
+        closeDetailButton.addEventListener('click', () => {
+            closeDetailModalFunc();
+        });
+
+        /**
+         * Función para subir la imagen a ImgBB y obtener la URL
+         * @param {File} file - Archivo de imagen
+         * @returns {Promise<string>} - URL de la imagen subida
+         */
+        async function uploadImageToImgBB(file) {
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbAPIKey}`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    return data.data.url;
+                } else {
+                    throw new Error('Error al subir la imagen a ImgBB');
+                }
+            } catch (error) {
+                console.error('Error al subir la imagen:', error);
+                throw error;
+            }
+        }
+
+        /**
+         * Agregar o editar una tarea
+         */
+        taskForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showSpinner(); // Mostrar spinner de carga
+
+            const taskName = taskNameInput.value.trim();
+            const dueDate = dueDateInput.value;
+            const description = descriptionInput.value.trim();
+
+            // Validación: solo nombre y fecha son obligatorios
+            if (!taskName || !dueDate) {
+                showNotification('Por favor, completa los campos obligatorios.', 'error');
+                hideSpinner();
+                return;
+            }
+
+            // Validación básica de fecha
+            const currentPeruDate = getCurrentPeruDate();
+            const [year, month, day] = dueDate.split('-').map(Number);
+            const selectedDate = new Date(year, month -1, day);
+            if (selectedDate < currentPeruDate) {
+                showNotification('La fecha de vencimiento no puede ser anterior a hoy.', 'error');
+                hideSpinner();
+                return;
+            }
+
+            try {
+                // Arreglo para almacenar las URLs de las imágenes
+                let imageUrls = [];
+
+                // Procesar las imágenes
+                for (const item of selectedImages) {
+                    if (item instanceof File) {
+                        // Si es un nuevo archivo, subirlo a ImgBB
+                        const url = await uploadImageToImgBB(item);
+                        imageUrls.push(url);
+                    } else {
+                        // Si es una URL existente, añadirla directamente
+                        imageUrls.push(item);
+                    }
+                }
+
+                const taskData = {
+                    nombre: taskName,
+                    fecha: dueDate,
+                    descripcion: description || '', // Guardar descripción vacía si no hay
+                    urlImagenes: imageUrls // Guardar arreglo de URLs de imágenes
+                };
+
+                if (!editMode) {
+                    // Agregar una nueva tarea
+                    await addDoc(collection(db, 'tareas'), taskData);
+                    showNotification('Tarea agregada correctamente!', 'success');
+                } else {
+                    // Actualizar tarea existente
+                    const taskRef = doc(db, 'tareas', currentEditTaskId);
+                    await updateDoc(taskRef, taskData);
+                    showNotification('Tarea actualizada correctamente!', 'success');
+                }
+
+                taskForm.reset();
+                imagePreviewContainer.innerHTML = '';
+                selectedImages = [];
+                taskModal.style.display = 'none'; // Cerrar modal
+                loadTasks(); // Recargar las tareas
+            } catch (error) {
+                console.error('Error al agregar/actualizar tarea:', error);
+                showNotification(`Error: ${error.message}`, 'error');
+            } finally {
+                hideSpinner(); // Ocultar spinner de carga
+            }
+        });
+
+        /**
+         * Mostrar todas las tareas ordenadas por fecha y resaltar las urgentes o vencidas
+         */
+        async function loadTasks() {
+            tasksList.innerHTML = '';
+            showSpinner();
+
+            try {
+                const snapshot = await getDocs(collection(db, 'tareas'));
+                allTasks = []; // Resetear el array de todas las tareas
+                let tasks = [];
+
+                snapshot.forEach((docSnap) => {
+                    const task = docSnap.data();
+                    const taskId = docSnap.id;
+                    tasks.push({ ...task, id: taskId });
+                });
+
+                // Almacenar todas las tareas para el buscador
+                allTasks = tasks.slice();
+
+                // Ordenar las tareas por fecha de vencimiento (ascendente)
+                tasks.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+                renderTasks(tasks);
+            } catch (error) {
+                console.error('Error al cargar las tareas:', error);
+                showNotification('Error al cargar las tareas.', 'error');
+            } finally {
+                hideSpinner();
+            }
+        }
+
+        /**
+         * Función para renderizar las tareas en el DOM
+         * @param {Array} tasks - Array de tareas
+         */
+        function renderTasks(tasks) {
+            tasksList.innerHTML = '';
+
+            tasks.forEach((task) => {
+                const taskId = task.id;
+                const daysLeft = getDaysLeft(task.fecha);
+                const dueMessage = getDueMessage(daysLeft);
+
+                const taskElement = document.createElement('li');
+
+                // Asignar clase según el estado de la tarea
+                if (daysLeft > 0 && daysLeft <= 5) {
+                    taskElement.classList.add('urgent');
+                } else if (daysLeft <= 0) {
+                    taskElement.classList.add('expired');
+                }
+
+                // Contenedor de información de la tarea
+                const taskInfo = document.createElement('div');
+                taskInfo.classList.add('task-info');
+                taskInfo.innerHTML = `
+                    <strong>${task.nombre}</strong>
+                    <span>${task.fecha} (${dueMessage})</span>
+                `;
+
+                // Contenedor de acciones (Editar y Eliminar)
+                const taskActions = document.createElement('div');
+                taskActions.classList.add('task-actions');
+                taskActions.innerHTML = `
+                    <button class="edit-btn">Editar</button>
+                    <button class="delete-btn">Eliminar</button>
+                `;
+
+                // Añadir eventos a los botones
+                const editBtn = taskActions.querySelector('.edit-btn');
+                const deleteBtn = taskActions.querySelector('.delete-btn');
+
+                editBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Evita que se active el evento de clic del li
+                    openTaskModal(true, { ...task, id: taskId });
+                });
+
+                deleteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Evita que se active el evento de clic del li
+                    deleteTask(taskId);
+                });
+
+                // Añadir evento para abrir el modal de detalles
+                taskElement.addEventListener('click', () => {
+                    openDetailModal(taskId);
+                });
+
+                // Añadir los contenedores al li
+                taskElement.appendChild(taskInfo);
+                taskElement.appendChild(taskActions);
+
+                tasksList.appendChild(taskElement);
+            });
+        }
+
+        /**
+         * Eliminar tarea
+         * @param {string} taskId - ID de la tarea a eliminar
+         */
+        async function deleteTask(taskId) {
+            if (confirm('¿Estás seguro de que deseas eliminar esta tarea?')) {
+                showSpinner();
+                try {
+                    const taskRef = doc(db, 'tareas', taskId);
+                    await deleteDoc(taskRef);
+                    showNotification('Tarea eliminada!', 'success');
+                    loadTasks(); // Recargar tareas
+                } catch (error) {
+                    console.error('Error eliminando tarea:', error);
+                    showNotification('Error al eliminar tarea.', 'error');
+                } finally {
+                    hideSpinner();
+                }
+            }
+        }
+
+        /**
+         * Función para filtrar tareas según el texto de búsqueda
+         * @param {string} query - Texto de búsqueda
+         */
+        function filterTasks(query) {
+            const filtered = allTasks.filter(task => 
+                task.nombre.toLowerCase().includes(query.toLowerCase())
+            );
+            renderTasks(filtered);
+        }
+
+        /**
+         * Event listener para el buscador
+         */
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            filterTasks(query);
+        });
+
+        /**
+         * Cerrar modales al hacer clic fuera de ellos
+         */
+        window.addEventListener('click', (e) => {
+            if (e.target == taskModal) {
+                closeTaskModal();
+            }
+            if (e.target == detailModal) {
+                closeDetailModalFunc();
+            }
+        });
+
+        /**
+         * Cargar las tareas al cargar la página
+         */
+        window.onload = loadTasks;
+    </script>
+</body>
+</html>
+

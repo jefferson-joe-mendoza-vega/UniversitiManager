@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Lista de Tareas</title>
+    <!-- Estilos CSS modulares -->
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+    <div class="task-container">
+        <h1>Lista de Tareas</h1>
+        
+
+        <!-- Barra de Búsqueda -->
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Buscar tareas...">
+        </div>
+
+        <!-- Botón para abrir el modal de agregar tarea -->
+        <button class="open-modal-btn" id="openModalBtn">Agregar Tarea</button>
+        <div class="contenedor-boton">
+        <div style="text-align: center; margin: 20px 0; padding: 10px;">
+        <a href="https://docs.google.com/document/d/1JTziAf29uFzhAg5r3Xd7W4yym2k_eWHL26cEStTRINM/edit?usp=sharing" target="_blank" style="color: white;">
+   Bot FastLearn
+</a>
+
+ 
+</a>
+
+    <iframe src="boton.html"
+            style="width: 250px; height: 80px; border: none;">
+    </iframe>
+</div>
+    </div>
+
+        <!-- Spinner de Carga -->
+        <div class="spinner-overlay" id="spinnerOverlay">
+            <div class="spinner"></div>
+        </div>        <!-- Modal para agregar/editar tarea -->
+        <div id="taskModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+            <div class="modal-content enhanced-modal">
+                <button class="close-modal-btn" id="closeModalBtn" aria-label="Cerrar Modal">&times;</button>
+                <h2 id="modalTitle">Agregar Nueva Tarea</h2>
+                
+                <form id="taskForm" class="enhanced-form">
+                    <!-- Sección principal del formulario -->
+                    <div class="form-main-section">
+                        <!-- Columna izquierda - Información básica -->
+                        <div class="form-left-column">
+                            <div class="input-group">
+                                <label for="taskName">Nombre de la tarea:</label>
+                                <input type="text" id="taskName" required placeholder="Ingresa el nombre de la tarea">
+                            </div>
+
+                            <div class="input-group">
+                                <label for="dueDate">Fecha de vencimiento:</label>
+                                <input type="date" id="dueDate" required>
+                            </div>
+
+                            <div class="temp-save-indicator" id="tempSaveIndicator">
+                                <span class="indicator-icon">💾</span>
+                                <span class="indicator-text">Guardado temporal activado</span>
+                            </div>
+                        </div>
+
+                        <!-- Columna derecha - Descripción -->
+                        <div class="form-right-column">
+                            <div class="input-group full-height">
+                                <label for="description">Descripción:</label>
+                                <textarea id="description" placeholder="Describe tu tarea aquí... (opcional)" rows="6"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección de imágenes -->
+                    <div class="form-images-section">
+                        <div class="images-header">
+                            <label class="images-label">Imágenes de la tarea</label>
+                            <div class="images-controls">
+                                <input type="file" id="taskImage" accept="image/*" multiple style="display: none;">
+                                <button type="button" id="addImagesBtn" class="add-more-images">
+                                    <span class="btn-icon">📷</span>
+                                    Seleccionar imágenes
+                                </button>
+                                <div class="images-counter" id="imagesCounter">0/3 imágenes seleccionadas</div>
+                            </div>
+                        </div>
+                        <div class="image-preview-container" id="imagePreviewContainer"></div>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="form-actions">
+                        <button type="button" id="clearTempBtn" class="btn-secondary">Limpiar formulario</button>
+                        <button type="submit" id="submitBtn" class="btn-primary">Agregar Tarea</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal para mostrar detalles de la tarea -->
+        <div id="detailModal" class="detail-modal" role="dialog" aria-labelledby="detailTaskName" aria-modal="true">
+            <div class="detail-modal-content">
+                <button class="close-modal-btn" id="closeDetailModalBtn" aria-label="Cerrar Modal">&times;</button>
+                <h2 id="detailTaskName"></h2>
+                <p><strong>Fecha de vencimiento:</strong> <span id="detailDueDate"></span></p>
+                <div id="detailDescriptionContainer">
+                    <p><strong>Descripción:</strong></p>
+                    <div id="detailDescription" class="description"></div>
+                </div>
+                
+                <div id="detailImagesContainer" class="image-gallery"></div>
+                
+                <button id="closeDetailButton">Cerrar</button>
+            </div>
+        </div>
+
+        <ul id="tasksList"></ul>
+    </div>
+
+    <!-- Notificación -->
+    <div id="notification" class="notification" role="alert" aria-live="assertive"></div>    <!-- Aplicación modular de tareas -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
+

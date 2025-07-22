@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mendoza Vega Jefferson Información</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        /* Estilos personalizados para una temática oscura más atractiva */
+        body {
+            background-color: #1E1E2F; /* Azul oscuro para un fondo moderno y relajante */
+            color: #E0E0E0; /* Texto claro para buen contraste */
+            transition: background-color 0.3s, color 0.3s;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            max-width: 900px;
+        }
+        /* Estilos para la barra de navegación */
+        .navbar-dark {
+            background-color: #2A2A40; /* Gris azulado para la navbar */
+        }
+        .navbar-dark .navbar-brand, .navbar-dark .nav-link {
+            color: #FFFFFF; /* Texto blanco para los elementos de la navbar */
+        }
+        .navbar-dark .nav-link:hover {
+            color: #FFD700; /* Color dorado al pasar el cursor */
+        }
+        /* Estilos del acordeón */
+        .accordion-button {
+            background-color: #2A2A40; /* Gris azulado para los botones del acordeón */
+            color: #FFFFFF; /* Texto blanco para destacar sobre el fondo oscuro */
+            transition: background-color 0.3s, color 0.3s;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        .accordion-button:hover {
+            background-color: #3A3A5A; /* Color más claro al pasar el cursor */
+        }
+        .accordion-button:not(.collapsed) {
+            background-color: #4B4B6E; /* Color activo para distinguir la sección abierta */
+            color: #FFD700; /* Texto dorado para resaltar */
+        }
+        .main-accordion-button {
+            font-weight: bold;
+        }
+        .copy-container {
+            /* Posición relativa para alinear el ícono */
+            position: relative;
+            text-align: right; /* Alinea el ícono a la derecha */
+            margin-bottom: 10px; /* Espacio entre el ícono y el texto */
+        }
+        .copy-icon {
+            cursor: pointer;
+            color: #1E90FF; /* Azul brillante para el ícono de copiar */
+            transition: color 0.3s, transform 0.3s;
+            font-size: 1.5rem; /* Tamaño del ícono */
+        }
+        .copy-icon:hover {
+            color: #63B3ED; /* Azul más claro al pasar el cursor */
+        }
+        /* Estilos para la animación de cambio de ícono */
+        .copy-icon.copied {
+            color: #32CD32; /* Verde para indicar éxito */
+            transform: rotate(360deg);
+        }
+        /* Animaciones para el acordeón */
+        .accordion-collapse {
+            transition: height 0.35s ease;
+        }
+        /* Estilo para los párrafos dentro del acordeón */
+        .accordion-body p {
+            font-size: 1rem;
+            line-height: 1.6;
+            white-space: pre-line; /* Preserva los saltos de línea */
+            margin-top: 1.5rem; /* Espacio superior para el texto */
+        }
+        /* Estilos para listas dentro del acordeón */
+        .accordion-body ul {
+            list-style-type: disc; /* Tipo de lista con viñetas */
+            padding-left: 1.5rem; /* Sangría para la lista */
+        }
+        .accordion-body li {
+            margin-bottom: 0.5rem; /* Espacio entre ítems de la lista */
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de Navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Mendoza Vega Jefferson</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav ms-auto">
+                    <!-- Menú Desplegable -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Información
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item" href="https://mendoza-vega-informacion.web.app/informacion/2/">Información sobre el tema 2</a></li>
+                            <li><a class="dropdown-item" href="https://mendoza-vega-informacion.web.app/informacion/3/">Información sobre el tema 3</a></li>
+                            <li><a class="dropdown-item" href="https://mendoza-vega-informacion.web.app/informacion/4/">Información sobre el tema 4</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Fin de la Barra de Navegación -->
+
+    <div class="container py-5">
+        <div class="accordion" id="mainAccordion">
+            <!-- Sección 1 -->
+            <div class="accordion-item section">
+                <h2 class="accordion-header" id="heading1">
+                    <button class="accordion-button main-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#section1" aria-expanded="true" aria-controls="section1">
+                        APRENDER 
+                    </button>
+                </h2>
+                <div id="section1" class="accordion-collapse collapse show" aria-labelledby="heading1" data-bs-parent="#mainAccordion">
+                    <div class="accordion-body">
+                        <div class="accordion nested-accordion" id="accordionSection1">
+                            <!-- Desplegable 1.1 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading1-1">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1-1" aria-expanded="false" aria-controls="collapse1-1">
+                                        Desplegable 1.1
+                                    </button>
+                                </h2>
+                                <div id="collapse1-1" class="accordion-collapse collapse" aria-labelledby="heading1-1" data-bs-parent="#accordionSection1">
+                                    <div class="accordion-body">
+                                        <div class="copy-container">
+                                            <!-- Ícono de copiar arriba del texto -->
+                                            <i class="bi bi-clipboard copy-icon" title="Copiar texto" onclick="copyText(this)"></i>
+                                        </div>
+                                        <p>
+                                            Hola:
+                                            - este es mejor
+                                            - me gusta
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Desplegable 1.2 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading1-2">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1-2" aria-expanded="false" aria-controls="collapse1-2">
+                                        Desplegable 1.2
+                                    </button>
+                                </h2>
+                                <div id="collapse1-2" class="accordion-collapse collapse" aria-labelledby="heading1-2" data-bs-parent="#accordionSection1">
+                                    <div class="accordion-body">
+                                        <div class="copy-container">
+                                            <!-- Ícono de copiar arriba del texto -->
+                                            <i class="bi bi-clipboard copy-icon" title="Copiar texto" onclick="copyText(this)"></i>
+                                        </div>
+                                        <p>
+Este es el contenido del segundo desplegable de la sección 1.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Desplegable 1.3 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading1-3">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1-3" aria-expanded="false" aria-controls="collapse1-3">
+                                        Desplegable 1.3
+                                    </button>
+                                </h2>
+                                <div id="collapse1-3" class="accordion-collapse collapse" aria-labelledby="heading1-3" data-bs-parent="#accordionSection1">
+                                    <div class="accordion-body">
+                                        <div class="copy-container">
+                                            <!-- Ícono de copiar arriba del texto -->
+                                            <i class="bi bi-clipboard copy-icon" title="Copiar texto" onclick="copyText(this)"></i>
+                                        </div>
+                                        <p>
+Este es el contenido del tercer desplegable de la sección 1.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección 2 -->
+            <div class="accordion-item section">
+                <h2 class="accordion-header" id="heading2">
+                    <button class="accordion-button collapsed main-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#section2" aria-expanded="false" aria-controls="section2">
+                        Sección 2
+                    </button>
+                </h2>
+                <div id="section2" class="accordion-collapse collapse" aria-labelledby="heading2" data-bs-parent="#mainAccordion">
+                    <div class="accordion-body">
+                        <div class="accordion nested-accordion" id="accordionSection2">
+                            <!-- Desplegable 2.1 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading2-1">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2-1" aria-expanded="false" aria-controls="collapse2-1">
+                                        Desplegable 2.1
+                                    </button>
+                                </h2>
+                                <div id="collapse2-1" class="accordion-collapse collapse" aria-labelledby="heading2-1" data-bs-parent="#accordionSection2">
+                                    <div class="accordion-body">
+                                        <div class="copy-container">
+                                            <!-- Ícono de copiar arriba del texto -->
+                                            <i class="bi bi-clipboard copy-icon" title="Copiar texto" onclick="copyText(this)"></i>
+                                        </div>
+                                        <p>
+Este es el contenido del primer desplegable de la sección 2.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Desplegable 2.2 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading2-2">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2-2" aria-expanded="false" aria-controls="collapse2-2">
+                                        Desplegable 2.2
+                                    </button>
+                                </h2>
+                                <div id="collapse2-2" class="accordion-collapse collapse" aria-labelledby="heading2-2" data-bs-parent="#accordionSection2">
+                                    <div class="accordion-body">
+                                        <div class="copy-container">
+                                            <!-- Ícono de copiar arriba del texto -->
+                                            <i class="bi bi-clipboard copy-icon" title="Copiar texto" onclick="copyText(this)"></i>
+                                        </div>
+                                        <p>
+Este es el contenido del segundo desplegable de la sección 2.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Desplegable 2.3 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading2-3">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2-3" aria-expanded="false" aria-controls="collapse2-3">
+                                        Desplegable 2.3
+                                    </button>
+                                </h2>
+                                <div id="collapse2-3" class="accordion-collapse collapse" aria-labelledby="heading2-3" data-bs-parent="#accordionSection2">
+                                    <div class="accordion-body">
+                                        <div class="copy-container">
+                                            <!-- Ícono de copiar arriba del texto -->
+                                            <i class="bi bi-clipboard copy-icon" title="Copiar texto" onclick="copyText(this)"></i>
+                                        </div>
+                                        <p>
+Este es el contenido del tercer desplegable de la sección 2.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección 3 -->
+            <div class="accordion-item section">
+                <h2 class="accordion-header" id="heading3">
+                    <button class="accordion-button collapsed main-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#section3" aria-expanded="false" aria-controls="section3">
+                        Sección 3
+                    </button>
+                </h2>
+                <div id="section3" class="accordion-collapse collapse" aria-labelledby="heading3" data-bs-parent="#mainAccordion">
+                    <div class="accordion-body">
+                        <div class="accordion nested-accordion" id="accordionSection3">
+                            <!-- Desplegable 3.1 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading3-1">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3-1" aria-expanded="false" aria-controls="collapse3-1">
+                                        Desplegable 3.1
+                                    </button>
+                                </h2>
+                                <div id="collapse3-1" class="accordion-collapse collapse" aria-labelledby="heading3-1" data-bs-parent="#accordionSection3">
+                                    <div class="accordion-body">
+                                        <div class="copy-container">
+                                            <!-- Ícono de copiar arriba del texto -->
+                                            <i class="bi bi-clipboard copy-icon" title="Copiar texto" onclick="copyText(this)"></i>
+                                        </div>
+                                        <p>
+Este es el contenido del primer desplegable de la sección 3.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Desplegable 3.2 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading3-2">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3-2" aria-expanded="false" aria-controls="collapse3-2">
+                                        Desplegable 3.2
+                                    </button>
+                                </h2>
+                                <div id="collapse3-2" class="accordion-collapse collapse" aria-labelledby="heading3-2" data-bs-parent="#accordionSection3">
+                                    <div class="accordion-body">
+                                        <div class="copy-container">
+                                            <!-- Ícono de copiar arriba del texto -->
+                                            <i class="bi bi-clipboard copy-icon" title="Copiar texto" onclick="copyText(this)"></i>
+                                        </div>
+                                        <p>
+Este es el contenido del segundo desplegable de la sección 3.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Desplegable 3.3 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading3-3">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3-3" aria-expanded="false" aria-controls="collapse3-3">
+                                        Desplegable 3.3
+                                    </button>
+                                </h2>
+                                <div id="collapse3-3" class="accordion-collapse collapse" aria-labelledby="heading3-3" data-bs-parent="#accordionSection3">
+                                    <div class="accordion-body">
+                                        <div class="copy-container">
+                                            <!-- Ícono de copiar arriba del texto -->
+                                            <i class="bi bi-clipboard copy-icon" title="Copiar texto" onclick="copyText(this)"></i>
+                                        </div>
+                                        <p>
+Este es el contenido del tercer desplegable de la sección 3.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            /**
+             * Función para copiar el texto del contenedor al portapapeles y cambiar el ícono temporalmente.
+             * @param {HTMLElement} icon - El ícono que fue clicado.
+             */
+            function copyText(icon) {
+                // Obtener el contenedor padre que contiene el párrafo
+                const container = icon.parentElement.nextElementSibling; // Obtener el siguiente elemento después del ícono
+                const text = container.innerText;
+    
+                // Usar API moderna de Clipboard para copiar el texto
+                navigator.clipboard.writeText(text).then(() => {
+                    // Cambiar el ícono a un checkmark
+                    icon.classList.remove('bi-clipboard');
+                    icon.classList.add('bi-check-lg', 'copied');
+    
+                    // Revertir el ícono después de 3 segundos
+                    setTimeout(() => {
+                        icon.classList.remove('bi-check-lg', 'copied');
+                        icon.classList.add('bi-clipboard');
+                    }, 3000);
+                }).catch(err => {
+                    console.error('Error al copiar el texto: ', err);
+                });
+            }
+    
+            // Función para abrir una sección específica basada en el hash de la URL
+            function openSectionFromHash() {
+                const hash = window.location.hash;
+                if (hash) {
+                    const targetElement = document.querySelector(hash);
+                    if (targetElement) {
+                        // Crear instancia de Bootstrap Collapse
+                        const collapse = new bootstrap.Collapse(targetElement, {
+                            toggle: true
+                        });
+    
+                        // Si el hash se refiere a una subsección, abrir también la sección principal
+                        if (hash.includes('-')) {
+                            const parentHash = hash.split('-')[0].replace('collapse', 'section');
+                            const parentElement = document.querySelector(`#${parentHash}`);
+                            if (parentElement) {
+                                new bootstrap.Collapse(parentElement, {
+                                    toggle: true
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+    
+            // Escuchar cambios en el hash de la URL
+            window.addEventListener('hashchange', openSectionFromHash);
+    
+            // Abrir la sección correcta al cargar la página
+            document.addEventListener('DOMContentLoaded', openSectionFromHash);
+    
+            // Actualizar el hash de la URL cuando se abre una sección
+            document.querySelectorAll('.accordion-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const target = this.getAttribute('data-bs-target');
+                    if (target.startsWith('#section') || target.startsWith('#collapse')) {
+                        window.location.hash = target.substring(1);
+                    }
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>

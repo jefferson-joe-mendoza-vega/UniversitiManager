@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Control Remoto - Presentador</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      margin: 0;
+      user-select: none; /* Prevenir selección accidental */
+    }
+    .control-container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 2rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .control-panel {
+      background: rgba(31,41,55,.9);
+      backdrop-filter: blur(12px);
+      border-radius: 1rem;
+      border: 1px solid rgba(75,85,99,.3);
+      padding: 2rem;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,.2);
+    }
+    .session-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(17,24,39,0.8);
+      border: 1px solid rgba(75,85,99,0.5);
+      border-radius: 0.5rem;
+      color: #e2e8f0;
+      font-size: 1.125rem;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-family: 'Courier New', monospace;
+    }
+    .session-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+    }
+    .control-button {
+      padding: 1rem 2rem;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-size: 1.125rem;
+      touch-action: manipulation; /* Mejora respuesta táctil */
+      position: relative;
+    }
+    .control-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .control-button.primary {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+    }
+    .control-button.primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(59,130,246,0.3);
+    }
+    .control-button.secondary {
+      background: rgba(75,85,99,0.8);
+      color: #e2e8f0;
+      border: 1px solid rgba(156,163,175,0.3);
+    }
+    .control-button.secondary:hover:not(:disabled) {
+      background: rgba(107,114,128,0.8);
+    }
+    
+    /* Estados de loading */
+    .control-button.loading {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .control-button.loading::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border: 2px solid transparent;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-left: 0.5rem;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .navigation-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .slide-info {
+      background: rgba(17,24,39,0.6);
+      border: 1px solid rgba(75,85,99,0.4);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      text-align: center;
+      margin: 1rem 0;
+    }
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+    .status-indicator.connected {
+      background: rgba(16,185,129,0.2);
+      color: #10b981;
+      border: 1px solid rgba(16,185,129,0.3);
+    }
+    .status-indicator.disconnected {
+      background: rgba(239,68,68,0.2);
+      color: #ef4444;
+      border: 1px solid rgba(239,68,68,0.3);
+    }
+    .status-indicator.sending {
+      background: rgba(251,191,36,0.2);
+      color: #f59e0b;
+      border: 1px solid rgba(251,191,36,0.3);
+    }
+    .message {
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .message.visible { opacity: 1; }
+    .message.success {
+      background: rgba(16,185,129,0.2);
+      color: #10b981;
+      border: 1px solid rgba(16,185,129,0.3);
+    }
+    .message.error {
+      background: rgba(239,68,68,0.2);
+      color: #ef4444;
+      border: 1px solid rgba(239,68,68,0.3);
+    }
+    .message.warning {
+      background: rgba(251,191,36,0.2);
+      color: #f59e0b;
+      border: 1px solid rgba(251,191,36,0.3);
+    }
+    
+    /* Cooldown visual */
+    .button-cooldown {
+      background: rgba(156,163,175,0.5) !important;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="control-container">
+    <div class="control-panel">
+      <div class="text-center mb-6">
+        <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400 mb-2">
+          Control Remoto
+        </h1>
+        <p class="text-gray-400">Controla la presentación desde otro dispositivo</p>
+      </div>
+
+      <div id="connectionStatus" class="status-indicator disconnected">
+        <span class="w-2 h-2 bg-current rounded-full mr-2"></span>
+        Desconectado
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-300 mb-2">Código de Sesión</label>
+        <input 
+          type="text" 
+          id="sessionInput" 
+          class="session-input" 
+          placeholder="Ingresa el código"
+          maxlength="6"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="characters"
+        >
+      </div>
+
+      <button id="connectBtn" class="control-button primary w-full">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 12l2 2 4-4"/>
+          <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
+          <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
+          <path d="M3 12h6m12 0h-6"/>
+        </svg>
+        Conectar
+      </button>
+
+      <div id="controlsPanel" style="display: none;">
+        <div class="slide-info">
+          <div class="text-lg font-semibold">
+            Diapositiva <span id="currentSlide">1</span> de <span id="totalSlides">1</span>
+          </div>
+        </div>
+
+        <div class="navigation-grid">
+          <button id="prevBtn" class="control-button secondary" disabled>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            Anterior
+          </button>
+          <button id="nextBtn" class="control-button secondary" disabled>
+            Siguiente
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
+        </div>
+
+        <button id="disconnectBtn" class="control-button secondary w-full mt-4">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 12l-4-4-4 4"/>
+            <path d="M12 16V8"/>
+          </svg>
+          Desconectar
+        </button>
+      </div>
+
+      <div id="message" class="message"></div>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+    import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyARQ-euUBzXOFhRWDyGPEvuvJn6S1p2Gks",
+      authDomain: "iam-presentacion.firebaseapp.com",
+      projectId: "iam-presentacion",
+      storageBucket: "iam-presentacion.firebasestorage.app",
+      messagingSenderId: "522271660881",
+      appId: "1:522271660881:web:438d64b46d12189f1f1170",
+      measurementId: "G-F3VWDGJ002"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
+    // Variables globales mejoradas
+    let currentSessionId = null;
+    let unsubscribeSession = null;
+    let sessionData = null;
+    let lastActionTime = 0;
+    let isProcessingAction = false;
+    let commandQueue = [];
+    let processQueueTimeout = null;
+    
+    // Configuración de throttling
+    const ACTION_COOLDOWN = 800; // 800ms entre acciones
+    const QUEUE_PROCESS_DELAY = 100; // 100ms para procesar cola
+    const MAX_QUEUE_SIZE = 3; // Máximo 3 comandos en cola
+    
+    // DOM elements
+    const sessionInput = document.getElementById('sessionInput');
+    const connectBtn = document.getElementById('connectBtn');
+    const controlsPanel = document.getElementById('controlsPanel');
+    const connectionStatus = document.getElementById('connectionStatus');
+    const currentSlide = document.getElementById('currentSlide');
+    const totalSlides = document.getElementById('totalSlides');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const disconnectBtn = document.getElementById('disconnectBtn');
+    const message = document.getElementById('message');
+
+    // === UTILIDADES MEJORADAS ===
+    
+    function showMessage(text, type = 'success', duration = 3000) {
+      message.textContent = text;
+      message.className = `message ${type} visible`;
+      setTimeout(() => message.classList.remove('visible'), duration);
+    }
+
+    function updateConnectionStatus(status) {
+      const statusMap = {
+        connected: { text: "Conectado", class: "connected" },
+        disconnected: { text: "Desconectado", class: "disconnected" },
+        sending: { text: "Enviando...", class: "sending" }
+      };
+      
+      const config = statusMap[status] || statusMap.disconnected;
+      connectionStatus.textContent = config.text;
+      connectionStatus.className = `status-indicator ${config.class}`;
+    }
+
+    function updateSlideInfo(current, total) {
+      currentSlide.textContent = current + 1;
+      totalSlides.textContent = total;
+      
+      // Actualizar estados de botones con validación mejorada
+      const canGoPrev = current > 0 && !isProcessingAction;
+      const canGoNext = current < total - 1 && !isProcessingAction;
+      
+      prevBtn.disabled = !canGoPrev;
+      nextBtn.disabled = !canGoNext;
+    }
+
+    // === SISTEMA DE THROTTLING Y COLA ===
+    
+    function canExecuteAction() {
+      const now = Date.now();
+      return (now - lastActionTime) >= ACTION_COOLDOWN && !isProcessingAction;
+    }
+    
+    function addToQueue(action) {
+      // Evitar duplicados consecutivos en la cola
+      if (commandQueue.length > 0 && commandQueue[commandQueue.length - 1] === action) {
+        return false;
+      }
+      
+      // Limitar tamaño de cola
+      if (commandQueue.length >= MAX_QUEUE_SIZE) {
+        commandQueue.shift(); // Remover el más antiguo
+      }
+      
+      commandQueue.push(action);
+      processQueue();
+      return true;
+    }
+    
+    function processQueue() {
+      if (processQueueTimeout) {
+        clearTimeout(processQueueTimeout);
+      }
+      
+      processQueueTimeout = setTimeout(() => {
+        if (commandQueue.length > 0 && canExecuteAction()) {
+          const action = commandQueue.shift();
+          executeAction(action);
+        }
+        
+        // Continuar procesando si hay más comandos
+        if (commandQueue.length > 0) {
+          processQueue();
+        }
+      }, QUEUE_PROCESS_DELAY);
+    }
+    
+    async function executeAction(action) {
+      if (!currentSessionId || !sessionData || isProcessingAction) return;
+      
+      // Validar límites antes de enviar
+      if (action === 'next' && sessionData.currentSlide >= sessionData.totalSlides - 1) {
+        showMessage("Ya estás en la última diapositiva", "warning", 1500);
+        return;
+      }
+      
+      if (action === 'prev' && sessionData.currentSlide <= 0) {
+        showMessage("Ya estás en la primera diapositiva", "warning", 1500);
+        return;
+      }
+      
+      isProcessingAction = true;
+      lastActionTime = Date.now();
+      
+      // Feedback visual inmediato
+      const button = action === 'next' ? nextBtn : prevBtn;
+      button.classList.add('loading');
+      updateConnectionStatus('sending');
+      
+      try {
+        await updateDoc(doc(db, "presentations", currentSessionId), {
+          action: action,
+          timestamp: lastActionTime,
+          sender: 'remote-control'
+        });
+        
+        // Cooldown visual
+        button.classList.add('button-cooldown');
+        setTimeout(() => {
+          button.classList.remove('button-cooldown');
+        }, ACTION_COOLDOWN);
+        
+      } catch (error) {
+        console.error("Error enviando acción:", error);
+        showMessage("Error enviando comando", "error");
+        commandQueue.unshift(action); // Volver a intentar
+      } finally {
+        button.classList.remove('loading');
+        updateConnectionStatus('connected');
+        
+        setTimeout(() => {
+          isProcessingAction = false;
+          updateSlideInfo(sessionData.currentSlide, sessionData.totalSlides);
+        }, 200);
+      }
+    }
+
+    // === FUNCIONES PRINCIPALES ===
+    
+    function validateSessionCode(code) {
+      return /^[A-Z0-9]{6}$/.test(code);
+    }
+
+    async function connectToSession() {
+      const sessionId = sessionInput.value.trim().toUpperCase();
+      
+      if (!sessionId) {
+        showMessage("Por favor ingresa un código de sesión", "error");
+        sessionInput.focus();
+        return;
+      }
+      
+      if (!validateSessionCode(sessionId)) {
+        showMessage("El código debe tener 6 caracteres alfanuméricos", "error");
+        sessionInput.focus();
+        return;
+      }
+
+      connectBtn.classList.add('loading');
+      connectBtn.disabled = true;
+
+      try {
+        unsubscribeSession = onSnapshot(doc(db, "presentations", sessionId), (docSnapshot) => {
+          if (docSnapshot.exists()) {
+            const newData = docSnapshot.data();
+            
+            if (newData.active) {
+              if (!currentSessionId) {
+                currentSessionId = sessionId;
+                updateConnectionStatus('connected');
+                controlsPanel.style.display = 'block';
+                connectBtn.style.display = 'none';
+                sessionInput.disabled = true;
+                showMessage(`Conectado a la sesión ${sessionId}`);
+              }
+              
+              sessionData = newData;
+              updateSlideInfo(sessionData.currentSlide, sessionData.totalSlides);
+            } else {
+              disconnectFromSession();
+              showMessage("La sesión ha sido terminada", "error");
+            }
+          } else {
+            if (currentSessionId) {
+              disconnectFromSession();
+              showMessage("La sesión ya no existe", "error");
+            } else {
+              showMessage("Código de sesión no válido", "error");
+            }
+          }
+        }, (error) => {
+          console.error("Error conectando a la sesión:", error);
+          showMessage("Error de conexión", "error");
+          connectBtn.classList.remove('loading');
+          connectBtn.disabled = false;
+        });
+
+      } catch (error) {
+        console.error("Error:", error);
+        showMessage("Error al conectar", "error");
+        connectBtn.classList.remove('loading');
+        connectBtn.disabled = false;
+      }
+    }
+
+    function disconnectFromSession() {
+      if (unsubscribeSession) {
+        unsubscribeSession();
+        unsubscribeSession = null;
+      }
+      
+      // Limpiar estado
+      currentSessionId = null;
+      sessionData = null;
+      commandQueue = [];
+      isProcessingAction = false;
+      lastActionTime = 0;
+      
+      if (processQueueTimeout) {
+        clearTimeout(processQueueTimeout);
+        processQueueTimeout = null;
+      }
+      
+      updateConnectionStatus('disconnected');
+      controlsPanel.style.display = 'none';
+      connectBtn.style.display = 'block';
+      connectBtn.classList.remove('loading');
+      connectBtn.disabled = false;
+      sessionInput.disabled = false;
+      sessionInput.value = '';
+    }
+
+    // === FUNCIONES DE NAVEGACIÓN MEJORADAS ===
+    
+    function requestNextSlide() {
+      if (canExecuteAction()) {
+        executeAction('next');
+      } else {
+        addToQueue('next');
+      }
+    }
+
+    function requestPrevSlide() {
+      if (canExecuteAction()) {
+        executeAction('prev');
+      } else {
+        addToQueue('prev');
+      }
+    }
+
+    // === EVENT LISTENERS MEJORADOS ===
+    
+    connectBtn.addEventListener('click', connectToSession);
+    disconnectBtn.addEventListener('click', disconnectFromSession);
+    
+    // Navegación con protección contra múltiples clics
+    nextBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      requestNextSlide();
+    });
+    
+    prevBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      requestPrevSlide();
+    });
+
+    sessionInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        connectToSession();
+      }
+    });
+
+    sessionInput.addEventListener('input', (e) => {
+      e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    });
+
+    // Keyboard shortcuts mejorados con throttling
+    let keydownTimeout = null;
+    document.addEventListener('keydown', (e) => {
+      if (!currentSessionId || e.repeat) return; // Ignorar teclas repetidas
+      
+      // Evitar múltiples eventos de teclado muy rápidos
+      if (keydownTimeout) return;
+      
+      keydownTimeout = setTimeout(() => {
+        keydownTimeout = null;
+      }, 200);
+      
+      switch(e.key) {
+        case 'ArrowLeft':
+          e.preventDefault();
+          requestPrevSlide();
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          requestNextSlide();
+          break;
+        case 'Escape':
+          e.preventDefault();
+          disconnectFromSession();
+          break;
+      }
+    });
+
+    // Prevenir gestos táctiles accidentales
+    document.addEventListener('touchstart', (e) => {
+      if (e.touches.length > 1) {
+        e.preventDefault(); // Prevenir gestos multi-táctil
+      }
+    }, { passive: false });
+
+    // Limpiar al cerrar
+    window.addEventListener('beforeunload', () => {
+      if (currentSessionId) {
+        disconnectFromSession();
+      }
+    });
+
+    // Manejo de visibilidad de página (prevenir comandos en background)
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        commandQueue = []; // Limpiar cola cuando la página no es visible
+      }
+    });
+  </script>
+</body>
+</html>

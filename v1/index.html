@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detector de conexión</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        .loading {
+            margin: 50px auto;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading">
+        <p>Detectando estado de conexión...</p>
+    </div>
+
+    <script>
+        // Registrar el Service Worker primero para asegurar que todo está cacheado
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(registration => {
+                    console.log('Service Worker registrado con éxito:', registration.scope);
+                })
+                .catch(error => {
+                    console.log('Error al registrar el Service Worker:', error);
+                });
+        }
+
+        // Función para redirigir según el estado de conexión
+        function checkConnectionAndRedirect() {
+            if (navigator.onLine) {
+                // Si hay conexión, redirige a index2.html
+                window.location.href = 'index2.html';
+            } else {
+                // Si no hay conexión, redirige a index1.html
+                window.location.href = 'index1.html';
+            }
+        }
+
+        // Espera un momento para asegurarse de que el Service Worker se ha registrado
+        setTimeout(checkConnectionAndRedirect, 1000);
+
+        // También manejar cambios en la conexión (por si el usuario está en esta página)
+        window.addEventListener('online', checkConnectionAndRedirect);
+        window.addEventListener('offline', checkConnectionAndRedirect);
+    </script>
+</body>
+</html>

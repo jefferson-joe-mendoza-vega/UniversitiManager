@@ -1,0 +1,176 @@
+/* Utility styles - States, animations, helpers */
+
+/* Estados de las tareas */
+.urgent {
+    background-color: var(--color-urgent) !important;
+    color: var(--text-white) !important;
+    animation: pulse 2s infinite;
+}
+
+.urgent .task-actions button {
+    color: var(--text-white) !important;
+}
+
+.expired {
+    background-color: var(--color-expired) !important;
+    color: var(--text-white) !important;
+    animation: fadeOutIn 1.5s infinite;
+}
+
+.expired .task-actions button {
+    color: var(--text-white) !important;
+}
+
+/* Ajuste de colores de texto en tareas urgentes y vencidas */
+.urgent .task-info strong,
+.urgent .task-info span,
+.expired .task-info strong,
+.expired .task-info span {
+    color: var(--text-white) !important;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(-20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 10px var(--color-urgent-shadow); }
+    50% { box-shadow: 0 0 20px var(--color-urgent-shadow); }
+    100% { box-shadow: 0 0 10px var(--color-urgent-shadow); }
+}
+
+@keyframes fadeOutIn {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Utilidades de visibilidad */
+.hidden {
+    display: none !important;
+}
+
+.visible {
+    display: block !important;
+}
+
+/* Utilidades de texto */
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Utilidades de espaciado */
+.mt-10 {
+    margin-top: 10px;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-10 {
+    margin-bottom: 10px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.p-10 {
+    padding: 10px;
+}
+
+.p-20 {
+    padding: 20px;
+}
+
+/* Utilidades de flexbox */
+.flex {
+    display: flex;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.flex-center {
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-between {
+    justify-content: space-between;
+}
+
+.flex-end {
+    justify-content: flex-end;
+}
+
+/* Responsive helpers */
+.mobile-only {
+    display: none;
+}
+
+.desktop-only {
+    display: block;
+}
+
+/* Utilidades de accesibilidad */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Estados de hover y focus mejorados */
+.interactive {
+    transition: all 0.3s ease;
+}
+
+.interactive:hover {
+    transform: translateY(-2px);
+}
+
+.interactive:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+/* Utilidades de sombra */
+.shadow-light {
+    box-shadow: var(--shadow-light);
+}
+
+.shadow-medium {
+    box-shadow: var(--shadow-medium);
+}
+
+.shadow-heavy {
+    box-shadow: var(--shadow-heavy);
+}

@@ -1,0 +1,184 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desencriptar Imagen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #e0f7fa;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #00796b;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #00796b;
+        }
+        .input-group input[type="file"],
+        .input-group input[type="password"],
+        .input-group select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #00796b;
+            border-radius: 6px;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+        .input-group button {
+            width: 100%;
+            padding: 12px;
+            background-color: #00796b;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+        .input-group button:hover {
+            background-color: #004d40;
+        }
+        img {
+            margin-top: 20px;
+            max-width: 100%;
+            border: 2px solid #00796b;
+            border-radius: 6px;
+        }
+        #decrypted-img-container {
+            display: none;
+            margin-top: 20px;
+        }
+        #download-btn {
+            display: none;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #00796b;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #download-btn:hover {
+            background-color: #004d40;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Desencriptar Imagen</h1>
+        <div class="input-group">
+            <label for="encrypted-file">Selecciona el archivo encriptado:</label>
+            <input type="file" id="encrypted-file" accept=".txt">
+        </div>
+        <div class="input-group">
+            <label for="decryption-key">Clave de desencriptación:</label>
+            <input type="password" id="decryption-key" placeholder="Introduce la clave de desencriptación">
+        </div>
+        <div class="input-group">
+            <label for="decryption-algorithm">Algoritmo de desencriptación:</label>
+            <select id="decryption-algorithm">
+                <option value="AES">AES</option>
+                <option value="TripleDES">TripleDES</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <button onclick="decryptImage()">Desencriptar Imagen</button>
+        </div>
+        <div id="decrypted-img-container">
+            <h2>Imagen Desencriptada</h2>
+            <img id="decrypted-img" alt="Imagen Desencriptada">
+            <button id="download-btn" onclick="downloadDecryptedImage()">Descargar Imagen</button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.0.0/crypto-js.js"></script>
+    <script>
+        let decryptedBlob;
+        let originalFilename;
+
+        function decryptImage() {
+            const fileInput = document.getElementById('encrypted-file');
+            const key = document.getElementById('decryption-key').value;
+            const algorithm = document.getElementById('decryption-algorithm').value;
+
+            if (!fileInput.files.length || !key) {
+                alert('Por favor selecciona un archivo encriptado y proporciona una clave de desencriptación.');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            originalFilename = file.name.replace('.txt', ''); // Guardar el nombre original sin extensión .txt
+
+            const reader = new FileReader();
+            reader.onload = function () {
+                const encryptedData = reader.result;
+                let decrypted;
+
+                if (algorithm === 'AES') {
+                    decrypted = CryptoJS.AES.decrypt(encryptedData, key);
+                } else if (algorithm === 'TripleDES') {
+                    decrypted = CryptoJS.TripleDES.decrypt(encryptedData, key);
+                } else {
+                    alert('Algoritmo de desencriptación no soportado.');
+                    return;
+                }
+
+                const typedArray = new Uint8Array(decrypted.sigBytes);
+                for (let i = 0; i < decrypted.sigBytes; i++) {
+                    typedArray[i] = (decrypted.words[Math.floor(i / 4)] >> (24 - (i % 4) * 8)) & 0xff;
+                }
+
+                // Asumimos que el archivo original es JPEG, pero puedes ajustar el MIME type según tu necesidad
+                decryptedBlob = new Blob([typedArray], { type: 'image/jpeg' });
+                const decryptedUrl = URL.createObjectURL(decryptedBlob);
+
+                document.getElementById('decrypted-img').src = decryptedUrl;
+                document.getElementById('decrypted-img-container').style.display = 'block';
+                document.getElementById('download-btn').style.display = 'block';
+            };
+            reader.readAsText(file);
+        }
+
+        function downloadDecryptedImage() {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(decryptedBlob);
+            link.download = originalFilename + '.jpg'; // Descargar con el nombre original más la extensión
+            link.click();
+        }
+    </script>
+</body>
+</html>

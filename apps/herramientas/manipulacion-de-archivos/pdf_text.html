@@ -1,0 +1,364 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Extracción de Texto</title>
+  <!-- Librerías necesarias -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.8.162/pdf.min.js"></script>
+  <style>
+    :root {
+      --background-color: #121212;
+      --container-color: #1e1e1e;
+      --text-color: #e0e0e0;
+      --button-color: #bb86fc;
+      --button-hover-color: #9a67ea;
+      --spinner-color: #bb86fc;
+      --border-color: #333;
+      --error-color: #cf6679;
+      --output-background: #2c2c2c;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--background-color);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: var(--text-color);
+    }
+    .container {
+      text-align: center;
+      background: var(--container-color);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      max-width: 600px;
+      width: 90%;
+    }
+    h1 {
+      font-size: 1.8em;
+      margin-bottom: 25px;
+      color: var(--text-color);
+    }
+    input[type="file"] {
+      margin: 20px 0;
+      padding: 10px;
+      background: var(--container-color);
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      color: var(--text-color);
+      cursor: pointer;
+    }
+    input[type="file"]::file-selector-button {
+      background-color: var(--button-color);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    input[type="file"]::file-selector-button:hover {
+      background-color: var(--button-hover-color);
+    }
+    .output {
+      margin-top: 20px;
+      padding: 15px;
+      background: var(--output-background);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      overflow-y: auto;
+      max-height: 300px;
+      word-wrap: break-word;
+      text-align: left;
+      white-space: pre-wrap;
+      font-size: 0.95em;
+      line-height: 1.4;
+    }
+    .button-group {
+      margin-top: 15px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap; /* Para que los botones se ajusten en pantallas pequeñas */
+    }
+    .copy-button, .download-button, .predefined-button {
+      padding: 12px 25px;
+      background-color: var(--button-color);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .copy-button:hover, .download-button:hover, .predefined-button:hover {
+      background-color: var(--button-hover-color);
+      transform: translateY(-2px);
+    }
+    .predefined-button-container {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .hidden {
+      display: none;
+    }
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-top: 4px solid var(--spinner-color);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 10px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .error {
+      color: var(--error-color);
+      margin-top: 10px;
+      font-size: 0.95em;
+    }
+    .copy-success {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--button-color);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+      z-index: 1000;
+    }
+    .copy-success.show {
+      opacity: 1;
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+      h1 {
+        font-size: 1.5em;
+      }
+      .copy-button, .download-button, .predefined-button {
+        padding: 10px 20px;
+        font-size: 0.9em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Sube tu archivo y extrae el texto</h1>
+    <input type="file" id="fileInput" accept=".ppt,.pptx,.txt,.pdf">
+    <div id="status" class="hidden">
+      Procesando archivo <div class="spinner"></div>
+    </div>
+    <div id="output" class="output"></div>
+    <div class="button-group">
+      <button id="copyButton" class="copy-button hidden">Copiar Texto</button>
+      <button id="downloadButton" class="download-button hidden">Descargar Texto</button>
+    </div>
+    <div id="error" class="error"></div>
+    
+    <!-- Nuevos botones para copiar texto predefinido -->
+    <div class="predefined-button-container">
+      <button id="copyTemplate2" class="predefined-button">Listado de preguntas</button>
+      <button id="copyTemplate1" class="predefined-button">quiz</button>
+      
+    </div>
+  </div>
+  <div id="copySuccess" class="copy-success">Texto copiado</div>
+  <script>
+    // Configuración de PDF.js
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.8.162/pdf.worker.min.js';
+
+    // Textos predefinidos para los nuevos botones
+    const textoPlantilla1 = `
+brindame un quis de  preguntas, donde cada pregunta indique la respuesta correcta y el por que, ademas que cumpla las siguientes caracteristicas:
+
+- la estructura debe ser la siguiente importante{debaajo de cada pregunta indicar primeramente la respuesta, luego las alternativas u otro, luego la explicacion d ela respuesta o algo asi)
+- las preguntas que me realizaras, denen ser preguntas frecuentes qque realizan otras universidades, instituciones y otros a nivel mundial, es decir lo que se repiten que coinciden, y admeaas algunas que son consideradas cruciales para un examen e importantes
+- **Diversidad de Preguntas:** Incluye diferentes tipos de preguntas (verdadero/falso, opción múltiple, preguntas abiertas) para cubrir todos los aspectos del tema.
+- **Número de Opciones:** Para preguntas de opción múltiple, utiliza 3 alternativas para evitar la sobrecarga cognitiva.
+- cada pregunta denotara al final el por que o explicacion de la respuest(**Feedback:** Proporciona retroalimentación inmediata para cada pregunta, explicando por qué la respuesta es correcta o incorrecta **Explicaciones:** Incluye una breve explicación con la respuesta correcta para reforzar el aprendizaje.)
+- **Explicaciones Detalladas**: Incluye una breve explicación de por qué la respuesta es correcta o incorrecta.
+
+teniendo en cuenta todo ello que sera caractiristico de cada pregunto, tomaras como una estructura genereal para las preguntas esto:
+contextualizar→ pregunta → brindar la respuesta correcta → alternativas a la pregunta → explicacion del porque de la respuesta correcta.
+
+ademas las preguntas deben estar en orden secunecial , donde el conocimmiento del anterior ssirva como base para la siguiente pregunta, y asi porfavor
+`;
+
+    const textoPlantilla2 = `brindame un listado de preguntas organizado que me permita comprender  la informacion siguiente:`;
+
+    document.getElementById("fileInput").addEventListener("change", async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const output = document.getElementById("output");
+      const copyButton = document.getElementById("copyButton");
+      const downloadButton = document.getElementById("downloadButton");
+      const status = document.getElementById("status");
+      const errorDiv = document.getElementById("error");
+      const copySuccess = document.getElementById("copySuccess");
+
+      // Resetear estados anteriores
+      output.textContent = "";
+      copyButton.classList.add("hidden");
+      downloadButton.classList.add("hidden");
+      errorDiv.textContent = "";
+      status.classList.remove("hidden");
+
+      try {
+        const fileName = file.name.toLowerCase();
+        let extractedText = "";
+
+        if (fileName.endsWith(".txt")) {
+          extractedText = await file.text();
+        } else if (fileName.endsWith(".pptx")) {
+          const zip = new JSZip();
+          const content = await zip.loadAsync(file);
+
+          // Extraer los nombres de archivo de las diapositivas
+          let slides = Object.keys(content.files).filter(name =>
+            name.startsWith("ppt/slides/slide") && name.endsWith(".xml")
+          );
+
+          // Ordenar las diapositivas por número extraído del nombre del archivo
+          slides.sort((a, b) => {
+            const numA = parseInt(a.match(/slide(\d+)\.xml/)[1]);
+            const numB = parseInt(b.match(/slide(\d+)\.xml/)[1]);
+            return numA - numB;
+          });
+
+          // Recorrer cada diapositiva en orden y extraer el texto
+          for (const slide of slides) {
+            const slideContent = await content.file(slide).async("string");
+            let slideText = "";
+
+            // Extraer textos de etiquetas <a:t>
+            const regex = /<a:t[^>]*>(.*?)<\/a:t>/g;
+            let match;
+            while ((match = regex.exec(slideContent)) !== null) {
+              slideText += match[1] + "\n";
+            }
+
+            // Extraer textos adicionales dentro de <text:body> si es necesario
+            const additionalRegex = /<text:body[^>]*>(.*?)<\/text:body>/g;
+            while ((match = additionalRegex.exec(slideContent)) !== null) {
+              slideText += match[1] + "\n";
+            }
+
+            // Agregar encabezado con el número de la diapositiva
+            const slideNumber = slide.match(/slide(\d+)\.xml/)[1];
+            extractedText += `--- Diapositiva ${slideNumber} ---\n${slideText.trim()}\n\n`;
+          }
+
+          if (!extractedText.trim()) {
+            extractedText = "No se encontró texto en las diapositivas.";
+          }
+        } else if (fileName.endsWith(".ppt")) {
+          extractedText = "La extracción de texto para archivos .ppt no está soportada actualmente. Por favor, convierte tu archivo a .pptx o .pdf e intenta nuevamente.";
+        } else if (fileName.endsWith(".pdf")) {
+          const arrayBuffer = await file.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          const maxPages = pdf.numPages;
+          let pageTexts = [];
+          for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
+            const page = await pdf.getPage(pageNum);
+            const textContent = await page.getTextContent();
+            const strings = textContent.items.map(item => item.str);
+            pageTexts.push(`--- Página ${pageNum} ---\n${strings.join(' ')}\n`);
+          }
+          extractedText = pageTexts.join('\n');
+        } else {
+          throw new Error("Formato de archivo no compatible. Solo se admiten .txt, .pptx, .ppt, .pdf.");
+        }
+
+        output.textContent = extractedText;
+        copyButton.classList.remove("hidden");
+        downloadButton.classList.remove("hidden");
+      } catch (error) {
+        errorDiv.textContent = `Ocurrió un error al procesar el archivo: ${error.message}`;
+        console.error(error);
+      } finally {
+        status.classList.add("hidden");
+      }
+    });
+
+    document.getElementById("copyButton").addEventListener("click", () => {
+      const output = document.getElementById("output");
+      const text = output.textContent;
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          mostrarCopiaExitosa();
+        })
+        .catch((err) => {
+          console.error("Error al copiar texto:", err);
+        });
+    });
+
+    document.getElementById("downloadButton").addEventListener("click", () => {
+      const output = document.getElementById("output");
+      const text = output.textContent;
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'texto_extraido.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    // Eventos para los nuevos botones de texto predefinido
+    document.getElementById("copyTemplate1").addEventListener("click", () => {
+      navigator.clipboard.writeText(textoPlantilla1)
+        .then(() => {
+          mostrarCopiaExitosa("Plantilla 1 copiada");
+        })
+        .catch((err) => {
+          console.error("Error al copiar plantilla 1:", err);
+        });
+    });
+
+    document.getElementById("copyTemplate2").addEventListener("click", () => {
+      navigator.clipboard.writeText(textoPlantilla2)
+        .then(() => {
+          mostrarCopiaExitosa("Plantilla 2 copiada");
+        })
+        .catch((err) => {
+          console.error("Error al copiar plantilla 2:", err);
+        });
+    });
+
+    function mostrarCopiaExitosa(mensaje = "Texto copiado") {
+      const copySuccess = document.getElementById("copySuccess");
+      copySuccess.textContent = mensaje;
+      copySuccess.classList.add("show");
+      setTimeout(() => {
+        copySuccess.classList.remove("show");
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horario de Clases</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@600&display=swap" rel="stylesheet">
+    <!-- Font Awesome para íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap para estilos y componentes -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Estilos personalizados -->
+    <style>
+        /* Reset de márgenes y paddings */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Tipografía y colores base */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+            padding: 20px; /* Añadido para evitar que el contenido toque los bordes en pantallas pequeñas */
+        }
+
+        /* Contenedor principal */
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1000px;
+            /* Eliminados overflow-y y max-height para evitar scroll */
+            /* overflow-y: auto; */
+            /* max-height: 90vh; */
+            display: flex;
+            flex-direction: column;
+            height: 100%; /* Asegura que el contenedor ocupe todo el alto disponible */
+        }
+
+        /* Título principal */
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5em;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-shrink: 0; /* Evita que el título se encoja */
+        }
+
+        /* Contenedor de secciones */
+        .sections {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            flex-grow: 1; /* Permite que las secciones ocupen el espacio disponible */
+            overflow: hidden; /* Evita scroll dentro de las secciones */
+        }
+
+        /* Estilo de cada sección */
+        .section {
+            background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-shrink: 0; /* Evita que las secciones se encojan */
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Encabezado de sección con ícono */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-header i {
+            font-size: 1.5em;
+            color: #3498db;
+        }
+
+        .section-header h2 {
+            font-size: 1.8em;
+            color: #2c3e50;
+        }
+
+        /* Estilo para el iframe */
+        .content iframe {
+            width: 100%;
+            height: 300px;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0; /* Evita que el iframe se encoja */
+        }
+
+        /* Mensaje cuando no hay actividades */
+        .message {
+            text-align: center;
+            font-size: 1.3em;
+            color: #7f8c8d;
+            margin-top: 20px;
+            flex-shrink: 0; /* Evita que el mensaje se encoja */
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+                margin-bottom: 30px; /* Reducido para pantallas pequeñas */
+            }
+
+            .section {
+                padding: 15px 20px;
+            }
+
+            .section-header h2 {
+                font-size: 1.5em;
+            }
+
+            /* Ajustar la altura del iframe en dispositivos móviles */
+            .content iframe {
+                height: 200px;
+            }
+
+            /* Ajustes adicionales para mejorar la responsividad */
+            body {
+                padding: 10px;
+            }
+
+            .section {
+                gap: 10px;
+            }
+
+            .content p {
+                font-size: 1em;
+            }
+        }
+    </style>
+    
+    <!-- Bootstrap JS (opcional, para componentes interactivos) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>📅 Horario de Clases</h1>
+        
+        <!-- Contenedor para las secciones con iframes -->
+        <div id="secciones-container" class="sections"></div>
+
+        <!-- Mensaje opcional cuando no hay actividades programadas -->
+        <div id="mensaje" class="message" style="display: none;">
+            <p>Actualmente no hay actividades programadas.</p>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Función para obtener la hora actual en Perú (UTC-5)
+         * @returns {Date} Objeto Date con la hora actual en Perú
+         */
+        function getPeruTime() {
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const peruOffset = -5; // Perú está en UTC-5
+            const peruTime = new Date(utc + (peruOffset * 3600000));
+            return peruTime;
+        }
+
+        /**
+         * Función para formatear la hora en formato 12 horas (AM/PM)
+         * @param {Date} date - Objeto Date a formatear
+         * @returns {string} Hora formateada
+         */
+        function formatTime(date) {
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // La hora '0' debe ser '12'
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            return hours + ':' + minutes + ' ' + ampm;
+        }
+
+        /**
+         * Objeto que mapea cada tipo de actividad a su respectiva ruta de archivo HTML
+         */
+        const archivosPorTipo = {
+            'Inicio de Clase': 'contexto/inicio_clase.html',
+            'Fin de Clase': 'contexto/fin_clase.html',
+            'Hora de Estudio': 'contexto/hora_estudio.html'
+        };
+
+        /**
+         * Función para crear una sección de actividad con iframe en el DOM
+         * @param {string} tipo - Tipo de actividad ("Inicio de Clase", "Fin de Clase", "Hora de Estudio")
+         * @param {object} intervalo - Objeto con las horas de inicio y fin, y formato de horario
+         */
+        function crearSeccion(tipo, intervalo) {
+            const seccionesContainer = document.getElementById('secciones-container');
+
+            // Crear elementos HTML para la sección
+            const seccion = document.createElement('div');
+            seccion.className = 'section';
+
+            const header = document.createElement('div');
+            header.className = 'section-header';
+
+            const icon = document.createElement('i');
+            // Asignar ícono según el tipo de actividad
+            switch(tipo) {
+                case 'Inicio de Clase':
+                    icon.className = 'fas fa-play-circle';
+                    break;
+                case 'Fin de Clase':
+                    icon.className = 'fas fa-stop-circle';
+                    break;
+                case 'Hora de Estudio':
+                    icon.className = 'fas fa-book-open';
+                    break;
+                default:
+                    icon.className = 'fas fa-info-circle';
+            }
+
+            const titulo = document.createElement('h2');
+            titulo.innerHTML = `¡Es hora de <strong>${tipo}</strong>!`;
+
+            header.appendChild(icon);
+            header.appendChild(titulo);
+
+            const contenido = document.createElement('div');
+            contenido.className = 'content';
+
+            // Horario de la actividad
+            const horario = document.createElement('p');
+            horario.innerHTML = `<strong>Horario:</strong> ${intervalo.formato}`;
+            contenido.appendChild(horario);
+
+            // Crear y añadir el iframe
+            if (archivosPorTipo[tipo]) {
+                const iframe = document.createElement('iframe');
+                iframe.src = archivosPorTipo[tipo];
+                iframe.title = tipo;
+                iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+                iframe.allowFullscreen = true;
+                contenido.appendChild(iframe);
+            } else {
+                // Para otras secciones, mostrar un mensaje placeholder
+                const placeholder = document.createElement('div');
+                placeholder.className = 'contenido-html';
+                placeholder.textContent = 'Aquí puedes agregar contenido adicional.';
+                contenido.appendChild(placeholder);
+            }
+
+            seccion.appendChild(header);
+            seccion.appendChild(contenido);
+            seccionesContainer.appendChild(seccion);
+        }
+
+        /**
+         * Función principal para determinar y mostrar las secciones correspondientes según el día y hora actual
+         */
+        function mostrarSeccionesActuales() {
+            const peruTime = getPeruTime();
+            const diaSemana = peruTime.getDay(); // 0: Domingo, 1: Lunes, ..., 6: Sábado
+            const hora = peruTime.getHours();
+            const minuto = peruTime.getMinutes();
+
+            // Definir horarios de ejemplo para cada día de la semana
+            const horarios = {
+                
+                0: { // Domingo
+                    inicioClase: [
+                        { inicio: 12, fin: 15 },    // 12 PM - 3 PM
+                        { inicio: 14, fin: 16 }     // 2 PM - 4 PM
+                    ],
+                    finClase: [
+                        { inicio: 12, fin: 14 },     // 12 PM - 2 PM
+                        { inicio: 14, fin: 16 }      // 2 PM - 4 PM
+                    ],
+                    horaEstudio: [
+                        { inicio: 20, fin: 22 },     // 8 PM - 10 PM
+                        { inicio: 23, fin: 1 }       // 11 PM - 1 AM (del día siguiente)
+                    ]
+                },
+                1: { // Lunes - Monday
+                    inicioClase: [
+                        { inicio: 8, fin: 10 },      // 8 AM - 10 AM (Construcción de Software II Grupo 1)
+                        { inicio: 10, fin: 12 },     // 10 AM - 12 PM (Construcción de Software II Grupo 2)
+                        { inicio: 15, fin: 17 }      // 3 PM -5 PM (Pruebas de Software)
+                    ],
+                    finClase: [
+                        //{ inicio: 9, fin: 10 },      // 9 AM - 10 AM
+                        { inicio: 12, fin: 13 },     // 12 PM - 1 PM
+                        { inicio: 17, fin: 21 }      // 5 PM - 8 PM
+                    ],
+                    horaEstudio: [
+                        { inicio: 13, fin: 15 },     // 1 PM - 3 PM
+                        { inicio: 17, fin: 22 }      // 5 PM - 10 PM
+                    ]
+                },
+                2: { // Martes - Tuesday
+                    inicioClase: [
+                        { inicio: 8, fin: 10 },      // 8 AM - 10 AM (Ética y Práctica Profesional)
+                        { inicio: 10, fin: 13 },     // 10 AM - 1 PM (Seguridad Informática) 
+                        { inicio: 15, fin: 19 }      // 3 PM - 7 PM (Ética y Práctica Profesional)
+                    ],
+                    finClase: [
+                        { inicio: 9, fin: 10 },      // 9 AM - 10 AM
+                        { inicio: 12, fin: 13 },     // 12 PM - 1 PM
+                        { inicio: 18, fin: 19 }      // 6 PM - 7 PM
+                    ],
+                    horaEstudio: [
+                        { inicio: 13, fin: 15 },     // 1 PM - 3 PM
+                        { inicio: 19, fin: 21 }      // 7 PM - 9 PM
+                    ]
+                },
+                3: { // Miércoles - Wednesday
+                    inicioClase: [
+                        { inicio: 8, fin: 13 }       // 8 AM - 1 PM (Construcción de Software II Grupo 1)
+                    ],
+                    finClase: [
+                        { inicio: 12, fin: 13 }      // 12 PM - 1 PM
+                    ],
+                    horaEstudio: [
+                        { inicio: 14, fin: 16 },     // 2 PM - 4 PM
+                        { inicio: 18, fin: 20 }      // 6 PM - 8 PM
+                    ]
+                },
+                4: { // Jueves - Thursday
+                    inicioClase: [
+                        { inicio: 8, fin: 13 }       // 8 AM - 1 PM (Seguridad Informática)
+                    ],
+                    finClase: [
+                        { inicio: 12, fin: 13 }      // 12 PM - 1 PM
+                    ],
+                    horaEstudio: [
+                        { inicio: 14, fin: 16 },     // 2 PM - 4 PM
+                        { inicio: 18, fin: 20 }      // 6 PM - 8 PM
+                    ]
+                },
+                5: { // Viernes - Friday
+                    inicioClase: [
+                        { inicio: 8, fin: 12 }       // 8 AM - 12 PM (Seguridad Informática)
+                    ],
+                    finClase: [
+                        { inicio: 11, fin: 12 }      // 11 AM - 12 PM
+                    ],
+                    horaEstudio: [
+                        { inicio: 13, fin: 15 },     // 1 PM - 3 PM
+                        { inicio: 16, fin: 18 }      // 4 PM - 6 PM
+                    ]
+                },
+                6: { // Sábado
+                    inicioClase: [
+                        { inicio: 11, fin: 13 },     // 11 AM - 1 PM
+                        { inicio: 14, fin: 16 }      // 2 PM - 4 PM
+                    ],
+                    finClase: [
+                        { inicio: 13, fin: 15 },     // 1 PM - 3 PM
+                        { inicio: 16, fin: 18 }      // 4 PM - 6 PM
+                    ],
+                    horaEstudio: [
+                        { inicio: 16, fin: 18 },     // 4 PM - 6 PM
+                        { inicio: 19, fin: 21 }      // 7 PM - 9 PM
+                    ]
+                }
+            };
+
+            // Obtener los horarios del día actual
+            const horarioHoy = horarios[diaSemana];
+
+            // Obtener el contenedor de secciones y limpiarlo
+            const seccionesContainer = document.getElementById('secciones-container');
+            seccionesContainer.innerHTML = '';
+
+            let actividadEncontrada = false;
+
+            /**
+             * Función para verificar si la hora actual está dentro de un intervalo
+             * @param {number} inicio - Hora de inicio en formato 24 horas
+             * @param {number} fin - Hora de fin en formato 24 horas
+             * @returns {boolean} Verdadero si está dentro del intervalo, falso de lo contrario
+             */
+            function enHorario(inicio, fin) {
+                if (inicio < fin) {
+                    return hora >= inicio && hora < fin;
+                } else {
+                    // Rango que pasa de un día al siguiente (por ejemplo, 22 a 2)
+                    return hora >= inicio || hora < fin;
+                }
+            }
+
+            /**
+             * Función para procesar una categoría de horarios
+             * @param {string} tipo - Tipo de actividad ("Inicio de Clase", "Fin de Clase", "Hora de Estudio")
+             * @param {Array} intervalos - Array de objetos con 'inicio' y 'fin'
+             */
+            function procesarCategoria(tipo, intervalos) {
+                intervalos.forEach(intervalo => {
+                    if (enHorario(intervalo.inicio, intervalo.fin)) {
+                        actividadEncontrada = true;
+                        // Formatear las horas de inicio y fin
+                        const inicioDate = new Date(getPeruTime().setHours(intervalo.inicio, 0, 0, 0));
+                        const finDate = new Date(getPeruTime().setHours(intervalo.fin, 0, 0, 0));
+
+                        // Manejar rangos que pasan al día siguiente
+                        if (intervalo.inicio > intervalo.fin) {
+                            finDate.setDate(finDate.getDate() + 1);
+                        }
+
+                        const formatoInicio = formatTime(inicioDate);
+                        const formatoFin = formatTime(finDate);
+
+                        const formatoHorario = `${formatoInicio} - ${formatoFin}`;
+
+                        // Crear y mostrar la sección correspondiente
+                        crearSeccion(tipo, { inicio: intervalo.inicio, fin: intervalo.fin, formato: formatoHorario });
+                    }
+                });
+            }
+
+            // Procesar cada categoría de horarios
+            procesarCategoria('Inicio de Clase', horarioHoy.inicioClase);
+            procesarCategoria('Fin de Clase', horarioHoy.finClase);
+            procesarCategoria('Hora de Estudio', horarioHoy.horaEstudio);
+
+            // Mostrar el mensaje si no hay actividades programadas
+            if (!actividadEncontrada) {
+                document.getElementById('mensaje').style.display = 'block';
+            } else {
+                document.getElementById('mensaje').style.display = 'none';
+            }
+        }
+
+        // Ejecutar la función al cargar la página
+        window.onload = mostrarSeccionesActuales;
+
+        // Opcional: Actualizar la sección cada minuto para reflejar cambios en tiempo real
+        // setInterval(mostrarSeccionesActuales, 60000);
+    </script>
+</body>
+</html>

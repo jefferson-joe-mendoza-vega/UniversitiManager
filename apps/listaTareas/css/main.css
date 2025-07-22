@@ -1,0 +1,18 @@
+/* Main CSS file - Imports all modular stylesheets */
+
+/* Import order is important for CSS cascading */
+
+/* 1. Base styles - Variables, reset, typography */
+@import url('./base.css');
+
+/* 2. Layout styles - Grid, flexbox, positioning */
+@import url('./layout.css');
+
+/* 3. Component styles - Buttons, modals, forms */
+@import url('./components.css');
+
+/* 4. Utility styles - Helpers, states, animations */
+@import url('./utilities.css');
+
+/* 5. Responsive styles - Media queries */
+@import url('./responsive.css');

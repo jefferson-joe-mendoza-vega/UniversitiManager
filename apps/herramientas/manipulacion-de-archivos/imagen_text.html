@@ -1,0 +1,911 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR Inteligente - Extraer Texto de Imágenes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --primary-dark: #2980b9;
+            --secondary-color: #2ecc71;
+            --accent-color: #9b59b6;
+            --text-color: #333;
+            --text-light: #666;
+            --bg-color: #f5f7fa;
+            --card-bg: #ffffff;
+            --border-color: #e1e4e8;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+            --warning-color: #f39c12;
+            --drop-area-bg: #eef7ff;
+            --drop-area-active: #d0e9ff;
+            --output-bg: #f8f9fa;
+        }
+
+        .dark-theme {
+            --primary-color: #4a9ced;
+            --primary-dark: #3a8cd8;
+            --secondary-color: #2ecc71;
+            --accent-color: #b07ad6;
+            --text-color: #e0e0e0;
+            --text-light: #b0b0b0;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --border-color: #333333;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --drop-area-bg: #2a3441;
+            --drop-area-active: #334455;
+            --output-bg: #252525;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        .theme-switch {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .theme-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            width: 50px;
+            height: 26px;
+            background-color: var(--primary-color);
+            border-radius: 100px;
+            position: relative;
+            padding: 5px;
+        }
+
+        .theme-label .fa-sun {
+            color: #f39c12;
+        }
+
+        .theme-label .fa-moon {
+            color: #f1c40f;
+        }
+
+        .theme-label .ball {
+            background-color: var(--card-bg);
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            height: 22px;
+            width: 22px;
+            transition: transform 0.3s;
+        }
+
+        .theme-switch:checked + .theme-label .ball {
+            transform: translateX(24px);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 16px var(--shadow-color);
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px var(--shadow-color);
+        }
+
+        #drop-area {
+            border: 2px dashed var(--primary-color);
+            padding: 40px;
+            background-color: var(--drop-area-bg);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #drop-area:hover {
+            background-color: var(--drop-area-active);
+        }
+
+        #drop-area i {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .file-label {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+            transition: background-color 0.3s;
+        }
+
+        .file-label:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .hint {
+            font-size: 0.85em;
+            color: var(--text-light);
+            margin-top: 15px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .image-preview-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .image-preview-wrapper {
+            max-height: 300px;
+            overflow: hidden;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        #image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+        }
+
+        .options-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .option-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        select:focus {
+            border-color: var(--primary-color);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .primary-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 24px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .primary-button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .primary-button:active {
+            transform: scale(0.98);
+        }
+
+        .primary-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .progress-container {
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0;
+            background-color: var(--primary-color);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        #progress {
+            text-align: center;
+            font-size: 0.9em;
+            color: var(--text-light);
+        }
+
+        .result-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 16px var(--shadow-color);
+            padding: 20px;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+            color: var(--text-light);
+            padding: 5px;
+            border-radius: 50%;
+            transition: background-color 0.3s, color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+        }
+
+        .icon-button:hover {
+            background-color: var(--border-color);
+            color: var(--primary-color);
+        }
+
+        .output {
+            background-color: var(--output-bg);
+            padding: 15px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+            line-height: 1.5;
+            font-size: 0.95em;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background-color: var(--success-color);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: transform 0.3s, opacity 0.3s;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .subtitle {
+                font-size: 0.9em;
+            }
+            
+            #drop-area {
+                padding: 25px;
+            }
+            
+            #drop-area i {
+                font-size: 36px;
+            }
+            
+            .options-panel {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .option-group {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-file-alt"></i> OCR Inteligente</h1>
+            <p class="subtitle">Extrae texto de imágenes al instante</p>
+            <div class="theme-toggle">
+                <input type="checkbox" id="theme-switch" class="theme-switch">
+                <label for="theme-switch" class="theme-label">
+                    <i class="fas fa-sun"></i>
+                    <i class="fas fa-moon"></i>
+                    <span class="ball"></span>
+                </label>
+            </div>
+        </header>
+
+        <main>
+            <div class="card upload-card">
+                <div id="drop-area">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Arrastra una imagen aquí o</p>
+                    <label for="imageInput" class="file-label">Selecciona una imagen</label>
+                    <input type="file" id="imageInput" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp">
+                    <p class="hint">También puedes pegar una imagen con Ctrl+V</p>
+                </div>
+
+                <div id="image-preview-container" style="display: none;">
+                    <div class="preview-header">
+                        <h3>Vista previa</h3>
+                        <button id="remove-image" class="icon-button" title="Eliminar imagen">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="image-preview-wrapper">
+                        <img id="image-preview" src="" alt="Vista previa">
+                    </div>
+                </div>
+            </div>
+
+            <div class="options-panel">
+                <div class="option-group">
+                    <label for="language-select">Idioma:</label>
+                    <select id="language-select">
+                        <option value="spa" selected>Español</option>
+                        <option value="eng">Inglés</option>
+                        <option value="fra">Francés</option>
+                        <option value="deu">Alemán</option>
+                        <option value="ita">Italiano</option>
+                        <option value="por">Portugués</option>
+                    </select>
+                </div>
+                <div class="option-group">
+                    <label for="quality-select">Calidad:</label>
+                    <select id="quality-select">
+                        <option value="fast">Rápida</option>
+                        <option value="standard" selected>Estándar</option>
+                        <option value="best">Óptima</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="process-button" class="primary-button" disabled>
+                    <i class="fas fa-cogs"></i> Procesar Imagen
+                </button>
+            </div>
+
+            <div class="progress-container" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <p id="progress">Preparando...</p>
+            </div>
+
+            <div class="result-container" style="display: none;">
+                <div class="result-header">
+                    <h3>Texto Extraído</h3>
+                    <div class="result-actions">
+                        <button id="copy-button" class="icon-button" title="Copiar texto">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button id="download-button" class="icon-button" title="Descargar como TXT">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="output" class="output"></div>
+            </div>
+        </main>
+
+        <div id="toast" class="toast">
+            <i class="fas fa-check-circle"></i>
+            <span id="toast-message"></span>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let isProcessing = false;
+        let selectedFile = null;
+        const supportedLanguages = {
+            spa: 'Español',
+            eng: 'Inglés',
+            fra: 'Francés',
+            deu: 'Alemán',
+            ita: 'Italiano',
+            por: 'Portugués'
+        };
+
+        // Elementos del DOM
+        const dropArea = document.getElementById('drop-area');
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('image-preview');
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+        const removeImageButton = document.getElementById('remove-image');
+        const processButton = document.getElementById('process-button');
+        const progressContainer = document.querySelector('.progress-container');
+        const progressBar = document.querySelector('.progress-fill');
+        const progressText = document.getElementById('progress');
+        const resultContainer = document.querySelector('.result-container');
+        const outputElement = document.getElementById('output');
+        const copyButton = document.getElementById('copy-button');
+        const downloadButton = document.getElementById('download-button');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+        const languageSelect = document.getElementById('language-select');
+        const qualitySelect = document.getElementById('quality-select');
+        const themeSwitch = document.getElementById('theme-switch');
+
+        // Comprobar si hay una preferencia de tema guardada
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-theme');
+            themeSwitch.checked = true;
+        }
+
+        // Eventos
+        document.addEventListener('DOMContentLoaded', initApp);
+        imageInput.addEventListener('change', handleFileSelect);
+        dropArea.addEventListener('click', () => imageInput.click());
+        dropArea.addEventListener('dragover', handleDragOver);
+        dropArea.addEventListener('dragleave', handleDragLeave);
+        dropArea.addEventListener('drop', handleDrop);
+        document.addEventListener('paste', handlePaste);
+        removeImageButton.addEventListener('click', removeImage);
+        processButton.addEventListener('click', processSelectedImage);
+        copyButton.addEventListener('click', copyText);
+        downloadButton.addEventListener('click', downloadText);
+        themeSwitch.addEventListener('change', toggleTheme);
+
+        function initApp() {
+            // Inicializar la aplicación
+            checkBrowserSupport();
+            preloadTesseractWorker();
+        }
+
+        function checkBrowserSupport() {
+            // Comprobar si el navegador es compatible con las características necesarias
+            if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
+                showToast('Tu navegador no soporta la API de archivos. Por favor, actualiza tu navegador.', 'error');
+                dropArea.innerHTML = '<p>Tu navegador no es compatible con esta aplicación.</p>';
+                return false;
+            }
+            if (!navigator.clipboard) {
+                copyButton.style.display = 'none';
+                showToast('Tu navegador no soporta la API del portapapeles.', 'warning');
+            }
+            return true;
+        }
+
+        // Precarga del worker de Tesseract para mejorar la velocidad del primer uso
+        function preloadTesseractWorker() {
+            if (typeof Tesseract !== 'undefined') {
+                // Inicializar el worker en segundo plano
+                const worker = Tesseract.createWorker();
+                worker.load()
+                    .then(() => worker.loadLanguage('spa'))
+                    .then(() => {
+                        worker.terminate();
+                        console.log('Tesseract worker precargado');
+                    })
+                    .catch(err => console.warn('Error al precargar Tesseract worker:', err));
+            }
+        }
+
+        // Gestión de archivos
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                validateAndPreviewFile(file);
+            }
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            dropArea.classList.add('active');
+        }
+
+        function handleDragLeave() {
+            dropArea.classList.remove('active');
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            dropArea.classList.remove('active');
+            
+            const file = event.dataTransfer.files[0];
+            if (file) {
+                validateAndPreviewFile(file);
+            }
+        }
+
+        function handlePaste(event) {
+            const items = (event.clipboardData || window.clipboardData).items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    const file = items[i].getAsFile();
+                    validateAndPreviewFile(file);
+                    break;
+                }
+            }
+        }
+
+        function validateAndPreviewFile(file) {
+            // Validar tipo de archivo
+            if (!file.type.match('image.*')) {
+                showToast('Por favor, selecciona una imagen válida (JPG, PNG, GIF, WEBP).', 'error');
+                return;
+            }
+            
+            // Limitar tamaño de archivo (10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                showToast('La imagen es demasiado grande. El tamaño máximo es de 10MB.', 'error');
+                return;
+            }
+            
+            selectedFile = file;
+            displayImagePreview(file);
+            processButton.disabled = false;
+        }
+
+        function displayImagePreview(file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                imagePreviewContainer.style.display = 'block';
+                dropArea.style.display = 'none';
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        function removeImage() {
+            selectedFile = null;
+            imagePreviewContainer.style.display = 'none';
+            dropArea.style.display = 'block';
+            processButton.disabled = true;
+            resultContainer.style.display = 'none';
+            imageInput.value = '';
+        }
+
+        // Procesamiento OCR
+        async function processSelectedImage() {
+            if (!selectedFile || isProcessing) return;
+            
+            isProcessing = true;
+            resultContainer.style.display = 'none';
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '0%';
+            progressText.textContent = 'Preparando...';
+            processButton.disabled = true;
+            
+            try {
+                const quality = qualitySelect.value;
+                const language = languageSelect.value;
+                
+                // Preprocesamiento de imagen si es necesario
+                const optimizedFile = await optimizeImageIfNeeded(selectedFile, quality);
+                
+                await processImageWithOCR(optimizedFile, language, quality);
+                
+            } catch (error) {
+                console.error("Error al procesar la imagen:", error);
+                showToast('Ocurrió un error al procesar la imagen.', 'error');
+                progressText.textContent = 'Error en el procesamiento.';
+            } finally {
+                isProcessing = false;
+                processButton.disabled = false;
+            }
+        }
+
+        async function optimizeImageIfNeeded(file, quality) {
+            // Si la calidad es rápida, no hacemos optimización
+            if (quality === 'fast') return file;
+            
+            try {
+                const img = await createImageBitmap(file);
+                
+                // Crear un canvas para manipular la imagen
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Ajustar tamaño
+                const maxDim = quality === 'best' ? 2000 : 1500;
+                let width = img.width;
+                let height = img.height;
+                
+                if (width > maxDim || height > maxDim) {
+                    if (width > height) {
+                        height = height * (maxDim / width);
+                        width = maxDim;
+                    } else {
+                        width = width * (maxDim / height);
+                        height = maxDim;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                // Dibujar imagen en el canvas
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Mejorar contraste si la calidad es "best"
+                if (quality === 'best') {
+                    const imageData = ctx.getImageData(0, 0, width, height);
+                    const data = imageData.data;
+                    
+                    // Simple ajuste de contraste
+                    for (let i = 0; i < data.length; i += 4) {
+                        data[i] = data[i] < 127 ? data[i] * 0.8 : Math.min(255, data[i] * 1.2);
+                        data[i+1] = data[i+1] < 127 ? data[i+1] * 0.8 : Math.min(255, data[i+1] * 1.2);
+                        data[i+2] = data[i+2] < 127 ? data[i+2] * 0.8 : Math.min(255, data[i+2] * 1.2);
+                    }
+                    
+                    ctx.putImageData(imageData, 0, 0);
+                }
+                
+                // Convertir canvas a Blob
+                return new Promise(resolve => {
+                    canvas.toBlob(blob => {
+                        resolve(blob);
+                    }, 'image/jpeg', 0.95);
+                });
+                
+            } catch (err) {
+                console.warn('Error en optimización de imagen, usando original:', err);
+                return file;
+            }
+        }
+
+        async function processImageWithOCR(file, language, quality) {
+            const worker = await Tesseract.createWorker({
+                logger: message => {
+                    if (message.status === 'recognizing text') {
+                        const progress = Math.round(message.progress * 100);
+                        progressBar.style.width = `${progress}%`;
+                        progressText.textContent = `Procesando: ${progress}%`;
+                    }
+                }
+            });
+            
+            try {
+                // Configuraciones según calidad
+                let ocrConfigs = {};
+                
+                switch (quality) {
+                    case 'fast':
+                        ocrConfigs = { 
+                            tessedit_pageseg_mode: '6',  // Modo de segmentación más rápido
+                            tessjs_create_pdf: '0'
+                        };
+                        break;
+                    case 'best':
+                        ocrConfigs = { 
+                            tessedit_pageseg_mode: '1',  // Modo de segmentación de mayor precisión
+                            tessjs_create_pdf: '0',
+                            tessedit_ocr_engine_mode: '2'  // Modo LSTM only
+                        };
+                        break;
+                    default:  // standard
+                        ocrConfigs = { 
+                            tessedit_pageseg_mode: '3',  // Modo de segmentación predeterminado
+                            tessjs_create_pdf: '0' 
+                        };
+                }
+                
+                // Añadir whitelist de caracteres para mejor precisión
+                ocrConfigs.tessedit_char_whitelist = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzáéíóúÁÉÍÓÚñÑüÜ¿¡0123456789.,;:!?()[]{}\"'<>/-_+=@#%&* ";
+                
+                await worker.load();
+                await worker.loadLanguage(language);
+                await worker.initialize(language);
+                
+                const result = await worker.recognize(file, ocrConfigs);
+                
+                // Mostrar resultado
+                const extractedText = result.data.text;
+                
+                if (extractedText.trim()) {
+                    outputElement.textContent = extractedText;
+                    resultContainer.style.display = 'block';
+                    showToast('¡Texto extraído correctamente!', 'success');
+                } else {
+                    showToast('No se pudo detectar texto en la imagen.', 'warning');
+                }
+                
+                // Ocultar barra de progreso
+                progressContainer.style.display = 'none';
+                
+            } finally {
+                await worker.terminate();
+            }
+        }
+
+        // Funciones de utilidad
+        function copyText() {
+            const text = outputElement.textContent;
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    showToast('Texto copiado al portapapeles', 'success');
+                })
+                .catch(err => {
+                    console.error('Error al copiar texto:', err);
+                    showToast('No se pudo copiar el texto', 'error');
+                });
+        }
+
+        function downloadText() {
+            const text = outputElement.textContent;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `OCR_texto_${formatDate()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Texto descargado como archivo TXT', 'success');
+        }
+
+        function formatDate() {
+            const now = new Date();
+            return now.toISOString().replace(/[:.]/g, '-').slice(0, 19);
+        }
+
+        function showToast(message, type = 'success') {
+            // Configurar el tipo de toast
+            toast.className = 'toast';
+            toast.classList.add(type);
+            
+            // Configurar el icono según el tipo
+            const icon = toast.querySelector('i');
+            switch (type) {
+                case 'error':
+                    icon.className = 'fas fa-times-circle';
+                    break;
+                case 'warning':
+                    icon.className = 'fas fa-exclamation-circle';
+                    break;
+                default:
+                    icon.className = 'fas fa-check-circle';
+            }
+            
+            // Mostrar mensaje
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            // Ocultar después de 3 segundos
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function toggleTheme() {
+            if (themeSwitch.checked) {
+                document.body.classList.add('dark-theme');
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                document.body.classList.remove('dark-theme');
+                localStorage.setItem('darkMode', 'false');
+            }
+        }
+    </script>
+</body>
+</html>

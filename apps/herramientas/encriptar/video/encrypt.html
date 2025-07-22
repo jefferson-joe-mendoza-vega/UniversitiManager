@@ -1,0 +1,365 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encriptar Video</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #e0f7fa;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #00796b;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #00796b;
+        }
+        .input-group input[type="file"],
+        .input-group input[type="password"],
+        .input-group input[type="text"],
+        .input-group select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #00796b;
+            border-radius: 6px;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+        .input-group button {
+            width: 100%;
+            padding: 12px;
+            background-color: #00796b;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+        .input-group button:hover {
+            background-color: #004d40;
+        }
+        video {
+            margin-top: 20px;
+            max-width: 100%;
+            border: 2px solid #00796b;
+            border-radius: 6px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .video-preview {
+            margin-top: 20px;
+            display: none;
+        }
+        #encryption-progress {
+            width: 100%;
+            height: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+            background-color: #e0e0e0;
+            overflow: hidden;
+            display: none;
+        }
+        #progress-bar {
+            height: 100%;
+            background-color: #00796b;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        #progress-text {
+            margin-top: 5px;
+            font-weight: bold;
+            color: #00796b;
+        }
+        #password-strength {
+            margin-top: 5px;
+            font-weight: bold;
+        }
+        #download-encrypted-btn {
+            display: none;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #00796b;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #download-encrypted-btn:hover {
+            background-color: #004d40;
+        }
+        .status-message {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #00796b;
+        }
+        .error-message {
+            color: #d32f2f;
+            margin-top: 10px;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Encriptar Video</h1>
+        <div class="input-group">
+            <label for="video-file">Selecciona un video:</label>
+            <input type="file" id="video-file" accept="video/mp4, video/webm, video/ogg" onchange="previewVideo()">
+        </div>
+        
+        <div class="video-preview" id="video-preview-container">
+            <h3>Vista previa</h3>
+            <video id="video-preview" controls></video>
+        </div>
+        
+        <div class="input-group">
+            <label for="encryption-key">Clave de encriptación:</label>
+            <input type="password" id="encryption-key" placeholder="Introduce la clave de encriptación" oninput="checkPasswordStrength()">
+            <div id="password-strength"></div>
+        </div>
+        
+        <div class="input-group">
+            <label for="encryption-algorithm">Algoritmo de encriptación:</label>
+            <select id="encryption-algorithm">
+                <option value="AES">AES</option>
+                <option value="TripleDES">TripleDES</option>
+            </select>
+        </div>
+        
+        <div class="input-group">
+            <label for="file-name">Nombre del archivo encriptado:</label>
+            <input type="text" id="file-name" placeholder="Introduce el nombre del archivo">
+        </div>
+        
+        <div class="input-group">
+            <label for="file-extension">Extensión del archivo encriptado:</label>
+            <select id="file-extension">
+                <option value="txt">TXT</option>
+                <option value="evid">EVID</option>
+                <option value="enc">ENC</option>
+            </select>
+        </div>
+        
+        <div class="input-group">
+            <button onclick="encryptVideo()">Encriptar Video</button>
+        </div>
+        
+        <div id="encryption-progress">
+            <div id="progress-bar"></div>
+        </div>
+        <div id="progress-text"></div>
+        
+        <div class="status-message" id="status-message"></div>
+        <div class="error-message" id="error-message"></div>
+        
+        <button id="download-encrypted-btn" onclick="downloadEncryptedVideo()">Descargar Video Encriptado</button>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.0.0/crypto-js.js"></script>
+    <script>
+        let encryptedData;
+        let videoMimeType;
+        let originalFileName;
+        
+        function previewVideo() {
+            const fileInput = document.getElementById('video-file');
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                videoMimeType = file.type;
+                originalFileName = file.name.split('.').slice(0, -1).join('.');
+                
+                // Establecer valor predeterminado para el nombre del archivo si está vacío
+                const fileNameInput = document.getElementById('file-name');
+                if (!fileNameInput.value) {
+                    fileNameInput.value = originalFileName + "_encriptado";
+                }
+                
+                const videoPreview = document.getElementById('video-preview');
+                videoPreview.src = URL.createObjectURL(file);
+                document.getElementById('video-preview-container').style.display = 'block';
+            }
+        }
+        
+        function checkPasswordStrength() {
+            const strengthBar = document.getElementById('password-strength');
+            const key = document.getElementById('encryption-key').value;
+            let strength = 0;
+
+            if (key.length >= 8) strength++;
+            if (key.match(/[A-Z]/)) strength++;
+            if (key.match(/[0-9]/)) strength++;
+            if (key.match(/[@$!%*?&]/)) strength++;
+
+            let strengthText = '';
+            switch (strength) {
+                case 1:
+                    strengthText = 'Muy Débil';
+                    strengthBar.style.color = 'red';
+                    break;
+                case 2:
+                    strengthText = 'Débil';
+                    strengthBar.style.color = 'orange';
+                    break;
+                case 3:
+                    strengthText = 'Medio';
+                    strengthBar.style.color = 'yellow';
+                    break;
+                case 4:
+                    strengthText = 'Fuerte';
+                    strengthBar.style.color = 'green';
+                    break;
+                default:
+                    strengthText = 'Muy Débil';
+                    strengthBar.style.color = 'red';
+            }
+            strengthBar.textContent = `Fuerza: ${strengthText}`;
+        }
+        
+        function showError(message) {
+            const errorElement = document.getElementById('error-message');
+            errorElement.innerText = message;
+            errorElement.style.display = 'block';
+        }
+        
+        function clearError() {
+            document.getElementById('error-message').style.display = 'none';
+        }
+        
+        function updateProgressBar(percent) {
+            document.getElementById('progress-bar').style.width = percent + '%';
+            document.getElementById('progress-text').textContent = `Progreso: ${Math.round(percent)}%`;
+        }
+        
+        function encryptVideo() {
+            clearError();
+            const fileInput = document.getElementById('video-file');
+            const key = document.getElementById('encryption-key').value;
+            const algorithm = document.getElementById('encryption-algorithm').value;
+
+            if (!fileInput.files.length) {
+                showError('Por favor selecciona un archivo de video.');
+                return;
+            }
+            
+            if (!key) {
+                showError('Por favor proporciona una clave de encriptación.');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            videoMimeType = file.type;
+            
+            // Mostrar barra de progreso
+            document.getElementById('encryption-progress').style.display = 'block';
+            document.getElementById('status-message').textContent = 'Encriptando video...';
+            document.getElementById('download-encrypted-btn').style.display = 'none';
+            
+            // Almacenar información del formato del video
+            const videoInfo = {
+                mimeType: videoMimeType,
+                name: file.name
+            };
+            
+            // Leer el archivo como ArrayBuffer
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                try {
+                    // Convertir ArrayBuffer a WordArray
+                    const wordArray = CryptoJS.lib.WordArray.create(event.target.result);
+                    
+                    // Información sobre el formato y tamaño original
+                    const metadataStr = JSON.stringify(videoInfo);
+                    const encodedMetadata = btoa(metadataStr);
+                    
+                    let encrypted;
+                    updateProgressBar(50);
+                    
+                    // Encriptar según el algoritmo seleccionado
+                    if (algorithm === 'AES') {
+                        encrypted = CryptoJS.AES.encrypt(wordArray, key).toString();
+                    } else if (algorithm === 'TripleDES') {
+                        encrypted = CryptoJS.TripleDES.encrypt(wordArray, key).toString();
+                    }
+                    
+                    updateProgressBar(90);
+                    
+                    // Combinar metadatos y datos encriptados
+                    encryptedData = encodedMetadata + "|" + encrypted;
+                    
+                    updateProgressBar(100);
+                    document.getElementById('status-message').textContent = 'Video encriptado correctamente!';
+                    document.getElementById('download-encrypted-btn').style.display = 'block';
+                } catch (error) {
+                    showError('Error durante la encriptación: ' + error.message);
+                    document.getElementById('encryption-progress').style.display = 'none';
+                }
+            };
+            
+            reader.onerror = function() {
+                showError('Error al leer el archivo de video.');
+                document.getElementById('encryption-progress').style.display = 'none';
+            };
+            
+            reader.onprogress = function(event) {
+                if (event.lengthComputable) {
+                    const percentLoaded = Math.round((event.loaded / event.total) * 40);
+                    updateProgressBar(percentLoaded);
+                }
+            };
+            
+            // Iniciar la lectura del archivo
+            reader.readAsArrayBuffer(file);
+        }
+        
+        function downloadEncryptedVideo() {
+            const fileName = document.getElementById('file-name').value || 'video_encriptado';
+            const extension = document.getElementById('file-extension').value;
+            
+            // Crear y descargar el archivo encriptado
+            const blob = new Blob([encryptedData], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName + '.' + extension;
+            link.click();
+        }
+    </script>
+</body>
+</html>

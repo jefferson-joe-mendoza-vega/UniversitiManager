@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desencriptar Video</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #e0f7fa;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #00796b;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #00796b;
+        }
+        .input-group input[type="file"],
+        .input-group input[type="password"],
+        .input-group select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #00796b;
+            border-radius: 6px;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+        .input-group button {
+            width: 100%;
+            padding: 12px;
+            background-color: #00796b;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+        .input-group button:hover {
+            background-color: #004d40;
+        }
+        video {
+            margin-top: 20px;
+            max-width: 100%;
+            border: 2px solid #00796b;
+            border-radius: 6px;
+        }
+        #decrypted-video-container {
+            display: none;
+            margin-top: 20px;
+        }
+        #decryption-progress {
+            width: 100%;
+            height: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+            background-color: #e0e0e0;
+            overflow: hidden;
+            display: none;
+        }
+        #progress-bar {
+            height: 100%;
+            background-color: #00796b;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        #progress-text {
+            margin-top: 5px;
+            font-weight: bold;
+            color: #00796b;
+        }
+        #download-btn {
+            display: none;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #00796b;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #download-btn:hover {
+            background-color: #004d40;
+        }
+        .status-message {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #00796b;
+        }
+        .error-message {
+            color: #d32f2f;
+            margin-top: 10px;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Desencriptar Video</h1>
+        <div class="input-group">
+            <label for="encrypted-file">Selecciona el archivo encriptado:</label>
+            <input type="file" id="encrypted-file" accept=".txt,.evid,.enc">
+        </div>
+        <div class="input-group">
+            <label for="decryption-key">Clave de desencriptación:</label>
+            <input type="password" id="decryption-key" placeholder="Introduce la clave de desencriptación">
+        </div>
+        <div class="input-group">
+            <label for="decryption-algorithm">Algoritmo de desencriptación:</label>
+            <select id="decryption-algorithm">
+                <option value="AES">AES</option>
+                <option value="TripleDES">TripleDES</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <button onclick="decryptVideo()">Desencriptar Video</button>
+        </div>
+        
+        <div id="decryption-progress">
+            <div id="progress-bar"></div>
+        </div>
+        <div id="progress-text"></div>
+        
+        <div class="status-message" id="status-message"></div>
+        <div class="error-message" id="error-message"></div>
+        
+        <div id="decrypted-video-container">
+            <h2>Video Desencriptado</h2>
+            <video id="decrypted-video" controls></video>
+            <button id="download-btn" onclick="downloadDecryptedVideo()">Descargar Video</button>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.0.0/crypto-js.js"></script>
+    <script>
+        let decryptedBlob;
+        let originalFileName;
+        let originalMimeType;
+        
+        function showError(message) {
+            const errorElement = document.getElementById('error-message');
+            errorElement.innerText = message;
+            errorElement.style.display = 'block';
+        }
+        
+        function clearError() {
+            document.getElementById('error-message').style.display = 'none';
+        }
+        
+        function updateProgressBar(percent) {
+            document.getElementById('progress-bar').style.width = percent + '%';
+            document.getElementById('progress-text').textContent = `Progreso: ${Math.round(percent)}%`;
+        }
+        
+        function decryptVideo() {
+            clearError();
+            const fileInput = document.getElementById('encrypted-file');
+            const key = document.getElementById('decryption-key').value;
+            const algorithm = document.getElementById('decryption-algorithm').value;
+
+            if (!fileInput.files.length) {
+                showError('Por favor selecciona un archivo encriptado.');
+                return;
+            }
+            
+            if (!key) {
+                showError('Por favor proporciona una clave de desencriptación.');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            
+            // Mostrar barra de progreso
+            document.getElementById('decryption-progress').style.display = 'block';
+            document.getElementById('status-message').textContent = 'Desencriptando video...';
+            document.getElementById('decrypted-video-container').style.display = 'none';
+            document.getElementById('download-btn').style.display = 'none';
+            
+            // Leer el archivo como texto
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                try {
+                    const encryptedData = event.target.result;
+                    
+                    // Separar metadatos y datos encriptados
+                    const parts = encryptedData.split('|');
+                    if (parts.length !== 2) {
+                        throw new Error('Formato de archivo encriptado inválido');
+                    }
+                    
+                    const encodedMetadata = parts[0];
+                    const encryptedContent = parts[1];
+                    
+                    // Decodificar metadatos
+                    let videoInfo;
+                    try {
+                        videoInfo = JSON.parse(atob(encodedMetadata));
+                        originalFileName = videoInfo.name.split('.').slice(0, -1).join('.');
+                        originalMimeType = videoInfo.mimeType;
+                    } catch (e) {
+                        throw new Error('Metadatos de archivo corruptos o inválidos');
+                    }
+                    
+                    updateProgressBar(30);
+                    
+                    // Desencriptar según algoritmo
+                    let decrypted;
+                    if (algorithm === 'AES') {
+                        decrypted = CryptoJS.AES.decrypt(encryptedContent, key);
+                    } else if (algorithm === 'TripleDES') {
+                        decrypted = CryptoJS.TripleDES.decrypt(encryptedContent, key);
+                    } else {
+                        throw new Error('Algoritmo de desencriptación no soportado');
+                    }
+                    
+                    updateProgressBar(70);
+                    
+                    // Verificar desencriptación exitosa
+                    if (decrypted.sigBytes <= 0) {
+                        throw new Error('La clave proporcionada es incorrecta o el archivo está corrupto');
+                    }
+                    
+                    // Convertir WordArray a ArrayBuffer
+                    const typedArray = convertWordArrayToUint8Array(decrypted);
+                    
+                    updateProgressBar(90);
+                    
+                    // Crear blob y mostrar video
+                    decryptedBlob = new Blob([typedArray], { type: originalMimeType });
+                    const videoURL = URL.createObjectURL(decryptedBlob);
+                    
+                    const videoElement = document.getElementById('decrypted-video');
+                    videoElement.onloadeddata = function() {
+                        updateProgressBar(100);
+                        document.getElementById('status-message').textContent = 'Video desencriptado correctamente!';
+                        document.getElementById('decrypted-video-container').style.display = 'block';
+                        document.getElementById('download-btn').style.display = 'block';
+                    };
+                    
+                    videoElement.onerror = function() {
+                        throw new Error('No se pudo cargar el video. La clave puede ser incorrecta o el archivo está dañado.');
+                    };
+                    
+                    videoElement.src = videoURL;
+                    
+                } catch (error) {
+                    showError('Error al desencriptar: ' + error.message);
+                    document.getElementById('decryption-progress').style.display = 'none';
+                }
+            };
+            
+            reader.onerror = function() {
+                showError('Error al leer el archivo.');
+                document.getElementById('decryption-progress').style.display = 'none';
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        function convertWordArrayToUint8Array(wordArray) {
+            // Método para convertir WordArray a Uint8Array
+            const arrayBuffer = new ArrayBuffer(wordArray.sigBytes);
+            const uint8Array = new Uint8Array(arrayBuffer);
+            
+            for (let i = 0; i < wordArray.sigBytes; i++) {
+                const bytePosition = i % 4;
+                const wordIndex = Math.floor(i / 4);
+                // Extraer el byte específico de la palabra en la posición correcta
+                uint8Array[i] = (wordArray.words[wordIndex] >>> (24 - 8 * bytePosition)) & 0xff;
+            }
+            
+            return uint8Array;
+        }
+        
+        function downloadDecryptedVideo() {
+            if (!decryptedBlob) {
+                showError('No hay video para descargar');
+                return;
+            }
+            
+            // Determinar extensión del archivo original
+            let extension = 'mp4';
+            if (originalMimeType) {
+                const mimeMap = {
+                    'video/mp4': 'mp4',
+                    'video/webm': 'webm',
+                    'video/ogg': 'ogg'
+                };
+                extension = mimeMap[originalMimeType] || 'mp4';
+            }
+            
+            // Nombre de descarga
+            let downloadName = originalFileName || 'video_desencriptado';
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(decryptedBlob);
+            link.download = downloadName + '.' + extension;
+            link.click();
+        }
+    </script>
+</body>
+</html>

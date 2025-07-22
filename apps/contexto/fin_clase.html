@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fin de Clase</title>
+    <!-- Bootstrap CSS para estilos rápidos y responsivos -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- D3.js CDN -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Estilos personalizados -->
+    <style>
+        /* Centrar el contenido vertical y horizontalmente */
+        .content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh; /* Ocupa al menos la altura completa de la ventana */
+            padding: 20px;
+            background-color: #f0f4f8;
+        }
+
+        /* Estilo para el contenedor del diagrama */
+        #diagram {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+        }
+
+        /* Responsividad para dispositivos móviles */
+        @media (max-width: 576px) {
+            #diagram {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <!-- Contenedor para el diagrama de flujo -->
+        <svg id="diagram"></svg>
+    </div>
+
+    <!-- Script para crear el diagrama de flujo con D3.js -->
+    <script>
+        // Configuración del SVG
+        const svg = d3.select("#diagram")
+                      .attr("width", "100%")
+                      .attr("height", 400);
+
+        const width = parseInt(svg.style("width"));
+        const height = parseInt(svg.style("height"));
+
+        // Datos de los nodos con iconos añadidos usando emojis
+        const nodes = [
+            { id: "📝 Revisar notas 15 min", x: width / 2, y: 50 }, // Primer cuadro
+            { id: "✅ Lista de tareas", x: width / 2, y: 200 },     // Segundo cuadro
+            { id: "⏰ Reloj y Google Calendar", x: width / 2, y: 350 }, // Tercer cuadro
+            { id: "Desarrollo de la Clase", x: width / 2, y: 500 },
+            { id: "Fin de Clase", x: width / 2, y: 650 }
+        ];
+
+        // Datos de las conexiones (links)
+        const links = [
+            { source: "📝 Revisar notas 15 min", target: "✅ Lista de tareas" },
+            { source: "✅ Lista de tareas", target: "⏰ Reloj y Google Calendar" },
+            { source: "⏰ Reloj y Google Calendar", target: "Desarrollo de la Clase" },
+            { source: "Desarrollo de la Clase", target: "Fin de Clase" }
+        ];
+
+        // Crear grupos para enlaces y nodos
+        const linkGroup = svg.append("g")
+                             .attr("class", "links");
+
+        const nodeGroup = svg.append("g")
+                             .attr("class", "nodes");
+
+        // Dibujar las líneas de conexión
+        linkGroup.selectAll("line")
+                 .data(links)
+                 .enter()
+                 .append("line")
+                 .attr("x1", d => getNodeById(d.source).x)
+                 .attr("y1", d => getNodeById(d.source).y + 20)
+                 .attr("x2", d => getNodeById(d.target).x)
+                 .attr("y2", d => getNodeById(d.target).y - 20)
+                 .attr("stroke", "#2c3e50")
+                 .attr("stroke-width", 2)
+                 .attr("marker-end", "url(#arrow)");
+
+        // Definir la flecha para las conexiones
+        svg.append("defs").append("marker")
+            .attr("id", "arrow")
+            .attr("viewBox", "0 0 10 10")
+            .attr("refX", 5)
+            .attr("refY", 5)
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto-start-reverse")
+            .append("path")
+            .attr("d", "M 0 0 L 10 5 L 0 10 Z")
+            .attr("fill", "#2c3e50");
+
+        // Dibujar los rectángulos (nodos)
+        nodeGroup.selectAll("rect")
+                 .data(nodes)
+                 .enter()
+                 .append("rect")
+                 .attr("x", d => d.x - 100) // Ajusta la posición X para centrar el rectángulo
+                 .attr("y", d => d.y - 20)
+                 .attr("width", 200)
+                 .attr("height", 40)
+                 .attr("rx", 10) // Bordes redondeados
+                 .attr("ry", 10)
+                 .attr("fill", "#3498db")
+                 .attr("stroke", "#2980b9")
+                 .attr("stroke-width", 2);
+
+        // Añadir el texto a los nodos
+        nodeGroup.selectAll("text")
+                 .data(nodes)
+                 .enter()
+                 .append("text")
+                 .attr("x", d => d.x)
+                 .attr("y", d => d.y + 5)
+                 .attr("text-anchor", "middle")
+                 .attr("fill", "#ffffff")
+                 .attr("font-size", "1rem")
+                 .text(d => d.id);
+
+        // Función para obtener un nodo por su ID
+        function getNodeById(id) {
+            return nodes.find(node => node.id === id);
+        }
+
+        // Responsividad: actualizar el diagrama al cambiar el tamaño de la ventana
+        window.addEventListener("resize", () => {
+            const newWidth = parseInt(svg.style("width"));
+            // Actualizar posiciones X si la pantalla cambia de tamaño
+            nodes.forEach(node => node.x = newWidth / 2);
+
+            // Redibujar las líneas
+            linkGroup.selectAll("line")
+                     .attr("x1", d => getNodeById(d.source).x)
+                     .attr("y1", d => getNodeById(d.source).y + 20)
+                     .attr("x2", d => getNodeById(d.target).x)
+                     .attr("y2", d => getNodeById(d.target).y - 20);
+
+            // Redibujar los rectángulos
+            nodeGroup.selectAll("rect")
+                     .attr("x", d => d.x - 100);
+
+            // Redibujar el texto
+            nodeGroup.selectAll("text")
+                     .attr("x", d => d.x);
+        });
+    </script>
+
+    <!-- Bootstrap JS (opcional, para componentes interactivos) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+</body>
+</html>

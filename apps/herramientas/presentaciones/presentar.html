@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Presentador HTML - Tema Oscuro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            dark: { 700: '#111827', 800: '#0d1117', 900: '#030712' },
+            accent: { 300: '#3b82f6', 500: '#1d4ed8', 600: '#1e40af' },
+            danger: { 600: '#dc2626' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0d1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .app-container {
+      max-width: 60rem;
+      margin: 0 auto;
+      background: rgba(31,41,55,.85);
+      backdrop-filter: blur(12px);
+      border-radius: .75rem;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,.2), 0 10px 10px -5px rgba(0,0,0,.1);
+      border: 1px solid rgba(75,85,99,.3);
+      padding: 1.5rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .thumbnails-container {
+      display: flex;
+      overflow-x: auto;
+      gap: 12px;
+      padding: 12px 8px 16px 8px;
+      margin-bottom: 20px;
+      background: rgba(17,24,39,0.6);
+      border-radius: 8px;
+      border: 1px solid rgba(75,85,99,0.4);
+      min-height: 95px;
+      scrollbar-width: thin;
+      scrollbar-color: #4b5563 #1f2937;
+    }
+    .thumbnails-container::-webkit-scrollbar { height: 6px; }
+    .thumbnails-container::-webkit-scrollbar-track { background: #1f2937; border-radius: 3px;}
+    .thumbnails-container::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px;}
+    .slide-outer-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      border-radius: .75rem;
+      background: #111827;
+      border: 1px solid #4b5563;
+      overflow: hidden;
+      min-height: 500px;
+      max-height: 600px;
+      position: relative;
+    }
+    #slideFrame { 
+      width: 100%; 
+      height: 100%; 
+      border: none; 
+      background: #fff; 
+      transition: opacity .3s; 
+      display: block; 
+      min-height: 500px;
+    }
+    .slide-placeholder {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; color: #9ca3af; z-index: 2;
+    }
+    .slide-thumbnail {
+      min-width: 140px; width: 140px; height: 79px;
+      background: #1f2937; border: 2px solid #374151;
+      border-radius: 6px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; position: relative; transition: all .2s;
+      overflow: hidden; flex-shrink: 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .slide-thumbnail:hover { border-color: #60a5fa; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.3);}
+    .slide-thumbnail.active { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.3),0 4px 8px rgba(0,0,0,0.3);}
+    .slide-thumbnail-number {
+      position: absolute; bottom: 4px; right: 4px; font-size: 11px; font-weight: 600;
+      background: rgba(0,0,0,.8); color: #fff; border-radius: 4px;
+      padding: 2px 6px; z-index: 10; border: 1px solid rgba(255,255,255,.2);
+    }
+    .slide-thumbnail iframe {
+      width: 1120px; 
+      height: 630px; 
+      transform: scale(0.125); 
+      transform-origin: top left;
+      border: none; pointer-events: none; position: absolute; top: 0; left: 0; background: #fff;
+    }
+    .nav-button:disabled { cursor: not-allowed; background: #4b5563; opacity: .7;}
+    .message-box {
+      position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
+      padding: 12px 24px; border-radius: .375rem; box-shadow: 0 4px 10px rgba(0,0,0,.15);
+      z-index: 10000; font-size: .95rem; opacity: 0; pointer-events: none; transition: opacity .4s, top .4s;
+    }
+    .message-box.success { background: #16a34a; color: #fff; }
+    .message-box.error { background: #dc2626; color: #fff; }
+    .message-box.warning { background: #f59e0b; color: #fff; }
+    .message-box.visible { opacity: 1; top: 60px; }
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.7);
+      display: flex; align-items: center; justify-content: center; z-index: 50;
+      opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s;
+    }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    .modal-content {
+      background: #1f2937; padding: 1.5rem; border-radius: .5rem;
+      width: 90%; max-width: 400px; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -1px rgba(0,0,0,.06);
+    }
+    .preview-container {
+      position: relative; 
+      width: 100%; 
+      height: 400px;
+      border: 1px solid #4b5563; 
+      border-radius: 8px; 
+      overflow: hidden; 
+      background: #fff; 
+      margin-bottom: 1rem;
+    }
+    .preview-frame { 
+      width: 100%; 
+      height: 100%; 
+      border: none; 
+      background: #fff; 
+      min-height: 400px;
+    }
+    
+    /* Control remoto styles */
+    .remote-control-panel {
+      background: rgba(17,24,39,0.9);
+      border: 1px solid rgba(75,85,99,0.5);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .session-code {
+      font-family: 'Courier New', monospace;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #3b82f6;
+      background: rgba(59,130,246,0.1);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      border: 1px solid rgba(59,130,246,0.3);
+      text-align: center;
+      letter-spacing: 2px;
+    }
+    .connection-status {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    .connection-status.connected {
+      background: rgba(16,185,129,0.2);
+      color: #10b981;
+      border: 1px solid rgba(16,185,129,0.3);
+    }
+    .connection-status.disconnected {
+      background: rgba(239,68,68,0.2);
+      color: #ef4444;
+      border: 1px solid rgba(239,68,68,0.3);
+    }
+    
+    /* Fullscreen styles */
+    #presentationHost.fullscreen-mode .app-container,
+    #presentationHost.fullscreen-mode .slide-outer-container {
+      width: 100vw; max-width: none; height: 100vh; border-radius: 0; border: none; box-shadow: none; padding: 0;
+      max-height: none;
+    }
+    #presentationHost.fullscreen-mode header,
+    #presentationHost.fullscreen-mode .slide-actions,
+    #presentationHost.fullscreen-mode .editor-panel,
+    #presentationHost.fullscreen-mode .thumbnails-container,
+    #presentationHost.fullscreen-mode .remote-control-panel { display: none !important; }
+    .fullscreen-controls {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: rgba(17,24,39,.9); padding: .75rem 1.5rem; border-radius: 9999px;
+      border: 1px solid rgba(75,85,99,.5); z-index: 1000; display: none; opacity: 0; transition: opacity .3s;
+    }
+    #presentationHost.fullscreen-mode .fullscreen-controls { display: flex; }
+    #presentationHost.fullscreen-mode .fullscreen-controls.visible { opacity: 1; }
+    #presentationHost.fullscreen-mode .navigation-controls { display: none !important;}
+    textarea:focus, input:focus, button:focus { outline: none; box-shadow: 0 0 0 2px #3b82f6; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-dark-900 to-dark-700">
+  <div id="presentationHost">
+    <div class="app-container">
+      <header class="mb-6 text-center flex-shrink-0">
+        <h1 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400">Presentador HTML</h1>
+        <p class="text-dark-100 mt-2 text-sm">Crea, edita y visualiza tus diapositivas HTML interactivas</p>
+      </header>
+      
+      <!-- Panel de Control Remoto -->
+      <div class="remote-control-panel">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="text-lg font-semibold text-white">Control Remoto</h3>
+          <div id="connectionStatus" class="connection-status disconnected">
+            <span class="w-2 h-2 bg-current rounded-full mr-2"></span>
+            Desconectado
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Código de Sesión</label>
+            <div id="sessionCode" class="session-code">No iniciado</div>
+          </div>
+          <div class="flex flex-col justify-end">
+            <button id="toggleRemoteBtn" class="bg-accent-600 hover:bg-accent-500 text-white font-semibold py-2 px-4 rounded-lg">
+              Iniciar Control Remoto
+            </button>
+          </div>
+        </div>
+        <p class="text-sm text-gray-400 mt-3">
+          Comparte este código con el dispositivo de control. Solo funciona en modo presentación.
+        </p>
+      </div>
+      
+      <div id="thumbnailsContainer" class="thumbnails-container hidden"></div>
+      
+      <div class="slide-outer-container mb-6">
+        <iframe id="slideFrame" title="Contenido de la Diapositiva Actual" allowfullscreen sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-modals"></iframe>
+        <div id="slidePlaceholder" class="slide-placeholder">
+          <div class="text-center p-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-dark-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h10a2 2 0 012 2v14a2 2 0 01-2 2z" />
+            </svg>
+            <p class="text-dark-200">No hay diapositivas. Agrega una usando el formulario de abajo.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="navigation-controls flex flex-wrap justify-between items-center mb-6 gap-3 flex-shrink-0">
+        <button id="prevBtn" class="nav-button bg-dark-600 hover:bg-dark-500 text-white font-semibold py-2.5 px-5 rounded-lg shadow-md" disabled>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+        <div class="text-dark-200 font-medium w-full sm:w-auto text-center py-2">
+          Diapositiva <span id="currentSlideNum" class="font-bold text-accent-300">0</span> de <span id="totalSlidesNum" class="font-bold text-accent-300">0</span>
+        </div>
+        <button id="nextBtn" class="nav-button bg-dark-600 hover:bg-dark-500 text-white font-semibold py-2.5 px-5 rounded-lg shadow-md" disabled>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+        <button id="fullscreenBtn" class="nav-button w-full mt-2 sm:mt-0 sm:w-auto bg-accent-600 hover:bg-accent-500 text-white font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center">
+          <svg id="fullscreenIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+          <svg id="exitFullscreenIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 0-2-2h-3M3 16h3a2 2 0 0 0 2 2v3"/></svg>
+          <span id="fullscreenBtnText">P. Completa</span>
+        </button>
+      </div>
+      
+      <div class="slide-actions flex gap-2 mt-2">
+        <button id="editSlideBtn" class="flex-grow bg-dark-600 hover:bg-dark-500 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2" disabled>✎ Editar</button>
+        <button id="deleteSlideBtn" class="flex-grow bg-dark-600 hover:bg-danger-600 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2" disabled>🗑️ Eliminar</button>
+      </div>
+      
+      <div class="editor-panel p-6 mt-6 bg-dark-600 rounded-lg shadow-inner border border-dark-400 flex-shrink-0">
+        <h2 class="text-xl font-semibold text-white mb-2 flex items-center justify-between">
+          <span id="editorTitle">Agregar Nueva Diapositiva</span>
+          <button id="clearEditorBtn" class="text-sm text-dark-200 hover:text-white bg-dark-700 hover:bg-dark-500 py-1 px-3 rounded">Limpiar</button>
+        </h2>
+        <p class="text-sm text-dark-100 mb-3">Pega tu código HTML. Para recursos externos usa <strong>URLs absolutas</strong>.</p>
+        
+        <div id="previewContainer" class="preview-container hidden">
+          <iframe id="previewFrame" class="preview-frame" title="Vista previa" sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-modals"></iframe>
+        </div>
+        
+        <textarea id="slideEditor" class="w-full h-40 p-3 border border-dark-400 rounded-md bg-dark-700 text-white font-mono text-sm" placeholder="Escribe o pega tu código HTML aquí..."></textarea>
+        <div class="flex justify-end mt-4 gap-2">
+          <button id="previewBtn" class="bg-dark-500 hover:bg-dark-400 text-white font-medium py-2 px-4 rounded-lg">Vista Previa</button>
+          <button id="saveSlideBtn" class="bg-accent-500 hover:bg-accent-400 text-white font-bold py-2 px-6 rounded-lg"><span id="saveButtonText">Guardar</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="fullscreen-controls">
+      <button id="fullscreenPrevBtn" class="nav-button bg-dark-600 hover:bg-dark-500 text-white font-semibold py-2 px-4 rounded-lg mr-4" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+      <div class="text-white font-medium px-4">
+        <span id="fullscreenCurrentSlide">1</span> / <span id="fullscreenTotalSlides">1</span>
+      </div>
+      <button id="fullscreenNextBtn" class="nav-button bg-dark-600 hover:bg-dark-500 text-white font-semibold py-2 px-4 rounded-lg ml-4" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Modales existentes -->
+  <div id="deleteModal" class="modal-overlay">
+    <div class="modal-content">
+      <h3 class="text-xl font-semibold text-white mb-4">Confirmar eliminación</h3>
+      <p class="text-dark-100 mb-6">¿Estás seguro de eliminar esta diapositiva? Esta acción no se puede deshacer.</p>
+      <div class="flex justify-end gap-3">
+        <button id="cancelDeleteBtn" class="bg-dark-500 hover:bg-dark-400 text-white font-medium py-2 px-4 rounded-lg">Cancelar</button>
+        <button id="confirmDeleteBtn" class="bg-danger-600 hover:bg-danger-500 text-white font-medium py-2 px-4 rounded-lg">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="messageBox" class="message-box"></div>
+
+  <!-- Firebase y Scripts -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+    import { getFirestore, doc, setDoc, onSnapshot, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyARQ-euUBzXOFhRWDyGPEvuvJn6S1p2Gks",
+      authDomain: "iam-presentacion.firebaseapp.com",
+      projectId: "iam-presentacion",
+      storageBucket: "iam-presentacion.firebasestorage.app",
+      messagingSenderId: "522271660881",
+      appId: "1:522271660881:web:438d64b46d12189f1f1170",
+      measurementId: "G-F3VWDGJ002"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
+    // Variables globales para Firebase
+    window.db = db;
+    window.firestoreModules = { doc, setDoc, onSnapshot, updateDoc, deleteDoc };
+  </script>
+
+  <script>
+    // === VARIABLES Y SELECTORES ===
+    let slides = [];
+    let currentSlideIndex = 0;
+    let isEditingExisting = false;
+    let controlsVisible = true, hideControlsTimeout;
+    
+    // Variables para control remoto OPTIMIZADAS
+    let sessionId = null;
+    let remoteControlActive = false;
+    let unsubscribeSession = null;
+    let lastProcessedAction = null;
+    let lastActionTimestamp = 0;
+    let isProcessingRemoteAction = false;
+    
+    // Configuración para prevenir comandos repetidos
+    const REMOTE_ACTION_COOLDOWN = 500; // 500ms entre acciones remotas
+    const ACTION_BUFFER_TIME = 100; // Buffer para evitar duplicados
+    
+    const $ = id => document.getElementById(id);
+
+    // DOM elements
+    const el = {
+      host: $("presentationHost"),
+      slideFrame: $("slideFrame"),
+      slidePlaceholder: $("slidePlaceholder"),
+      thumbnails: $("thumbnailsContainer"),
+      prevBtn: $("prevBtn"),
+      nextBtn: $("nextBtn"),
+      slideNum: $("currentSlideNum"),
+      totalSlides: $("totalSlidesNum"),
+      slideEditor: $("slideEditor"),
+      saveBtn: $("saveSlideBtn"),
+      saveBtnText: $("saveButtonText"),
+      previewBtn: $("previewBtn"),
+      previewContainer: $("previewContainer"),
+      previewFrame: $("previewFrame"),
+      clearEditorBtn: $("clearEditorBtn"),
+      editorTitle: $("editorTitle"),
+      msg: $("messageBox"),
+      fullscreenBtn: $("fullscreenBtn"),
+      fullscreenIcon: $("fullscreenIcon"),
+      exitFullscreenIcon: $("exitFullscreenIcon"),
+      fullscreenBtnText: $("fullscreenBtnText"),
+      editBtn: $("editSlideBtn"),
+      delBtn: $("deleteSlideBtn"),
+      deleteModal: $("deleteModal"),
+      confirmDelBtn: $("confirmDeleteBtn"),
+      cancelDelBtn: $("cancelDeleteBtn"),
+      fullscreenControls: document.querySelector(".fullscreen-controls"),
+      fullscreenPrevBtn: $("fullscreenPrevBtn"),
+      fullscreenNextBtn: $("fullscreenNextBtn"),
+      fullscreenCurrent: $("fullscreenCurrentSlide"),
+      fullscreenTotal: $("fullscreenTotalSlides"),
+      // Elementos del control remoto
+      sessionCode: $("sessionCode"),
+      connectionStatus: $("connectionStatus"),
+      toggleRemoteBtn: $("toggleRemoteBtn")
+    };
+
+    // === UTILIDADES ===
+    const showMessage = (msg, type='success', duration=2400) => {
+      el.msg.textContent = msg;
+      el.msg.className = `message-box ${type} visible`;
+      setTimeout(() => el.msg.classList.remove('visible'), duration);
+    };
+
+    // === FUNCIONES DE CONTROL REMOTO OPTIMIZADAS ===
+    function generateSessionCode() {
+      return Math.random().toString(36).substring(2, 8).toUpperCase();
+    }
+
+    async function startRemoteControl() {
+      if (!window.db) {
+        showMessage("Error: Firebase no está disponible", "error");
+        return;
+      }
+
+      try {
+        sessionId = generateSessionCode();
+        const { doc, setDoc } = window.firestoreModules;
+        
+        const sessionData = {
+          currentSlide: currentSlideIndex,
+          totalSlides: slides.length,
+          action: null,
+          timestamp: Date.now(),
+          active: true,
+          lastActionId: null // Nuevo campo para tracking de acciones
+        };
+
+        await setDoc(doc(window.db, "presentations", sessionId), sessionData);
+        
+        // Escuchar cambios en la sesión con handler optimizado
+        const { onSnapshot } = window.firestoreModules;
+        unsubscribeSession = onSnapshot(doc(window.db, "presentations", sessionId), (docSnapshot) => {
+          if (docSnapshot.exists()) {
+            const data = docSnapshot.data();
+            handleRemoteActionOptimized(data);
+          }
+        });
+
+        remoteControlActive = true;
+        el.sessionCode.textContent = sessionId;
+        el.connectionStatus.textContent = "Conectado";
+        el.connectionStatus.className = "connection-status connected";
+        el.toggleRemoteBtn.textContent = "Detener Control Remoto";
+        
+        showMessage(`Control remoto iniciado. Código: ${sessionId}`, "success");
+      } catch (error) {
+        console.error("Error iniciando control remoto:", error);
+        showMessage("Error al iniciar control remoto", "error");
+      }
+    }
+
+    async function stopRemoteControl() {
+      if (!sessionId) return;
+
+      try {
+        // Eliminar la sesión de Firestore
+        const { deleteDoc, doc } = window.firestoreModules;
+        await deleteDoc(doc(window.db, "presentations", sessionId));
+        
+        // Detener el listener
+        if (unsubscribeSession) {
+          unsubscribeSession();
+          unsubscribeSession = null;
+        }
+
+        // Limpiar estado
+        remoteControlActive = false;
+        sessionId = null;
+        lastProcessedAction = null;
+        lastActionTimestamp = 0;
+        isProcessingRemoteAction = false;
+        
+        el.sessionCode.textContent = "No iniciado";
+        el.connectionStatus.textContent = "Desconectado";
+        el.connectionStatus.className = "connection-status disconnected";
+        el.toggleRemoteBtn.textContent = "Iniciar Control Remoto";
+        
+        showMessage("Control remoto detenido", "warning");
+      } catch (error) {
+        console.error("Error deteniendo control remoto:", error);
+        showMessage("Error al detener control remoto", "error");
+      }
+    }
+
+    // FUNCIÓN CLAVE OPTIMIZADA - Aquí estaba el problema principal
+    async function handleRemoteActionOptimized(data) {
+      // Verificar si hay una acción válida
+      if (!data.action || !data.timestamp) return;
+      
+      // Prevenir procesamiento de la misma acción repetidamente
+      const actionId = `${data.action}_${data.timestamp}`;
+      if (lastProcessedAction === actionId) {
+        return; // Ya procesamos esta acción
+      }
+      
+      // Verificar cooldown entre acciones
+      const now = Date.now();
+      if (now - lastActionTimestamp < REMOTE_ACTION_COOLDOWN) {
+        return; // Muy pronto para procesar otra acción
+      }
+      
+      // Verificar que no estemos ya procesando una acción
+      if (isProcessingRemoteAction) {
+        return;
+      }
+      
+      // Marcar como procesando
+      isProcessingRemoteAction = true;
+      lastProcessedAction = actionId;
+      lastActionTimestamp = now;
+      
+      console.log(`[REMOTE] Procesando acción: ${data.action}, Timestamp: ${data.timestamp}`);
+      
+      try {
+        let actionExecuted = false;
+        
+        switch (data.action) {
+          case 'next':
+            if (currentSlideIndex < slides.length - 1) {
+              currentSlideIndex++;
+              actionExecuted = true;
+            }
+            break;
+          case 'prev':
+            if (currentSlideIndex > 0) {
+              currentSlideIndex--;
+              actionExecuted = true;
+            }
+            break;
+          case 'goto':
+            if (data.slideIndex !== undefined && 
+                data.slideIndex >= 0 && 
+                data.slideIndex < slides.length) {
+              currentSlideIndex = data.slideIndex;
+              actionExecuted = true;
+            }
+            break;
+        }
+        
+        if (actionExecuted) {
+          renderSlide();
+          showControlsTemporarily();
+          
+          // IMPORTANTE: Limpiar la acción para evitar repeticiones
+          setTimeout(async () => {
+            try {
+              const { updateDoc, doc } = window.firestoreModules;
+              await updateDoc(doc(window.db, "presentations", sessionId), {
+                action: null,
+                lastActionId: actionId,
+                currentSlide: currentSlideIndex,
+                timestamp: Date.now()
+              });
+            } catch (error) {
+              console.error("Error limpiando acción:", error);
+            }
+          }, ACTION_BUFFER_TIME);
+        }
+        
+      } finally {
+        // Liberar el lock después de un breve delay
+        setTimeout(() => {
+          isProcessingRemoteAction = false;
+        }, ACTION_BUFFER_TIME * 2);
+      }
+    }
+
+    async function updateRemoteSession() {
+      if (!remoteControlActive || !sessionId || isProcessingRemoteAction) return;
+
+      try {
+        const { updateDoc, doc } = window.firestoreModules;
+        await updateDoc(doc(window.db, "presentations", sessionId), {
+          currentSlide: currentSlideIndex,
+          totalSlides: slides.length,
+          timestamp: Date.now()
+          // No actualizar 'action' aquí para evitar interferencia
+        });
+      } catch (error) {
+        console.error("Error actualizando sesión remota:", error);
+      }
+    }
+
+    function toggleRemoteControl() {
+      if (remoteControlActive) {
+        stopRemoteControl();
+      } else {
+        startRemoteControl();
+      }
+    }
+
+    // === FUNCIONES ORIGINALES DEL PRESENTADOR ===
+    function updateThumbnails() {
+      el.thumbnails.innerHTML = "";
+      if (!slides.length) return el.thumbnails.classList.add('hidden');
+      el.thumbnails.classList.remove('hidden');
+      slides.forEach((slide, i) => {
+        const thumb = document.createElement('div');
+        thumb.className = `slide-thumbnail${i === currentSlideIndex ? " active" : ""}`;
+        const thumbFrame = document.createElement('iframe');
+        thumbFrame.srcdoc = slide;
+        thumb.innerHTML = `<span class="slide-thumbnail-number">${i+1}</span>`;
+        thumb.appendChild(thumbFrame);
+        thumb.onclick = () => { 
+          currentSlideIndex = i; 
+          renderSlide(); 
+        };
+        el.thumbnails.appendChild(thumb);
+      });
+    }
+
+    function renderSlide() {
+      el.slideFrame.style.opacity = 0;
+      setTimeout(() => {
+        if (!slides.length) {
+          el.slidePlaceholder.style.display = "flex";
+          el.slideFrame.srcdoc = "";
+        } else {
+          el.slidePlaceholder.style.display = "none";
+          currentSlideIndex = Math.max(0, Math.min(currentSlideIndex, slides.length-1));
+          el.slideFrame.srcdoc = slides[currentSlideIndex];
+        }
+        updateNavigation();
+        updateThumbnails();
+        updateEditorMode();
+        
+        // Solo actualizar sesión remota si no estamos procesando una acción remota
+        if (!isProcessingRemoteAction) {
+          updateRemoteSession();
+        }
+        
+        el.slideFrame.style.opacity = 1;
+      }, 20);
+    }
+
+    function updateNavigation() {
+      const slideNum = slides.length ? currentSlideIndex+1 : 0;
+      const total = slides.length;
+      el.slideNum.textContent = slideNum;
+      el.totalSlides.textContent = total;
+      el.prevBtn.disabled = !slides.length || currentSlideIndex === 0;
+      el.nextBtn.disabled = !slides.length || currentSlideIndex === slides.length-1;
+      el.fullscreenCurrent.textContent = slideNum;
+      el.fullscreenTotal.textContent = total;
+      el.fullscreenPrevBtn.disabled = el.prevBtn.disabled;
+      el.fullscreenNextBtn.disabled = el.nextBtn.disabled;
+      el.editBtn.disabled = el.delBtn.disabled = !slides.length;
+    }
+
+    function updateEditorMode() {
+      el.editorTitle.textContent = isEditingExisting ? `Editando Diapositiva ${currentSlideIndex+1}` : "Agregar Nueva Diapositiva";
+      el.saveBtnText.textContent = isEditingExisting ? "Actualizar" : "Guardar";
+    }
+
+    const editCurrentSlide = () => {
+      if (!slides.length) return;
+      isEditingExisting = true;
+      el.slideEditor.value = slides[currentSlideIndex];
+      updateEditorMode();
+      el.slideEditor.scrollIntoView({behavior:"smooth"});
+      showMessage("Diapositiva cargada en el editor");
+    };
+
+    // Funciones de navegación con protección adicional
+    const prevSlide = () => {
+      if (isProcessingRemoteAction) return; // Bloquear si hay acción remota en proceso
+      if(currentSlideIndex>0){ 
+        currentSlideIndex--; 
+        renderSlide(); 
+        showControlsTemporarily(); 
+      }
+    };
+    
+    const nextSlide = () => {
+      if (isProcessingRemoteAction) return; // Bloquear si hay acción remota en proceso
+      if(currentSlideIndex<slides.length-1){ 
+        currentSlideIndex++; 
+        renderSlide(); 
+        showControlsTemporarily(); 
+      }
+    };
+
+    function previewSlide() {
+      const html = el.slideEditor.value.trim();
+      if(!html) return showMessage("El contenido está vacío","error");
+      el.previewContainer.classList.remove('hidden');
+      el.previewFrame.srcdoc = html;
+      el.slidePlaceholder.style.display = "none";
+      el.slideFrame.srcdoc = html;
+      el.slideFrame.style.opacity = 1;
+      showMessage("Vista previa activa (no guardada)");
+    }
+
+    function saveSlide() {
+      const html = el.slideEditor.value.trim();
+      if(!html) return showMessage("El contenido no puede estar vacío","error");
+      if(isEditingExisting) {
+        slides[currentSlideIndex] = html;
+        showMessage(`Diapositiva ${currentSlideIndex+1} actualizada`);
+        isEditingExisting = false;
+      } else {
+        slides.push(html);
+        currentSlideIndex = slides.length - 1;
+        showMessage("Nueva diapositiva agregada");
+      }
+      el.slideEditor.value = "";
+      el.previewContainer.classList.add('hidden');
+      updateEditorMode();
+      renderSlide();
+    }
+
+    function clearEditor() {
+      el.slideEditor.value = "";
+      el.previewContainer.classList.add('hidden');
+      isEditingExisting = false;
+      updateEditorMode();
+    }
+
+    const showDeleteModal = () => { if(slides.length) el.deleteModal.classList.add('active'); };
+    const hideDeleteModal = () => el.deleteModal.classList.remove('active');
+    
+    function deleteCurrentSlide() {
+      if(!slides.length) return;
+      slides.splice(currentSlideIndex,1);
+      currentSlideIndex = Math.max(0, slides.length-1);
+      hideDeleteModal();
+      renderSlide();
+      showMessage("Diapositiva eliminada");
+    }
+
+    function toggleFullscreen() {
+      if(!slides.length) return showMessage("Agrega al menos una diapositiva primero","error");
+      if(!document.fullscreenElement) el.host.requestFullscreen?.();
+      else document.exitFullscreen?.();
+    }
+
+    function handleFullscreenChange() {
+      const fs = !!document.fullscreenElement;
+      el.host.classList.toggle('fullscreen-mode', fs);
+      el.fullscreenIcon.style.display = fs?'none':'inline-block';
+      el.exitFullscreenIcon.style.display = fs?'inline-block':'none';
+      el.fullscreenBtnText.textContent = fs?'Salir':'P. Completa';
+      fs ? showControlsTemporarily() : (controlsVisible = true);
+      renderSlide();
+    }
+
+    function showControlsTemporarily() {
+      if (!document.fullscreenElement) return;
+      controlsVisible = true;
+      el.fullscreenControls.classList.add('visible');
+      clearTimeout(hideControlsTimeout);
+      hideControlsTimeout = setTimeout(() => {
+        if (document.fullscreenElement) {
+          controlsVisible = false;
+          el.fullscreenControls.classList.remove('visible');
+        }
+      }, 3000);
+    }
+
+    // === EVENTOS ===
+    el.prevBtn.onclick = prevSlide;
+    el.nextBtn.onclick = nextSlide;
+    el.fullscreenPrevBtn.onclick = prevSlide;
+    el.fullscreenNextBtn.onclick = nextSlide;
+    el.saveBtn.onclick = saveSlide;
+    el.previewBtn.onclick = previewSlide;
+    el.clearEditorBtn.onclick = clearEditor;
+    el.editBtn.onclick = editCurrentSlide;
+    el.delBtn.onclick = showDeleteModal;
+    el.cancelDelBtn.onclick = hideDeleteModal;
+    el.confirmDelBtn.onclick = deleteCurrentSlide;
+    el.fullscreenBtn.onclick = toggleFullscreen;
+    el.toggleRemoteBtn.onclick = toggleRemoteControl;
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+    el.slideEditor.addEventListener('input', () => {
+      const html = el.slideEditor.value.trim();
+      if (html && !el.previewContainer.classList.contains('hidden')) el.previewFrame.srcdoc = html;
+    });
+
+    // Eventos de teclado con protección adicional
+    document.addEventListener('keydown', e => {
+      if(document.activeElement === el.slideEditor) return;
+      if(isProcessingRemoteAction) return; // Bloquear controles locales durante acción remota
+      
+      switch(e.key) {
+        case "ArrowLeft": 
+          if(!el.prevBtn.disabled) prevSlide(); 
+          break;
+        case "ArrowRight": 
+          if(!el.nextBtn.disabled) nextSlide(); 
+          break;
+        case "f": case "F":
+          if(e.ctrlKey || e.metaKey) { e.preventDefault(); toggleFullscreen(); }
+          break;
+        case "Escape":
+          if(document.fullscreenElement) toggleFullscreen();
+          else if(el.deleteModal.classList.contains('active')) hideDeleteModal();
+          break;
+        case "Home":
+          if(slides.length > 0) { currentSlideIndex = 0; renderSlide(); showControlsTemporarily(); }
+          break;
+        case "End":
+          if(slides.length > 0) { currentSlideIndex = slides.length - 1; renderSlide(); showControlsTemporarily(); }
+          break;
+      }
+    });
+    
+    document.addEventListener('mousemove', () => {
+      if (document.fullscreenElement) showControlsTemporarily();
+    });
+
+    // Limpiar al cerrar la ventana
+    window.addEventListener('beforeunload', () => {
+      localStorage.setItem('htmlPresentation', JSON.stringify(slides));
+      if (remoteControlActive) {
+        stopRemoteControl();
+      }
+    });
+
+    // === INICIALIZACIÓN ===
+    document.addEventListener('DOMContentLoaded', () => {
+      try { 
+        slides = JSON.parse(localStorage.getItem('htmlPresentation')) || []; 
+      } catch { 
+        slides = []; 
+      }
+      renderSlide();
+    });
+  </script>
+</body>
+</html>

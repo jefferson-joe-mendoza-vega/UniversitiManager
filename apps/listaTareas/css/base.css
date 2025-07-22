@@ -1,0 +1,135 @@
+/* Base styles - Variables, reset, and general styles */
+
+/* CSS Variables para mantener consistencia */
+:root {
+    /* Colores principales */
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2a2a2a;
+    --bg-tertiary: #333333;
+    --bg-input: #4a4a4a;
+    --bg-hover: #383838;
+    
+    /* Colores de texto */
+    --text-primary: #e0e0e0;
+    --text-secondary: #bdbdbd;
+    --text-white: #ffffff;
+    --text-light: #f0f0f0;
+    
+    /* Colores de acento */
+    --color-accent: #80cbc4;
+    --color-accent-hover: #66aaa6;
+    --color-accent-secondary: #26a69a;
+    
+    /* Colores de botones */
+    --color-purple: #7e57c2;
+    --color-purple-hover: #6a5dc2;
+    --color-purple-light: #9575cd;
+    --color-purple-alt: #8468d1;
+    
+    /* Colores de estado */
+    --color-success: #4caf50;
+    --color-error: #f44336;
+    --color-urgent: #ff8a80;
+    --color-expired: #d32f2f;
+    --color-urgent-shadow: #ff5252;
+    --color-edit: #80cbc4;
+    --color-delete: #e57373;
+    --color-delete-hover: #ef5350;
+    
+    /* Bordes */
+    --border-color: #555555;
+    --border-light: #444444;
+    
+    /* Sombras */
+    --shadow-light: 0 4px 15px rgba(255, 255, 255, 0.05);
+    --shadow-medium: 0 4px 15px rgba(0, 0, 0, 0.3);
+    --shadow-heavy: 0 4px 20px rgba(0, 0, 0, 0.5);
+    --shadow-notification: 0 4px 15px rgba(0,0,0,0.5);
+    
+    /* Tamaños */
+    --container-max-width: 900px;
+    --border-radius: 10px;
+    --border-radius-small: 5px;
+    --border-radius-large: 30px;
+    
+    /* Z-index */
+    --z-sticky: 100;
+    --z-modal: 150;
+    --z-spinner: 200;
+    --z-notification: 200;
+}
+
+/* Reset y estilos base */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    position: relative;
+    line-height: 1.6;
+}
+
+/* Estado de carga global */
+body.loading {
+    overflow: hidden;
+    cursor: wait;
+}
+
+/* Estilos base para elementos comunes */
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    color: var(--text-light);
+}
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 2.5rem;
+    letter-spacing: 1px;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+/* Estilos base para formularios */
+input, textarea, button {
+    font-family: inherit;
+}
+
+input, textarea {
+    padding: 12px;
+    margin-top: 8px;
+    font-size: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-small);
+    background-color: var(--bg-input);
+    color: var(--text-white);
+    width: 100%;
+    box-sizing: border-box;
+    transition: border 0.3s ease;
+}
+
+input:focus, textarea:focus {
+    border: 1px solid var(--color-accent);
+    outline: none;
+}
+
+/* Estilos base para botones */
+button {
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Herramientas - Joe</title>
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #4cc9f0;
+            --background: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #2b2d42;
+            --text-light: #6c757d;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --border-radius: 16px;
+            --transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            --primary: #4cc9f0;
+            --secondary: #4361ee;
+            --accent: #7209b7;
+            --background: #121212;
+            --card-bg: #1e1e1e;
+            --text: #e9ecef;
+            --text-light: #adb5bd;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            transition: var(--transition);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 8s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        .theme-toggle {
+            background: var(--card-bg);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--text);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            height: 100%;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-number {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--background);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.2);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .card-link {
+            display: block;
+            margin-top: 15px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        .card-link:hover {
+            color: var(--accent);
+            transform: translateX(5px);
+        }
+
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .current-date {
+            font-style: italic;
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .logo h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Estilos para interacción táctil en dispositivos móviles */
+        @media (hover: none) {
+            .card:active {
+                transform: scale(0.98);
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        /* Animación de entrada para las cards */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            animation: fadeIn 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+        .card:nth-child(5) { animation-delay: 0.5s; }
+        .card:nth-child(6) { animation-delay: 0.6s; }
+        .card:nth-child(7) { animation-delay: 0.7s; }
+
+        /* Loader */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--background);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 5px solid var(--primary);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loader -->
+    <div class="loader">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>Panel de Herramientas</h1>
+            </div>
+            <button class="theme-toggle" aria-label="Cambiar tema">
+                <i class="fas fa-moon"></i>
+            </button>
+        </header>
+
+        <div class="grid">
+            <!-- Herramienta 1 -->
+            <div class="card" onclick="navigateTo('https://universitymanageunas.web.app/apps/herramientas/pomodoro')">
+                <div class="card-number">1</div>
+                <div class="card-icon">
+                    <i class="fas fa-university"></i>
+                </div>
+                <h2 class="card-title">Pomodoro | Enfoque mind</h2>
+                <p>Gestiona tu tiempo estrictamente</p>
+                <a href="https://universitymanageunas.web.app/apps/herramientas/pomodoro" class="card-link" target="_blank">Pomodoro<i class="fas fa-external-link-alt"></i></a>
+            </div>
+
+            <!-- Herramienta 2 -->
+            <div class="card" onclick="navigateTo('https://universitymanageunas.web.app/apps/herramientas/manipulacion-de-archivos/')">
+                <div class="card-number">2</div>
+                <div class="card-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h2 class="card-title">Manejo y edición de documentos</h2>
+                <p>Herramientas para edición y manipulación eficiente de documentos.</p>
+                <a href="https://universitymanageunas.web.app/apps/herramientas/manipulacion-de-archivos/" class="card-link" target="_blank">Manipulación de Documentos <i class="fas fa-external-link-alt"></i></a>
+            </div>
+
+            <!-- Herramienta 3 -->
+            <div class="card" onclick="navigateTo('https://universitymanageunas.web.app/apps/herramientas/lector_text/')">
+                <div class="card-number">3</div>
+                <div class="card-icon">
+                    <i class="fas fa-book-reader"></i>
+                </div>
+                <h2 class="card-title">Lectura de textos</h2>
+                <p>Herramienta avanzada para la lectura y análisis de textos digitales.</p>
+                <a href="https://universitymanageunas.web.app/apps/herramientas/lector_text/" class="card-link" target="_blank">Lector de Texto <i class="fas fa-external-link-alt"></i></a>
+            </div>
+
+            <!-- NUEVA HERRAMIENTA DE PRESENTACIONES CANVAS/POWERPOINT -->
+            <div class="card" onclick="navigateTo('presentaciones/')">
+                <div class="card-number">4</div>
+                <div class="card-icon">
+                    <i class="fas fa-chalkboard"></i>
+                </div>
+                <h2 class="card-title">Presentaciones tipo Canvas/PowerPoint</h2>
+                <p>Crea presentaciones visuales personalizadas fácilmente, controlando cada elemento y animación como tú quieras.</p>
+                <a href="presentaciones/" class="card-link" target="_blank">Presentador Creativo <i class="fas fa-external-link-alt"></i></a>
+            </div>
+
+            <!-- Herramienta 4 (ahora es la 5) -->
+            <div class="card" onclick="navigateTo('encriptar/')">
+                <div class="card-number">5</div>
+                <div class="card-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h2 class="card-title">Seguridad y cifrado</h2>
+                <p>Soluciones para cifrado y protección de datos sensibles.</p>
+                <a href="encriptar/" class="card-link" target="_blank">Cifrar <i class="fas fa-external-link-alt"></i></a>
+            </div>
+
+            <!-- Herramienta 5 (ahora es la 6) -->
+            <div class="card" onclick="navigateTo('https://joe-696.github.io/pizarra-magica/')">
+                <div class="card-number">6</div>
+                <div class="card-icon">
+                    <i class="fas fa-palette"></i>
+                </div>
+                <h2 class="card-title">Herramientas creativas</h2>
+                <p>Recursos digitales para la expresión creativa y educativa.</p>
+                <a href="https://joe-696.github.io/pizarra-magica/" class="card-link" target="_blank">Pizarra Mágica <i class="fas fa-external-link-alt"></i></a>
+            </div>
+
+            <!-- Herramienta 6 (ahora es la 7) -->
+            <div class="card" onclick="navigateTo('https://jefferson-joe-mendoza-vega.github.io/editor-de-ocde-hmtl/')">
+                <div class="card-number">7</div>
+                <div class="card-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h2 class="card-title">Desarrollo de código</h2>
+                <p>Editor especializado para desarrollo y prueba de código HTML.</p>
+                <a href="https://jefferson-joe-mendoza-vega.github.io/editor-de-ocde-hmtl/" class="card-link" target="_blank">Editor de Código HTML <i class="fas fa-external-link-alt"></i></a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Desarrollado por Joe-696</p>
+            <p class="current-date">Actualizado: 2025-03-04</p>
+        </footer>
+    </div>
+
+    <script>
+        // Gestionar el loader
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                document.querySelector('.loader').classList.add('hidden');
+            }, 800);
+        });
+
+        // Cambio de tema
+        const themeToggle = document.querySelector('.theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        // Verificar si hay una preferencia guardada
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            
+            if (document.body.classList.contains('dark-mode')) {
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
+            
+            // Animación suave para el cambio de tema
+            document.body.style.transition = 'background-color 0.5s ease, color 0.5s ease';
+        });
+
+        // Función para navegar al hacer clic en la tarjeta
+        function navigateTo(url) {
+            window.open(url, '_blank');
+        }
+
+        // Efecto hover en dispositivos táctiles
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('touchstart', function() {
+                this.classList.add('hover');
+            });
+            card.addEventListener('touchend', function() {
+                this.classList.remove('hover');
+            });
+        });
+        
+        // Detección de preferencia de tema del sistema
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && !savedTheme) {
+            document.body.classList.add('dark-mode');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+            localStorage.setItem('theme', 'dark');
+        }
+
+        // Animación al hacer scroll
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>

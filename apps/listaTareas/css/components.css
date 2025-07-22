@@ -1,0 +1,444 @@
+/* Component styles - Modals, buttons, notifications, forms */
+
+/* Botones principales */
+.open-modal-btn {
+    display: block;
+    width: 220px;
+    margin: 20px auto;
+    padding: 12px;
+    background: linear-gradient(135deg, var(--color-purple), var(--color-purple-light));
+    color: var(--text-white);
+    text-align: center;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: var(--border-radius-large);
+    cursor: pointer;
+    transition: background 0.5s ease, transform 0.3s ease;
+    box-shadow: var(--shadow-medium);
+    position: relative;
+    overflow: hidden;
+}
+
+.open-modal-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transform: translateY(-50%) scale(0);
+    transition: transform 0.5s ease;
+}
+
+.open-modal-btn:hover::after {
+    transform: translateY(-50%) scale(1);
+}
+
+.open-modal-btn:hover {
+    background: linear-gradient(135deg, var(--color-purple-hover), var(--color-purple-alt));
+    transform: translateY(-3px);
+}
+
+/* Botones de acción */
+.edit-btn {
+    background-color: var(--color-edit);
+    color: #000000;
+}
+
+.edit-btn:hover {
+    background-color: var(--color-accent-hover);
+    transform: translateY(-1px);
+}
+
+.delete-btn {
+    background-color: var(--color-delete);
+    color: #000000;
+}
+
+.delete-btn:hover {
+    background-color: var(--color-delete-hover);
+    transform: translateY(-1px);
+}
+
+/* Modales */
+.modal, .detail-modal {
+    display: none;
+    position: fixed;
+    z-index: var(--z-modal);
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content, .detail-modal-content {
+    background-color: var(--bg-tertiary);
+    margin: 2% auto;
+    padding: 25px 30px;
+    border-radius: var(--border-radius);
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+    color: var(--text-primary);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Modal mejorado */
+.enhanced-modal {
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.enhanced-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* Sección principal del formulario */
+.form-main-section {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 25px;
+    align-items: start;
+}
+
+.form-left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-right-column {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group.full-height {
+    height: 100%;
+}
+
+.input-group.full-height textarea {
+    flex: 1;
+    min-height: 150px;
+    resize: vertical;
+}
+
+/* Labels mejorados */
+.enhanced-form label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    margin-bottom: 5px;
+}
+
+/* Indicador de guardado temporal */
+.temp-save-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background: linear-gradient(135deg, rgba(77, 182, 172, 0.1), rgba(26, 188, 156, 0.1));
+    border: 1px solid rgba(77, 182, 172, 0.3);
+    border-radius: var(--border-radius-small);
+    font-size: 0.85rem;
+    color: var(--color-accent);
+    display: none;
+    transition: all 0.3s ease;
+}
+
+.temp-save-indicator.temp-save-active {
+    background: linear-gradient(135deg, rgba(77, 182, 172, 0.15), rgba(26, 188, 156, 0.15));
+    border-color: rgba(77, 182, 172, 0.5);
+    box-shadow: 0 2px 8px rgba(77, 182, 172, 0.2);
+}
+
+.indicator-icon {
+    font-size: 1rem;
+    transition: transform 0.2s ease;
+}
+
+.indicator-text {
+    font-weight: 500;
+}
+
+/* Estilos para modal de confirmación de limpieza */
+.temp-save-confirm-modal .btn-primary,
+.temp-save-confirm-modal .btn-secondary {
+    padding: 10px 20px;
+    margin: 0;
+    width: auto;
+    min-width: 100px;
+}
+
+/* Sección de imágenes mejorada */
+.form-images-section {
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+}
+
+.images-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.images-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.images-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Botones mejorados */
+.form-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.btn-primary, .btn-secondary {
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--border-radius-large);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-accent), #4db6ac);
+    color: #000000;
+    box-shadow: var(--shadow-medium);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--color-accent-hover), var(--color-accent-secondary));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(77, 182, 172, 0.4);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #6c757d, #5a6268);
+    color: var(--text-white);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #5a6268, #495057);
+    transform: translateY(-2px);
+}
+
+.modal-content input, .modal-content textarea {
+    padding: 12px 15px;
+    margin-top: 0;
+    font-size: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-small);
+    background-color: var(--bg-input);
+    color: var(--text-white);
+    width: 100%;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.modal-content input:focus, .modal-content textarea:focus {
+    border: 2px solid var(--color-accent);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(77, 182, 172, 0.1);
+}
+
+.modal-content input::placeholder, .modal-content textarea::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.8;
+}
+
+/* Estilos heredados del modal original */
+.modal-content button, .detail-modal-content button {
+    padding: 12px;
+    margin-top: 20px;
+    font-size: 1rem;
+    background: linear-gradient(135deg, var(--color-accent), #4db6ac);
+    color: #000000;
+    border: none;
+    border-radius: var(--border-radius-large);
+    cursor: pointer;
+    transition: background 0.5s ease, transform 0.3s ease;
+    width: 100%;
+    box-shadow: var(--shadow-medium);
+}
+
+.modal-content button:hover, .detail-modal-content button:hover {
+    background: linear-gradient(135deg, var(--color-accent-hover), var(--color-accent-secondary));
+    transform: translateY(-3px);
+}
+
+/* Botón de cerrar modal */
+.close-modal-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background-color: transparent;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: color 0.3s ease;
+}
+
+.close-modal-btn:hover {
+    color: var(--text-white);
+}
+
+/* Botones de imagen mejorados */
+.add-more-images {
+    background: linear-gradient(135deg, var(--bg-input), #555555);
+    color: var(--text-white);
+    border: 1px solid var(--color-accent);
+    padding: 10px 16px;
+    border-radius: var(--border-radius-small);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: auto;
+    width: auto;
+}
+
+.add-more-images:hover {
+    background: linear-gradient(135deg, #555555, var(--color-accent));
+    color: #000000;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(77, 182, 172, 0.3);
+}
+
+.btn-icon {
+    font-size: 1rem;
+}
+
+.remove-image {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+    line-height: 1;
+}
+
+.remove-image:hover {
+    background-color: rgba(255, 0, 0, 0.7);
+}
+
+/* Notificaciones */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: var(--bg-tertiary);
+    color: var(--text-white);
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-notification);
+    opacity: 0;
+    transition: opacity 0.5s ease, transform 0.3s ease;
+    z-index: var(--z-notification);
+    font-size: 1rem;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.notification.success {
+    background-color: var(--color-success);
+}
+
+.notification.error {
+    background-color: var(--color-error);
+}
+
+/* Spinner de carga */
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--border-radius);
+    z-index: var(--z-spinner);
+    display: none;
+}
+
+.spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #4db6ac;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+
+/* Contador de imágenes */
+.images-counter {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* Estilos para listas en la descripción */
+.description ul {
+    list-style-type: disc;
+    margin-left: 20px;
+    padding-left: 0;
+}
+
+.description li {
+    margin-bottom: 5px;
+}

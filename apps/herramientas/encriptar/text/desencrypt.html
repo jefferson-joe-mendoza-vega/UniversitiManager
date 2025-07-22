@@ -1,0 +1,250 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desencriptar Texto</title>
+    <!-- Google Fonts para la tipografía -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome para los iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e0f7fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            max-width: 400px;
+            width: 100%;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+        }
+        .container:hover {
+            transform: translateY(-5px);
+        }
+        h1 {
+            color: #00796b;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #00796b;
+            font-size: 14px;
+        }
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 2px solid #00796b;
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: all 0.3s ease-in-out;
+            margin-top: 5px;
+        }
+        .input-group input:focus, .input-group select:focus {
+            border-color: #004d40;
+            outline: none;
+        }
+        .input-group i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #00796b;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #00796b;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        button:hover {
+            background-color: #004d40;
+        }
+        #resultado {
+            margin-top: 30px;
+            display: none;
+        }
+        #resultado h2 {
+            color: #00796b;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        #textoDesencriptado {
+            width: 100%;
+            padding: 12px;
+            background-color: #f1f8e9;
+            border: 2px solid #00796b;
+            border-radius: 6px;
+            height: 120px;
+            font-size: 16px;
+            margin-top: 10px;
+            resize: none;
+            box-sizing: border-box;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        .action-buttons button {
+            flex: 1;
+            margin: 0 5px;
+            background-color: #388e3c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .action-buttons button i {
+            margin-right: 8px;
+        }
+        .action-buttons button:hover {
+            background-color: #2e7d32;
+        }
+        #progress-bar {
+            margin-top: 20px;
+            width: 100%;
+            height: 25px;
+            background-color: #c8e6c9;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        #progress {
+            width: 0;
+            height: 100%;
+            background-color: #00796b;
+            transition: width 0.4s ease;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                width: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-lock-open"></i> Desencriptar</h1>
+        <div class="input-group">
+            <label for="textoEncriptado"><i class="fas fa-key"></i> Texto encriptado</label>
+            <input type="text" id="textoEncriptado" placeholder="Introduce el texto encriptado aquí">
+        </div>
+        <div class="input-group">
+            <label for="clave"><i class="fas fa-hashtag"></i> Clave numérica</label>
+            <input type="number" id="clave" placeholder="Introduce la clave numérica" min="1">
+        </div>
+        <div class="input-group">
+            <label for="algoritmo"><i class="fas fa-cogs"></i> Algoritmo</label>
+            <select id="algoritmo">
+                <option value="cesar">Cifrado César</option>
+                <option value="xor">Cifrado XOR</option>
+            </select>
+        </div>
+        <button onclick="desencriptar()"><i class="fas fa-unlock"></i> Desencriptar</button>
+
+        <div id="resultado">
+            <h2><i class="fas fa-file-alt"></i> Texto Desencriptado</h2>
+            <textarea id="textoDesencriptado" readonly></textarea>
+            <div class="action-buttons">
+                <button class="copy-button" onclick="copiarTexto()"><i class="fas fa-copy"></i> Copiar</button>
+                <button class="download-button" onclick="descargarTexto()"><i class="fas fa-download"></i> Descargar</button>
+            </div>
+        </div>
+
+        <div id="progress-bar">
+            <div id="progress"></div>
+        </div>
+    </div>
+
+    <script>
+        function desencriptar() {
+            var textoEncriptado = document.getElementById("textoEncriptado").value;
+            var clave = parseInt(document.getElementById("clave").value);
+            var algoritmo = document.getElementById("algoritmo").value;
+
+            if (!textoEncriptado || isNaN(clave) || clave < 1) {
+                alert("Por favor, introduce el texto encriptado y una clave numérica válida.");
+                return;
+            }
+
+            var textoDesencriptado = "";
+            var progressBar = document.getElementById("progress");
+            progressBar.style.width = "0%";
+
+            for (var i = 0; i < textoEncriptado.length; i++) {
+                var charCode = textoEncriptado.charCodeAt(i);
+                var nuevoCharCode;
+
+                if (algoritmo === "cesar") {
+                    nuevoCharCode = (charCode - clave + 65536) % 65536;
+                } else if (algoritmo === "xor") {
+                    nuevoCharCode = charCode ^ clave;
+                }
+
+                textoDesencriptado += String.fromCharCode(nuevoCharCode);
+
+                // Actualizar la barra de progreso
+                var progress = ((i + 1) / textoEncriptado.length) * 100;
+                progressBar.style.width = progress + "%";
+            }
+
+            document.getElementById("textoDesencriptado").value = textoDesencriptado;
+            document.getElementById("resultado").style.display = 'block';
+        }
+
+        function copiarTexto() {
+            var textarea = document.getElementById("textoDesencriptado");
+            textarea.select();
+            document.execCommand('copy');
+            alert("Texto desencriptado copiado al portapapeles.");
+        }
+
+        function descargarTexto() {
+            var textoDesencriptado = document.getElementById("textoDesencriptado").value;
+            var blob = new Blob([textoDesencriptado], { type: "text/plain;charset=utf-8" });
+            var link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "texto_desencriptado.txt";
+            link.click();
+        }
+    </script>
+</body>
+</html>

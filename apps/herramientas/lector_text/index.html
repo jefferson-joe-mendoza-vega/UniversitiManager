@@ -1,0 +1,1202 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lector de Texto Avanzado</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos personalizados para tema oscuro */
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #121826; /* Fondo oscuro */
+            color: #e2e8f0; /* Texto claro */
+            margin: 0;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #1e293b; /* Contenedor oscuro */
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 700px;
+        }
+        textarea {
+            min-height: 150px;
+            border-radius: 0.5rem;
+            border: 1px solid #334155;
+            padding: 0.75rem;
+            transition: border-color 0.3s;
+            background-color: #0f172a; /* Fondo oscuro para textarea */
+            color: #e2e8f0; /* Texto claro */
+            resize: vertical;
+        }
+        textarea:focus {
+            border-color: #818cf8; /* Color de borde al enfocar */
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+        }
+        .control-group {
+            margin-bottom: 1.25rem;
+        }
+        .control-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #94a3b8; /* Color de texto de etiqueta */
+        }
+        select, input[type="range"] {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid #334155;
+            background-color: #0f172a; /* Fondo oscuro para inputs */
+            color: #e2e8f0;
+            transition: border-color 0.3s;
+        }
+        select:focus, input[type="range"]:focus {
+            border-color: #818cf8;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+        }
+        .button-group button {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .button-group button svg {
+            margin-right: 0.25rem;
+        }
+        .button-group button:hover:not(.btn-disabled) {
+            transform: translateY(-2px);
+        }
+        .button-group button:active:not(.btn-disabled) {
+            transform: translateY(0px);
+        }
+        .btn-play {
+            background-color: #818cf8; /* Indigo */
+            color: white;
+        }
+        .btn-play:hover:not(.btn-disabled) {
+            background-color: #6366f1;
+        }
+        .btn-pause {
+            background-color: #f59e0b; /* Amber */
+            color: white;
+        }
+        .btn-pause:hover:not(.btn-disabled) {
+            background-color: #d97706;
+        }
+        .btn-nav {
+            background-color: #475569; /* Slate */
+            color: white;
+        }
+        .btn-nav:hover:not(.btn-disabled) {
+            background-color: #334155;
+        }
+        .btn-disabled {
+            background-color: #475569;
+            color: #64748b;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .btn-disabled:hover {
+            background-color: #475569;
+            transform: none;
+        }
+        .status-message {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-weight: 500;
+        }
+        .status-error {
+            background-color: #7f1d1d; /* Fondo rojo oscuro para errores */
+            color: #fecaca; /* Texto rojo claro para errores */
+        }
+        .status-info {
+            background-color: #172554; /* Fondo azul oscuro para info */
+            color: #bfdbfe; /* Texto azul claro para info */
+        }
+
+        /* Estilo para los sliders */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            background: #334155; /* Color de la pista del slider */
+            outline: none;
+            opacity: 0.9;
+            transition: opacity .15s ease-in-out;
+            border-radius: 9999px; /* Pista redondeada */
+        }
+        input[type="range"]:hover {
+            opacity: 1;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #818cf8; /* Color del pulgar */
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid #1e293b; /* Borde oscuro alrededor del pulgar */
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #818cf8;
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid #1e293b;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+        .range-value {
+            display: inline-block;
+            min-width: 30px;
+            text-align: right;
+            color: #94a3b8;
+        }
+
+        /* Estilo para el indicador de progreso */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: #334155;
+            border-radius: 9999px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #818cf8;
+            border-radius: 9999px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Estilos para posición de lectura */
+        .reading-position {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        /* Visualización de párrafos */
+        .paragraphs-container {
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 1rem 0;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            background-color: #0f172a;
+            padding: 0.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: #475569 #1e293b;
+        }
+
+        .paragraph {
+            padding: 0.5rem;
+            margin-bottom: 0.25rem;
+            border-radius: 0.25rem;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .paragraph.active {
+            background-color: #3730a3;
+            border-left: 3px solid #818cf8;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .paragraph:hover:not(.active) {
+            background-color: #1e293b;
+        }
+
+        /* Barra de desplazamiento personalizada */
+        .paragraphs-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .paragraphs-container::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 10px;
+        }
+
+        .paragraphs-container::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 10px;
+        }
+
+        .paragraphs-container::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* Estilos para mostrar atajos de teclado */
+        .keyboard-shortcuts {
+            background-color: #0f172a;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .keyboard-shortcuts h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: #818cf8;
+        }
+
+        .keyboard-shortcuts ul {
+            list-style-type: none;
+            padding-left: 0.5rem;
+        }
+
+        .keyboard-shortcuts li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .key {
+            display: inline-block;
+            background-color: #334155;
+            border-radius: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            margin-right: 0.5rem;
+            font-weight: bold;
+            min-width: 1.5rem;
+            text-align: center;
+        }
+
+        /* Mejoras para dispositivos móviles */
+        @media (max-width: 640px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem !important;
+                margin-bottom: 1rem !important;
+            }
+
+            .button-group button {
+                padding: 0.625rem;
+                font-size: 0.875rem;
+            }
+
+            .button-group button svg {
+                height: 1.25rem;
+                width: 1.25rem;
+            }
+
+            .button-text {
+                display: none;
+            }
+
+            .control-group {
+                margin-bottom: 1rem;
+            }
+
+            .status-message {
+                padding: 0.5rem;
+                font-size: 0.875rem;
+            }
+            
+            .paragraphs-container {
+                max-height: 150px;
+            }
+        }
+
+        /* Focus visible */
+        button:focus-visible, select:focus-visible, textarea:focus-visible {
+            outline: 2px solid #818cf8;
+            outline-offset: 2px;
+        }
+        
+        /* Tooltip para pistas de teclado en botones */
+        .tooltip {
+            position: relative;
+        }
+        
+        .tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.25rem 0.5rem;
+            background-color: #334155;
+            color: #e2e8f0;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            z-index: 10;
+            margin-bottom: 5px;
+        }
+
+        /* Animación para transiciones de párrafos */
+        @keyframes highlight-paragraph {
+            0% { background-color: #4f46e5; }
+            100% { background-color: #3730a3; }
+        }
+
+        .paragraph.active-transition {
+            animation: highlight-paragraph 0.6s ease-out;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8 text-indigo-300">Lector de Texto Avanzado</h1>
+
+        <div class="control-group">
+            <label for="textToSpeak" class="text-base md:text-lg">Escribe el texto aquí:</label>
+            <textarea id="textToSpeak" class="w-full p-3 border border-gray-700 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400" rows="5" placeholder="Ingresa el texto que deseas escuchar..."></textarea>
+        </div>
+
+        <!-- Contenedor de párrafos para visualización con resaltado -->
+        <div class="paragraphs-container" id="paragraphsContainer">
+            <div class="text-center text-gray-500 p-4">
+                Ingresa texto para ver los párrafos aquí
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+        
+        <div class="reading-position" id="readingPosition">Párrafo 0 de 0</div>
+
+        <div class="control-group">
+            <label for="voiceSelect" class="text-base md:text-lg">Selecciona una voz:</label>
+            <select id="voiceSelect" class="w-full p-3 border border-gray-700 rounded-lg shadow-sm bg-gray-900 focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400"></select>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 control-group">
+            <div>
+                <label for="rate" class="text-base md:text-lg">Velocidad: <span id="rateValue" class="range-value">1</span></label>
+                <input type="range" id="rate" min="0.5" max="2" value="1" step="0.1" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+            </div>
+            <div>
+                <label for="pitch" class="text-base md:text-lg">Tono: <span id="pitchValue" class="range-value">1</span></label>
+                <input type="range" id="pitch" min="0" max="2" value="1" step="0.1" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+            </div>
+        </div>
+
+        <div class="button-group flex flex-wrap justify-center gap-2 md:gap-4 mt-6 md:mt-8">
+            <button id="prevButton" class="btn-nav tooltip" data-tooltip="Flecha izquierda">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+                </svg>
+                <span class="button-text">Anterior</span>
+            </button>
+            <button id="playButton" class="btn-play tooltip" data-tooltip="Espacio">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="button-text">Reproducir</span>
+            </button>
+            <button id="pauseButton" class="btn-pause tooltip" data-tooltip="Espacio">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="button-text">Pausar</span>
+            </button>
+            <button id="nextButton" class="btn-nav tooltip" data-tooltip="Flecha derecha">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+                <span class="button-text">Siguiente</span>
+            </button>
+        </div>
+
+        <div id="statusMessage" class="status-message mt-4 md:mt-6" role="status" aria-live="polite"></div>
+        
+        <div class="keyboard-shortcuts">
+            <h3>Atajos de teclado:</h3>
+            <ul>
+                <li><span class="key">Espacio</span> Reproducir/Pausar</li>
+                <li><span class="key">←</span> Párrafo anterior</li>
+                <li><span class="key">→</span> Párrafo siguiente</li>
+                <li><span class="key">↑</span> Aumentar velocidad</li>
+                <li><span class="key">↓</span> Disminuir velocidad</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Referencias a los elementos del DOM
+        const textToSpeakInput = document.getElementById('textToSpeak');
+        const voiceSelect = document.getElementById('voiceSelect');
+        const rateInput = document.getElementById('rate');
+        const rateValueDisplay = document.getElementById('rateValue');
+        const pitchInput = document.getElementById('pitch');
+        const pitchValueDisplay = document.getElementById('pitchValue');
+        const playButton = document.getElementById('playButton');
+        const pauseButton = document.getElementById('pauseButton');
+        const prevButton = document.getElementById('prevButton');
+        const nextButton = document.getElementById('nextButton');
+        const statusMessage = document.getElementById('statusMessage');
+        const progressBar = document.getElementById('progressBar');
+        const readingPosition = document.getElementById('readingPosition');
+        const paragraphsContainer = document.getElementById('paragraphsContainer');
+
+        // Variables para control de párrafos y posición
+        let paragraphs = [];
+        let paragraphElements = [];
+        let currentParagraph = 0;
+        let isPaused = false;
+        let voicesLoaded = false;
+        let pausedByUser = false;
+        let chromeWorkaround = null;
+        let isReading = false;
+
+        // Configuración para almacenamiento local
+        const STORAGE_KEY = 'textReaderData';
+        const STORAGE_KEY_VOICE = 'selectedVoiceData';
+
+        // Instancia de SpeechSynthesisUtterance
+        let utterance = new SpeechSynthesisUtterance();
+        let voices = []; // Array para almacenar las voces disponibles
+
+        // Función para mostrar mensajes de estado
+        function showStatus(message, type = 'info') {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message ${type === 'error' ? 'status-error' : 'status-info'}`;
+            if (message) {
+                statusMessage.classList.remove('hidden');
+            } else {
+                statusMessage.classList.add('hidden');
+            }
+        }
+        
+        // Función para actualizar estado de botones
+        function updateButtonStates() {
+            // Verificar estado actual real del sintetizador
+            const isSpeaking = speechSynthesis.speaking;
+            isPaused = speechSynthesis.paused;
+            
+            // Sincronizar nuestro estado con el estado real
+            isReading = isSpeaking;
+
+            // Configurar botones de reproducción/pausa
+            playButton.disabled = isSpeaking && !isPaused;
+            pauseButton.disabled = !isSpeaking || isPaused;
+            
+            // Configurar botones de navegación - SIEMPRE ESTÁN HABILITADOS SI HAY PÁRRAFOS
+            // La única limitante es que no existan más párrafos antes o después
+            prevButton.disabled = currentParagraph <= 0;
+            nextButton.disabled = currentParagraph >= paragraphs.length - 1;
+
+            if (isSpeaking && !isPaused) { // Hablando activamente
+                playButton.classList.add('btn-disabled');
+                pauseButton.classList.remove('btn-disabled');
+                
+                // No deshabilitamos los botones de navegación, sólo los que no tienen más párrafos
+                prevButton.classList.toggle('btn-disabled', currentParagraph <= 0);
+                nextButton.classList.toggle('btn-disabled', currentParagraph >= paragraphs.length - 1);
+            } else if (isSpeaking && isPaused) { // Pausado
+                playButton.classList.remove('btn-disabled');
+                playButton.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="button-text">Reanudar</span>`;
+                pauseButton.classList.add('btn-disabled');
+                
+                prevButton.classList.toggle('btn-disabled', currentParagraph <= 0);
+                nextButton.classList.toggle('btn-disabled', currentParagraph >= paragraphs.length - 1);
+            } else { // Detenido o inicial
+                playButton.classList.remove('btn-disabled');
+                playButton.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="button-text">Reproducir</span>`;
+                pauseButton.classList.add('btn-disabled');
+                
+                prevButton.classList.toggle('btn-disabled', currentParagraph <= 0);
+                nextButton.classList.toggle('btn-disabled', currentParagraph >= paragraphs.length - 1);
+            }
+        }
+
+        // Función para dividir el texto en párrafos de manera inteligente
+        function splitTextIntoParagraphs(text) {
+            if (!text || text.trim() === '') {
+                return [];
+            }
+            
+            // Dividir por saltos de línea
+            let rawParagraphs = text.split(/\n+/);
+            let result = [];
+            
+            for (let p of rawParagraphs) {
+                p = p.trim();
+                if (p === '') continue; // Ignorar párrafos vacíos
+                
+                // Si el párrafo es muy largo, dividir por oraciones
+                if (p.length > 250) {
+                    let sentences = p.split(/(?<=\.|\!|\?) /);
+                    let currentChunk = '';
+                    
+                    for (let sentence of sentences) {
+                        if ((currentChunk + sentence).length > 250) {
+                            if (currentChunk) result.push(currentChunk.trim());
+                            currentChunk = sentence;
+                        } else {
+                            currentChunk += (currentChunk ? ' ' : '') + sentence;
+                        }
+                    }
+                    
+                    if (currentChunk) result.push(currentChunk.trim());
+                } else {
+                    result.push(p);
+                }
+            }
+            
+            return result.filter(p => p.length > 0); // Remover párrafos vacíos
+        }
+
+        // Función para actualizar la visualización de párrafos
+        function updateParagraphsView() {
+            paragraphsContainer.innerHTML = '';
+            paragraphElements = [];
+
+            if (paragraphs.length === 0) {
+                paragraphsContainer.innerHTML = `
+                    <div class="text-center text-gray-500 p-4">
+                        Ingresa texto para ver los párrafos aquí
+                    </div>`;
+                return;
+            }
+            
+            paragraphs.forEach((text, index) => {
+                const paragraph = document.createElement('div');
+                paragraph.className = `paragraph ${index === currentParagraph ? 'active' : ''}`;
+                paragraph.textContent = text;
+                paragraph.dataset.index = index;
+                
+                paragraph.addEventListener('click', () => {
+                    // Permitir hacer clic en un párrafo para seleccionarlo y reproducirlo
+                    currentParagraph = index;
+                    highlightCurrentParagraph();
+                    updatePositionInfo();
+                    
+                    if (isReading) {
+                        speechSynthesis.cancel();
+                        speakCurrentParagraph();
+                    } else {
+                        showStatus(`Párrafo ${currentParagraph + 1} seleccionado`, 'info');
+                    }
+                    
+                    saveToLocalStorage();
+                });
+                
+                paragraphsContainer.appendChild(paragraph);
+                paragraphElements.push(paragraph);
+            });
+            
+            // Asegurar que el párrafo activo sea visible (scroll hacia él)
+            scrollToCurrentParagraph();
+        }
+
+        // Resaltar el párrafo actual
+        function highlightCurrentParagraph() {
+            paragraphElements.forEach((p, i) => {
+                if (i === currentParagraph) {
+                    p.classList.add('active');
+                    // Añadir animación de transición
+                    p.classList.add('active-transition');
+                    setTimeout(() => p.classList.remove('active-transition'), 600);
+                } else {
+                    p.classList.remove('active');
+                }
+            });
+            
+            scrollToCurrentParagraph();
+        }
+
+        // Hacer scroll al párrafo actual
+        function scrollToCurrentParagraph() {
+            if (paragraphElements[currentParagraph]) {
+                paragraphElements[currentParagraph].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest'
+                });
+            }
+        }
+
+        // Función para actualizar la información de posición
+        function updatePositionInfo() {
+            if (paragraphs.length > 0) {
+                readingPosition.textContent = `Párrafo ${currentParagraph + 1} de ${paragraphs.length}`;
+                progressBar.style.width = `${((currentParagraph + 1) / paragraphs.length) * 100}%`;
+            } else {
+                readingPosition.textContent = `Párrafo 0 de 0`;
+                progressBar.style.width = '0%';
+            }
+        }
+
+        // Función para obtener información completa de una voz
+        function getVoiceInfo(voice) {
+            return {
+                name: voice.name,
+                lang: voice.lang,
+                voiceURI: voice.voiceURI,
+                localService: voice.localService
+            };
+        }
+
+        // Función para guardar estado en localStorage
+        function saveToLocalStorage() {
+            try {
+                // Guardar datos generales
+                const data = {
+                    text: textToSpeakInput.value,
+                    currentParagraph: currentParagraph,
+                    rate: rateInput.value,
+                    pitch: pitchInput.value
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                
+                // Guardar información completa de la voz seleccionada
+                const selectedVoice = voices[voiceSelect.value];
+                if (selectedVoice) {
+                    const voiceInfo = getVoiceInfo(selectedVoice);
+                    localStorage.setItem(STORAGE_KEY_VOICE, JSON.stringify(voiceInfo));
+                }
+            } catch (error) {
+                console.error("Error al guardar en localStorage:", error);
+            }
+        }
+
+        // Función para encontrar la voz que mejor coincida con la información guardada
+        function findBestMatchingVoice(voiceInfo) {
+            if (!voiceInfo || !voices.length) return 0;
+            
+            // 1. Intentar coincidencia exacta por voiceURI
+            for (let i = 0; i < voices.length; i++) {
+                if (voices[i].voiceURI === voiceInfo.voiceURI) {
+                    return i;
+                }
+            }
+            
+            // 2. Intentar coincidencia por nombre y idioma
+            for (let i = 0; i < voices.length; i++) {
+                if (voices[i].name === voiceInfo.name && voices[i].lang === voiceInfo.lang) {
+                    return i;
+                }
+            }
+            
+            // 3. Intentar coincidencia solo por nombre
+            for (let i = 0; i < voices.length; i++) {
+                if (voices[i].name === voiceInfo.name) {
+                    return i;
+                }
+            }
+            
+            // 4. Intentar coincidencia solo por idioma
+            for (let i = 0; i < voices.length; i++) {
+                if (voices[i].lang === voiceInfo.lang) {
+                    return i;
+                }
+            }
+            
+            // 5. Devolver el índice de la primera voz en español o la primera disponible
+            const spanishVoiceIndex = voices.findIndex(voice => voice.lang.includes('es'));
+            return spanishVoiceIndex >= 0 ? spanishVoiceIndex : 0;
+        }
+
+        // Función para cargar estado desde localStorage
+        function loadFromLocalStorage() {
+            try {
+                const savedData = localStorage.getItem(STORAGE_KEY);
+                if (savedData) {
+                    const data = JSON.parse(savedData);
+                    textToSpeakInput.value = data.text || '';
+                    rateInput.value = data.rate || 1;
+                    rateValueDisplay.textContent = parseFloat(rateInput.value).toFixed(1);
+                    pitchInput.value = data.pitch || 1;
+                    pitchValueDisplay.textContent = parseFloat(pitchInput.value).toFixed(1);
+                    
+                    // Procesar el texto para configurar los párrafos
+                    if (data.text) {
+                        paragraphs = splitTextIntoParagraphs(data.text);
+                        currentParagraph = Math.min(data.currentParagraph || 0, Math.max(0, paragraphs.length - 1));
+                        updateParagraphsView();
+                        updatePositionInfo();
+                    }
+                }
+            } catch (error) {
+                console.error("Error al cargar desde localStorage:", error);
+                // En caso de error, intentar limpiar el localStorage
+                try {
+                    localStorage.removeItem(STORAGE_KEY);
+                } catch (e) {}
+            }
+        }
+
+        // Cargar y popular las voces disponibles
+        function populateVoiceList() {
+            voices = speechSynthesis.getVoices();
+            
+            if (voices.length === 0) {
+                setTimeout(populateVoiceList, 50); // Reintentamos si no hay voces disponibles aún
+                return;
+            }
+            
+            voiceSelect.innerHTML = ''; // Limpiar opciones previas
+            
+            // Filtrar voces en español primero
+            const spanishVoices = voices.filter(voice => voice.lang.includes('es'));
+            const otherVoices = voices.filter(voice => !voice.lang.includes('es'));
+            const sortedVoices = [...spanishVoices, ...otherVoices];
+            
+            sortedVoices.forEach((voice) => {
+                const option = document.createElement('option');
+                option.textContent = `${voice.name} (${voice.lang})`;
+                if (voice.default) {
+                    option.textContent += ' -- DEFAULT';
+                }
+                option.setAttribute('data-lang', voice.lang);
+                option.setAttribute('data-name', voice.name);
+                option.setAttribute('data-uri', voice.voiceURI || '');
+                option.value = voices.indexOf(voice); // Usar el índice original como valor
+                voiceSelect.appendChild(option);
+            });
+            
+            voicesLoaded = true;
+            
+            // Intentar restaurar la voz guardada
+            try {
+                const savedVoiceInfo = localStorage.getItem(STORAGE_KEY_VOICE);
+                if (savedVoiceInfo) {
+                    const voiceInfo = JSON.parse(savedVoiceInfo);
+                    const bestMatchIndex = findBestMatchingVoice(voiceInfo);
+                    if (bestMatchIndex >= 0) {
+                        voiceSelect.value = bestMatchIndex;
+                        utterance.voice = voices[bestMatchIndex];
+                    }
+                } else if (spanishVoices.length > 0) {
+                    // Si no hay voz guardada, seleccionar una voz en español
+                    const spanishIndex = voices.indexOf(spanishVoices[0]);
+                    voiceSelect.value = spanishIndex;
+                    utterance.voice = voices[spanishIndex];
+                }
+            } catch (e) {
+                console.error("Error al restaurar la voz:", e);
+                // En caso de error, seleccionar la primera voz
+                if (voiceSelect.options.length > 0) {
+                    voiceSelect.selectedIndex = 0;
+                    utterance.voice = voices[voiceSelect.value];
+                }
+            }
+            
+            updateButtonStates();
+        }
+
+        // La API de SpeechSynthesis a veces carga las voces de forma asíncrona.
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = populateVoiceList;
+        }
+
+        // Intentar cargar las voces inmediatamente
+        populateVoiceList();
+
+        // Solución para el bug de Chrome: la síntesis de voz a veces se detiene después de ~15 segundos
+        function startChromeWorkaround() {
+            // Limpiar cualquier workaround previo
+            stopChromeWorkaround();
+            
+            // Establecer un nuevo intervalo para mantener viva la síntesis
+            chromeWorkaround = setInterval(() => {
+                if (speechSynthesis.speaking && !speechSynthesis.paused && !pausedByUser) {
+                    // Pausar y reanudar rápidamente para evitar que Chrome detenga la síntesis
+                    speechSynthesis.pause();
+                    speechSynthesis.resume();
+                }
+            }, 5000); // Intervalo de 5 segundos
+        }
+
+        function stopChromeWorkaround() {
+            if (chromeWorkaround) {
+                clearInterval(chromeWorkaround);
+                chromeWorkaround = null;
+            }
+        }
+
+        // Función para reproducir el párrafo actual
+        function speakCurrentParagraph() {
+            if (paragraphs.length === 0 || currentParagraph >= paragraphs.length) {
+                showStatus('No hay texto para leer', 'error');
+                return;
+            }
+            
+            // Cancelar cualquier reproducción previa y detener el workaround
+            speechSynthesis.cancel();
+            stopChromeWorkaround();
+            
+            // Configurar y reproducir el párrafo actual
+            utterance = new SpeechSynthesisUtterance(paragraphs[currentParagraph]);
+            
+            // Asegurarse de que la voz esté configurada
+            if (voices.length > 0 && voiceSelect.value) {
+                utterance.voice = voices[voiceSelect.value];
+            }
+            
+            utterance.rate = parseFloat(rateInput.value);
+            utterance.pitch = parseFloat(pitchInput.value);
+            
+            // Configurar eventos
+            utterance.onstart = handleSpeechStart;
+            utterance.onend = handleSpeechEnd;
+            utterance.onerror = handleSpeechError;
+            utterance.onpause = handleSpeechPause;
+            utterance.onresume = handleSpeechResume;
+            
+            speechSynthesis.speak(utterance);
+            pausedByUser = false;
+            isReading = true;
+            
+            showStatus(`Reproduciendo párrafo ${currentParagraph + 1} de ${paragraphs.length}`, 'info');
+            highlightCurrentParagraph();
+            updatePositionInfo();
+            updateButtonStates();
+            
+            // Iniciar el workaround para Chrome
+            startChromeWorkaround();
+            
+            // Guardar estado actual
+            saveToLocalStorage();
+        }
+
+        // Manejadores de eventos para la síntesis de voz
+        function handleSpeechStart() {
+            console.log('Speech synthesis started.');
+            isReading = true;
+            updateButtonStates();
+        }
+
+        function handleSpeechEnd() {
+            console.log('Speech synthesis ended.');
+            
+            // Avanzar automáticamente al siguiente párrafo
+            if (currentParagraph < paragraphs.length - 1) {
+                currentParagraph++;
+                highlightCurrentParagraph();
+                updatePositionInfo();
+                speakCurrentParagraph();
+            } else {
+                showStatus('Lectura finalizada.', 'info');
+                stopChromeWorkaround();
+                isReading = false;
+                updateButtonStates();
+            }
+        }
+
+        function handleSpeechError(event) {
+            console.error('Speech synthesis error:', event.error);
+            showStatus(`Error: ${event.error}`, 'error');
+            stopChromeWorkaround();
+            isReading = false;
+            updateButtonStates();
+        }
+
+        function handleSpeechPause() {
+            console.log('Speech synthesis paused.');
+            updateButtonStates();
+        }
+
+        function handleSpeechResume() {
+            console.log('Speech synthesis resumed.');
+            showStatus('Reanudando...', 'info');
+            updateButtonStates();
+        }
+
+        // Función para alternar entre reproducir y pausar - CORREGIDA
+        function togglePlayPause() {
+            if (!textToSpeakInput.value.trim()) {
+                showStatus('Por favor, ingresa algún texto.', 'error');
+                return;
+            }
+
+            // Verificar el estado actual del sintetizador
+            const isSpeaking = speechSynthesis.speaking;
+            const isPaused = speechSynthesis.paused;
+
+            // Si está hablando (reproduciendo activamente o pausado)
+            if (isSpeaking) {
+                // Si está pausado, reanudar
+                if (isPaused) {
+                    pausedByUser = false;
+                    speechSynthesis.resume();
+                    showStatus('Reanudando...', 'info');
+                    isReading = true;
+                } 
+                // Si está reproduciendo activamente, pausar
+                else {
+                    pausedByUser = true;
+                    speechSynthesis.pause();
+                    showStatus('Pausado.', 'info');
+                }
+            } 
+            // Si no está hablando en absoluto, comenzar a leer
+            else {
+                // Procesar el texto si aún no hay párrafos
+                if (paragraphs.length === 0) {
+                    paragraphs = splitTextIntoParagraphs(textToSpeakInput.value.trim());
+                    currentParagraph = 0;
+                    updateParagraphsView();
+                }
+                
+                if (paragraphs.length > 0) {
+                    speakCurrentParagraph();
+                }
+            }
+            
+            // Actualizar estados de los botones según el nuevo estado
+            updateButtonStates();
+        }
+
+        // Función para ir al párrafo anterior - Ahora funciona durante la reproducción
+        function gotoPreviousParagraph() {
+            if (currentParagraph > 0) {
+                // Deteremos cualquier reproducción actual
+                speechSynthesis.cancel();
+                stopChromeWorkaround();
+                
+                currentParagraph--;
+                highlightCurrentParagraph();
+                updatePositionInfo();
+                
+                // Si estábamos reproduciendo o en pausa, seguir reproduciendo en el nuevo párrafo
+                if (isReading) {
+                    speakCurrentParagraph();
+                } else {
+                    showStatus(`Párrafo ${currentParagraph + 1} seleccionado`, 'info');
+                }
+                
+                saveToLocalStorage();
+                updateButtonStates();
+            }
+        }
+
+        // Función para ir al párrafo siguiente - Ahora funciona durante la reproducción
+        function gotoNextParagraph() {
+            if (currentParagraph < paragraphs.length - 1) {
+                // Deteremos cualquier reproducción actual
+                speechSynthesis.cancel();
+                stopChromeWorkaround();
+                
+                currentParagraph++;
+                highlightCurrentParagraph();
+                updatePositionInfo();
+                
+                // Si estábamos reproduciendo o en pausa, seguir reproduciendo en el nuevo párrafo
+                if (isReading) {
+                    speakCurrentParagraph();
+                } else {
+                    showStatus(`Párrafo ${currentParagraph + 1} seleccionado`, 'info');
+                }
+                
+                saveToLocalStorage();
+                updateButtonStates();
+            }
+        }
+
+        // Función para cambiar velocidad
+        function adjustRate(increment) {
+            let newRate = parseFloat(rateInput.value) + increment;
+            newRate = Math.min(Math.max(newRate, parseFloat(rateInput.min)), parseFloat(rateInput.max));
+            rateInput.value = newRate;
+            rateValueDisplay.textContent = newRate.toFixed(1);
+            
+            if (speechSynthesis.speaking && !speechSynthesis.paused) {
+                // Actualizar la velocidad en tiempo real
+                speechSynthesis.cancel();
+                speakCurrentParagraph();
+            }
+            
+            saveToLocalStorage();
+        }
+
+        // Event listeners para los controles de botones
+        playButton.addEventListener('click', togglePlayPause);
+        pauseButton.addEventListener('click', togglePlayPause);
+
+        // Botones de navegación entre párrafos - Permitidos durante la reproducción
+        prevButton.addEventListener('click', gotoPreviousParagraph);
+        nextButton.addEventListener('click', gotoNextParagraph);
+
+        // Actualizar valores de velocidad y tono en la UI
+        rateInput.addEventListener('input', () => {
+            rateValueDisplay.textContent = parseFloat(rateInput.value).toFixed(1);
+            
+            // Aplicar cambios de velocidad en tiempo real
+            if (speechSynthesis.speaking && !speechSynthesis.paused) {
+                speechSynthesis.cancel();
+                speakCurrentParagraph();
+            }
+            
+            saveToLocalStorage();
+        });
+
+        pitchInput.addEventListener('input', () => {
+            pitchValueDisplay.textContent = parseFloat(pitchInput.value).toFixed(1);
+            
+            // Aplicar cambios de tono en tiempo real
+            if (speechSynthesis.speaking && !speechSynthesis.paused) {
+                speechSynthesis.cancel();
+                speakCurrentParagraph();
+            }
+            
+            saveToLocalStorage();
+        });
+        
+        voiceSelect.addEventListener('change', () => {
+            if (voices.length > 0) {
+                utterance.voice = voices[voiceSelect.value];
+                
+                // Aplicar cambio de voz en tiempo real
+                if (speechSynthesis.speaking && !speechSynthesis.paused) {
+                    speechSynthesis.cancel();
+                    speakCurrentParagraph();
+                }
+            }
+            saveToLocalStorage();
+        });
+
+        // Procesar el texto cuando cambia y actualizar la vista de párrafos
+        textToSpeakInput.addEventListener('input', () => {
+            // Actualizar los párrafos cuando cambia el texto
+            paragraphs = splitTextIntoParagraphs(textToSpeakInput.value.trim());
+            
+            // Si cambió el texto, resetear la posición actual
+            if (paragraphs.length > 0) {
+                currentParagraph = Math.min(currentParagraph, paragraphs.length - 1);
+                updateParagraphsView();
+                updatePositionInfo();
+            } else {
+                currentParagraph = 0;
+                updateParagraphsView();
+                updatePositionInfo();
+            }
+            
+            saveToLocalStorage();
+        });
+
+        // Controles de teclado - CORREGIDO
+        document.addEventListener('keydown', (e) => {
+            // No procesar teclas si estamos en un input o textarea
+            if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
+                return;
+            }
+
+            switch (e.key) {
+                case ' ': // Espacio para reproducir/pausar
+                    e.preventDefault(); // Evitar scroll
+                    togglePlayPause(); // Usar la misma función que los botones
+                    break;
+                case 'ArrowLeft': // Flecha izquierda para párrafo anterior
+                    e.preventDefault();
+                    gotoPreviousParagraph();
+                    break;
+                case 'ArrowRight': // Flecha derecha para párrafo siguiente
+                    e.preventDefault();
+                    gotoNextParagraph();
+                    break;
+                case 'ArrowUp': // Flecha arriba para aumentar velocidad
+                    e.preventDefault();
+                    adjustRate(0.1);
+                    break;
+                case 'ArrowDown': // Flecha abajo para disminuir velocidad
+                    e.preventDefault();
+                    adjustRate(-0.1);
+                    break;
+            }
+        });
+        
+        // Asegurar que el lector de voz se detiene si cambia la visibilidad de la página
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && speechSynthesis.speaking && !speechSynthesis.paused) {
+                // La página no está visible, pausar la lectura
+                pausedByUser = true;
+                speechSynthesis.pause();
+                // Si la página vuelve a ser visible en menos de 30 segundos, intentamos reanudar
+                setTimeout(() => {
+                    if (!document.hidden && speechSynthesis.paused && pausedByUser) {
+                        speechSynthesis.resume();
+                        pausedByUser = false;
+                    }
+                }, 1000); // Verificar después de 1 segundo
+            }
+        });
+
+        // Gestionar errores y recuperación de la síntesis de voz
+        window.addEventListener('error', function(e) {
+            if (e.message.includes('speech') || e.message.toLowerCase().includes('utterance')) {
+                console.error('Error en síntesis de voz:', e);
+                // Intentar reiniciar el sistema
+                try {
+                    speechSynthesis.cancel();
+                    stopChromeWorkaround();
+                    showStatus('Hubo un error. Intenta nuevamente.', 'error');
+                    isReading = false;
+                    updateButtonStates();
+                } catch (err) {
+                    console.error('Error al recuperar síntesis:', err);
+                }
+            }
+        });
+
+        // Inicialización
+        loadFromLocalStorage();
+        
+        setTimeout(() => {
+            updateButtonStates();
+            showStatus('Lector listo. Escribe algo y presiona Reproducir o usa la tecla Espacio.', 'info');
+        }, 300);
+
+        // Guardar al cerrar la página
+        window.addEventListener('beforeunload', saveToLocalStorage);
+
+        // Workaround para Chrome: la síntesis de voz a veces se detiene después de ~15 segundos
+        setInterval(() => {
+            if (speechSynthesis.speaking && !speechSynthesis.paused && !pausedByUser) {
+                speechSynthesis.pause();
+                speechSynthesis.resume();
+            }
+        }, 10000);
+    </script>
+</body>
+</html>
